@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('用户信息列表')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+<body class="gray-bg">
+	
+	<!-- 系统参数列表 -->
+	<div class="container-div ui-layout-center">
+		<div class="row">
+			
+			<!-- 最上面的搜索框 -->
+			<div class="col-sm-12 search-collapse">
+				<form id="user-form">
+					<div class="select-list">
+						<input type="hidden" id="user_id" name="user_id" th:value="${user_id}">
+						<ul>
+							<li>
+								子级代数：<input type="text" name="rank"/>
+							</li>
+							<li>
+								手机号：<input type="text" name="user_tel" id="user_tel" />
+							</li>
+							<li>
+								姓名：<input type="text" name="real_name" id="real_name" />
+							</li>
+							<li>
+								会员状态：
+								<select name="status" id="status" th:with="type=${@dict.getType('user_info_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								会员认证状态：
+								<select name="auth_status" id="auth_status" th:with="type=${@dict.getType('user_info_auth_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								报备状态：
+								<select name="report_status" id="report_status" th:with="type=${@dict.getType('user_info_report_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								推荐人手机号：<input type="text" name="referer_user_tel" id="referer_user_tel" />
+							</li>
+							<li class="select-time">
+								<label>创建时间： </label>
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="beginTime"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+			
+			<!-- 上面的各项增删改查导入导出操作 -->
+	        <div class="btn-group-sm" id="toolbar" role="group">
+		       	<!-- 表格：导出数据 -->
+	            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="deveagent:userInfo:export">
+		            <i class="fa fa-download"></i> 导出
+		        </a>
+		        <!-- 操作封装：修改信息，全屏 -->
+		        <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="deveagent:userInfo:edit">
+		            <i class="fa fa-edit"></i> 修改
+		        </a>
+		        <!-- 表格：导出数据 -->
+	            <a class="btn btn-warning" onclick="batchSysFreeze();" shiro:hasPermission="deveagent:userInfo:sysFreeze">
+		            <i class="fa fa-download"></i> 批量冻结
+		        </a>
+		        <!-- 表格：导出数据 -->
+	            <a class="btn btn-warning" onclick="batchSysNoFreeze();" shiro:hasPermission="deveagent:userInfo:sysFreeze">
+		            <i class="fa fa-download"></i> 批量解冻
+		        </a>
+	        </div>
+
+	        
+	        <!-- bootstrap表格数据部分 -->
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+			
+		</div>
+	</div>
+	
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		//详情
+		var detailFlag = [[${@permission.hasPermi('deveagent:userInfo:detail')}]];
+		//冻结解冻
+		var sysFreezeFlag = [[${@permission.hasPermi('deveagent:userInfo:sysFreeze')}]];
+		//编辑
+		var editFlag = [[${@permission.hasPermi('deveagent:userInfo:edit')}]];
+
+		var datas_grade = [[${@dict.getType('user_info_grade')}]];
+		var datas_status = [[${@dict.getType('user_info_status')}]];
+		var datas_auth_status = [[${@dict.getType('user_info_auth_status')}]];
+		var datas_report_status = [[${@dict.getType('user_info_report_status')}]];
+	
+		//前缀路径
+		var prefix = "/deveagent/userInfo";
+		
+		//初始化方法
+		$(function() {
+			//初始化时间范围
+			intiTime();
+		   	//查询用户列表
+		    queryChildrenAgentUserInfoList();
+		});
+
+		
+		//查询用户列表
+		function queryChildrenAgentUserInfoList() {
+		    var options = {
+		        url: prefix + "/childrenList",//URL列表路径
+		        detailUrl: prefix + "/detail/{id}",//详情路径
+		        updateUrl: prefix + "/edit/{id}",//编辑路径
+		        exportUrl: prefix + "/childrenExport",//导出路径
+		        modalName: "代理伞下团队成员信息",//模块名称：用户
+		        showExport: true,
+		        //列信息
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+					field : 'id', 
+					title : '编号',
+					sortable: true,
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detail(\'' + row.id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					title: '&#12288;&#12288;&#12288;&#12288;&#12288;操作&#12288;&#12288;&#12288;&#12288;&#12288;',
+		            align: 'center',
+		            formatter: function(value, row, index) {
+		            	//事件数组
+		                var actions = [];
+		              	//详情按钮
+		            	actions.push('<a class="btn btn-warning btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="detail(\'' + row.id + '\')"><i class="fa fa-search"></i>详细</a>');
+		            	//编辑按钮：修改信息 全屏
+		            	actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+		            	if(row.status==0){
+			                //冻结
+			                actions.push('<a class="btn btn-primary btn-xs ' + sysFreezeFlag + '" href="javascript:void(0)" onclick="sysFreeze(\'' + row.id + '\')"><i class="fa fa-key"></i>冻结</a>');
+			           	}else{
+			              	//解冻
+			               	actions.push('<a class="btn btn-danger btn-xs ' + sysFreezeFlag + '" href="javascript:void(0)" onclick="sysNoFreeze(\'' + row.id + '\')"><i class="fa fa-key"></i>解冻</a>');
+			           	}
+		              	return actions.join('');
+		            }
+		        },
+		        {
+					field : 'manager_id', 
+					title : '代理编号'
+				},
+				 {
+					field : 'rank', 
+					title : '子级代数'
+				},
+				{
+					field : 'user_tel', 
+					title : '手机号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detail(\'' + row.id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'real_name', 
+					title : '姓名'
+				},
+				{
+					field : 'id_card', 
+					title : '身份证号',
+					formatter: function(value, row, index) {
+						if(value!=null && value!=''){
+							return '<a href="javascript:void(0)" onclick="detail(\'' + row.id + '\')">' + value + '</a>';
+						}
+		            }
+				},
+				{
+					field : 'referer_user_tel', 
+					title : '推荐人手机号',
+					formatter: function(value, row, index) {
+						if(value!=null && value!=''){
+							return '<a href="javascript:void(0)" onclick="detail(\'' + row.referer_id + '\')">' + value + '</a>';
+						}
+		            }
+				},
+				{
+					field : 'referer_real_name', 
+					title : '推荐人姓名'
+				},
+				{
+					field : 'money', 
+					title : '账户余额',
+					sortable: true
+				},
+				{
+					field : 'settle_money', 
+					title : '到账金额',
+					sortable: true
+				},
+				{
+					field : 'deduct_money', 
+					title : '扣除金额',
+					sortable: true
+				},
+				{
+					field : 'today_benefit', 
+					title : '今日收益',
+					sortable: true
+				},
+				{
+					field : 'total_benefit', 
+					title : '累计收益',
+					sortable: true
+				},
+				{
+					field : 'settle_single_feet_money', 
+					title : '单笔手续费',
+					sortable: true
+				},
+				{
+					field : 'single_rate_feet_money', 
+					title : '比例手续费',
+					sortable: true
+				},
+				{
+					field : 'status', 
+					title : '状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_status, value);
+		            }
+				},
+				{
+					field : 'auth_status', 
+					title : '认证状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_auth_status, value);
+		            }
+				},
+				{
+					field : 'report_status', 
+					title : '报备状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_report_status, value);
+		            }
+				},
+				{
+					field : 'referer_num', 
+					title : '直推人',
+					sortable: true
+				},
+				{
+					field : 'under_num', 
+					title : '团队人',
+					sortable: true
+				}]
+		    };
+		    //表格初始化
+		    $.table.init(options);
+		}
+		
+		
+		/* 查询用户详情 */
+		function detail(id){
+			var url = prefix + '/detail/'+id;
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		   	$.modal.openTab("编号"+id+"用户详情", url);
+		}
+		
+		
+		//冻结账号
+		function sysFreeze(id) {
+		    var url = prefix + '/toSysFreeze/' + id+"?operParam=1";
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		    $.modal.open("冻结账号", url, '800', '450');
+		}
+		
+		
+		//解冻账号
+		function sysNoFreeze(id) {
+		    var url = prefix + '/toSysFreeze/' + id+"?operParam=0";
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		    $.modal.open("解冻账号", url, '800', '450');
+		}
+		
+		
+		//批量冻结账号
+		function batchSysFreeze(){
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+    		if (rows.length == 0) {
+    			$.modal.alertWarning("请至少选择一条记录");
+    			return;
+    		}
+    		for(var i=0;i<rows.length;i++){
+    			if(rows[i].status==1){
+    				$.modal.alertWarning("不能选择未冻结的账号");
+    				return;
+    			}
+    		}
+    		$.modal.confirm("确认要冻结选中的" + rows.length + "个账号吗?", function() {
+    			var user_ids = "";
+    			// 遍历所有选择的行数据，取每条数据对应的ID
+    			$.each(rows, function(i, row) {
+    				if(i<rows.length-1){
+    					user_ids=user_ids+row['id']+",";
+    				}else{
+    					user_ids=user_ids+row['id'];
+    				}
+    			});
+    			var url = prefix + '/toSysFreeze/' + user_ids+"?operParam=1";
+    			$.modal.open("冻结账号", url, '800', '450');
+    		});
+		}
+		
+		
+		//批量解冻账号
+		function batchSysNoFreeze(){
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+    		if (rows.length == 0) {
+    			$.modal.alertWarning("请至少选择一条记录");
+    			return;
+    		}
+    		for(var i=0;i<rows.length;i++){
+    			if(rows[i].status==0){
+    				$.modal.alertWarning("不能选择已冻结的账号");
+    				return;
+    			}
+    		}
+    		$.modal.confirm("确认要解冻选中的" + rows.length + "个账号吗?", function() {
+    			var user_ids = "";
+    			// 遍历所有选择的行数据，取每条数据对应的ID
+    			$.each(rows, function(i, row) {
+    				if(i<rows.length-1){
+    					user_ids=user_ids+row['id']+",";
+    				}else{
+    					user_ids=user_ids+row['id'];
+    				}
+    			});
+    			var url = prefix + '/toSysFreeze/' + user_ids+"?operParam=0";
+    			$.modal.open("冻结账号", url, '800', '450');
+    		});
+		}
+		
+	</script>
+</body>
+</html>

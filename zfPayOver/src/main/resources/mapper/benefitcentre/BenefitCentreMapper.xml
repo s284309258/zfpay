@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.longecological.mapper.benefitcentre.BenefitCentreMapper">
+
+	<!-- 查询收益中心头部信息 cast((money - today_benefit) as char) AS withdraw_money,-->
+	<select id="getHeaderInformation" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			cast(today_benefit as char) as today_benefit,
+			cast(money as char) AS withdraw_money,
+			cast(settle_money as char) as settle_money,
+			cast(total_benefit as char) as total_benefit
+		 FROM
+			t_user_info
+		WHERE
+			id = #{map.sys_user_id}
+	</select>
+	
+	<!-- 查询每月的传统POS详情 -->
+	<select id="getMonthTraditionalPosBenefitDeatil" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(benefit as char) benefit,
+			cast(merchant_benefit as char) as merchant_benefit,
+			cast(agency_benefit as char) as agency_benefit,
+			cast((
+				share_benefit + single_benefit
+			) as char) AS share_benefit,
+			cast(return_benefit as char) as return_benefit,
+			cast(activity_benefit as char) as activity_benefit,
+			cast(deduct_money as char) as deduct_money
+		FROM
+			t_summary_user_traditional_pos_benefit_month
+		WHERE user_id = #{map.sys_user_id} and cre_month = #{map.date}
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and pos_type='epos'
+			</when>
+			<otherwise>
+				and pos_type is null
+			</otherwise>
+		</choose>
+	</select>
+
+	<!-- 查询每月的传统POS详情 add byqh202003-->
+	<select id="getMonthEposBenefitDeatil" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(benefit as char) benefit,
+			cast(merchant_benefit as char) as merchant_benefit,
+			cast(agency_benefit as char) as agency_benefit,
+			cast((
+				share_benefit + single_benefit
+			) as char) AS share_benefit,
+			cast(return_benefit as char) as return_benefit,
+			cast(activity_benefit as char) as activity_benefit,
+			cast(deduct_money as char) as deduct_money
+		FROM
+			t_summary_user_traditional_pos_benefit_month
+		WHERE user_id = #{map.sys_user_id} and cre_month = #{map.date} and pos_type='epos'
+	</select>
+	
+	<!-- 查询每月的MPOS详情 -->
+	<select id="getMonthMposBenefitDeatil" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(benefit as char) benefit,
+			cast(merchant_benefit as char) as merchant_benefit,
+			cast(agency_benefit as char) as agency_benefit,
+			cast((
+				share_benefit + single_benefit
+			) as char) AS share_benefit,
+			cast(return_benefit as char) as return_benefit,
+			cast(activity_benefit as char) as activity_benefit,
+			cast(deduct_money as char) as deduct_money
+		FROM
+			t_summary_user_mpos_benefit_month
+		WHERE user_id = #{map.sys_user_id} and cre_month = #{map.date}
+	</select>
+	
+	<!-- 分润记录列表（传统POS） update add field trans_product byqh 201912 -->
+	<select id="getShareBenefitTraditionalPosList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(id as char) as record_id,
+			order_id,
+			benefit_money,
+			sn,
+			trans_amount,
+			trans_type,
+			trans_product,
+			card_type,
+			benefit_type,
+			state_type,
+			single_amount,
+			DATE_FORMAT(STR_TO_DATE(trans_time,'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS trans_datetime,
+			DATE_FORMAT(STR_TO_DATE(CONCAT(cre_date, cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		FROM
+			t_user_trapos_share_benefit_record
+		WHERE
+			user_id = #{map.sys_user_id}
+		and cre_date between #{map.start_date} and #{map.end_date}
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and pos_type='03'
+			</when>
+			<otherwise>
+				and pos_type is null
+			</otherwise>
+		</choose>
+			<if test="map.last_id != null and map.last_id != ''" >
+        		AND id &lt; #{map.last_id}
+      		</if>
+      	ORDER BY id desc
+		limit 0,10
+	</select>
+
+	<!-- 分润记录列表（传统POS） update add field trans_product byqh 201912 add byqh202003-->
+	<select id="getShareBenefitEposList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+		cast(id as char) as record_id,
+		order_id,
+		benefit_money,
+		sn,
+		trans_amount,
+		trans_type,
+		trans_product,
+		card_type,
+		benefit_type,
+		state_type,
+		single_amount,
+		DATE_FORMAT(STR_TO_DATE(trans_time,'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS trans_datetime,
+		DATE_FORMAT(STR_TO_DATE(CONCAT(cre_date, cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		FROM
+		t_user_trapos_share_benefit_record
+		WHERE
+		user_id = #{map.sys_user_id} and pos_type='03'
+		and cre_date between #{map.start_date} and #{map.end_date}
+		<if test="map.last_id != null and map.last_id != ''" >
+			AND id &lt; #{map.last_id}
+		</if>
+		ORDER BY id desc
+		limit 0,10
+	</select>
+	
+	<!-- 机器返现记录列表（传统POS） -->
+	<select id="getMachineBackTraditionalPosList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+		cast(id as char) as record_id,
+		order_id,
+		money,
+		sn,
+		frozen_time,
+		return_amt,
+		DATE_FORMAT(STR_TO_DATE(CONCAT(cre_date, cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		FROM
+		t_user_trapos_machine_back_record
+		WHERE
+		user_id = #{map.sys_user_id}
+		and cre_date between #{map.start_date} and #{map.end_date}
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and pos_type='03'
+			</when>
+			<otherwise>
+				and pos_type is null
+			</otherwise>
+		</choose>
+		<if test="map.last_id != null and map.last_id != ''" >
+			AND id &lt; #{map.last_id}
+		</if>
+		ORDER BY id desc
+		limit 0,10
+	</select>
+
+	<!-- 机器返现记录列表（传统POS） add byqh202003-->
+	<select id="getMachineBackEposList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+		cast(id as char) as record_id,
+		order_id,
+		money,
+		sn,
+		frozen_time,
+		return_amt,
+		DATE_FORMAT(STR_TO_DATE(CONCAT(cre_date, cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		FROM
+		t_user_trapos_machine_back_record
+		WHERE
+		user_id = #{map.sys_user_id} and pos_type='03'
+		and cre_date between #{map.start_date} and #{map.end_date}
+		<if test="map.last_id != null and map.last_id != ''" >
+			AND id &lt; #{map.last_id}
+		</if>
+		ORDER BY id desc
+		limit 0,10
+	</select>
+	
+	<!-- 活动奖励记录列表（传统POS） update byqh 201912
+	SELECT
+			cast(t.id as char) as record_id,
+			t.order_id,
+			t.money,
+			t.sn,
+			t1.activity_name,
+			t1.start_date,
+			t1.end_date,
+			DATE_FORMAT(STR_TO_DATE(CONCAT(t.cre_date, t.cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		FROM
+			t_user_trapos_activity_reward_record t
+		LEFT JOIN t_sys_trapos_activity_info t1 on t.activity_id = t1.id
+		WHERE
+			t.user_id = #{map.sys_user_id}
+		and t.cre_date between #{map.start_date} and #{map.end_date}
+			<if test="map.last_id != null and map.last_id != ''" >
+        		AND t.id &lt; #{map.last_id}
+      		</if>
+      	ORDER BY t.id desc
+		limit 0,10
+	-->
+	<select id="getActivityRewardTraditionalPosList" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from (
+		select cast(@rownum:=@rownum+1 as char) AS record_id,tt.* from (
+		SELECT
+		t.order_id,
+		t.money,
+		t.sn,
+		t1.activity_name,
+		t1.start_date,
+		t1.end_date,
+		DATE_FORMAT(STR_TO_DATE(CONCAT(t.cre_date, t.cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		FROM
+		t_user_trapos_activity_reward_record t
+		LEFT JOIN t_sys_trapos_activity_info t1 on t.activity_id = t1.id
+		WHERE
+		t.user_id = #{map.sys_user_id}
+		<choose>
+			<when test="map.pos_type!=null and map.pos_typ!=''">
+				and t1.pos_type='03'
+			</when>
+			<otherwise>
+				and t1.pos_type is null
+			</otherwise>
+		</choose>
+		and t.activity_id is not null
+		and t.cre_date between #{map.start_date} and #{map.end_date}
+		union
+		select
+		t.order_id,
+		t.money,
+		t.sn,
+		t1.policy_name,
+		t.begin_date,
+		t.end_date,
+		DATE_FORMAT(STR_TO_DATE(CONCAT(t.cre_date, t.cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		from t_user_trapos_activity_reward_record t INNER JOIN t_sys_pos_policy_define t1 on t.policy_id=t1.id
+		WHERE
+		t.user_id = #{map.sys_user_id}
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and t.pos_type='03'
+			</when>
+			<otherwise>
+				and t.pos_type is null
+			</otherwise>
+		</choose>
+		and t.cre_date between #{map.start_date} and #{map.end_date}
+		)tt,(SELECT @rownum:=0) r ORDER BY tt.cre_datetime desc)t
+			<if test="map.last_id != null and map.last_id != ''" >
+        		WHERE t.record_id > #{map.last_id}
+      		</if>
+		limit 0,10
+	</select>
+
+	<!--add byqh202003-->
+	<select id="getActivityRewardEposList" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from (
+		select cast(@rownum:=@rownum+1 as char) AS record_id,tt.* from (
+		SELECT
+		t.order_id,
+		t.money,
+		t.sn,
+		t1.activity_name,
+		t1.start_date,
+		t1.end_date,
+		DATE_FORMAT(STR_TO_DATE(CONCAT(t.cre_date, t.cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		FROM
+		t_user_trapos_activity_reward_record t
+		LEFT JOIN t_sys_trapos_activity_info t1 on t.activity_id = t1.id
+		WHERE
+		t.user_id = #{map.sys_user_id} and t1.pos_type='epos' and t.activity_id is not null
+		and t.cre_date between #{map.start_date} and #{map.end_date}
+		union
+		select
+		t.order_id,
+		t.money,
+		t.sn,
+		t1.policy_name,
+		t.begin_date,
+		t.end_date,
+		DATE_FORMAT(STR_TO_DATE(CONCAT(t.cre_date, t.cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		from t_user_trapos_activity_reward_record t INNER JOIN t_sys_pos_policy_define t1 on t.policy_id=t1.id
+		WHERE
+		t.user_id = #{map.sys_user_id} and t.pos_type='03'
+		and t.cre_date between #{map.start_date} and #{map.end_date}
+		)tt,(SELECT @rownum:=0) r ORDER BY tt.cre_datetime desc)t
+		<if test="map.last_id != null and map.last_id != ''" >
+			WHERE t.record_id > #{map.last_id}
+		</if>
+		limit 0,10
+	</select>
+	
+	<!-- 扣除记录列表（传统POS）add byqh 201912
+	SELECT
+			cast(t.id as char) as record_id,
+			t.order_id,
+			t.money,
+			t.sn,
+			t1.assess_name,
+			t1.start_date,
+			t1.end_date,
+			DATE_FORMAT(STR_TO_DATE(CONCAT(t.cre_date, t.cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		FROM
+			t_user_trapos_deduct_record t
+		LEFT JOIN t_user_trapos_assess_info t1 on t.assess_id = t1.id
+		WHERE
+			t.user_id = #{map.sys_user_id}
+		and t.cre_date between #{map.start_date} and #{map.end_date}
+			<if test="map.last_id != null and map.last_id != ''" >
+        		AND t.id &lt; #{map.last_id}
+      		</if>
+      	ORDER BY t.id desc
+		limit 0,10
+	-->
+	<select id="getDeductTraditionalPosList" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from (
+		select cast(@rownum:=@rownum+1 as char) AS record_id,tt.* from (
+		SELECT t.order_id, t.money, t.sn, t1.assess_name, t1.start_date, t1.end_date, DATE_FORMAT(STR_TO_DATE(CONCAT(t.cre_date, t.cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime FROM t_user_trapos_deduct_record t INNER JOIN t_user_trapos_assess_info t1 on t.assess_id = t1.id
+		WHERE t.user_id = #{map.sys_user_id}
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and t.pos_type='03'
+			</when>
+			<otherwise>
+				and t.pos_type is null
+			</otherwise>
+		</choose>
+		and t.cre_date between #{map.start_date} and #{map.end_date}
+		union
+		select t.order_id, t.money, t.sn, t1.policy_name, t.begin_date,t.end_date, DATE_FORMAT(STR_TO_DATE(CONCAT(t.cre_date, t.cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime from t_user_trapos_deduct_record t INNER JOIN t_sys_pos_policy_define t1 on t.policy_id=t1.id
+		where t.user_id=#{map.sys_user_id}
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and t.pos_type='03'
+			</when>
+			<otherwise>
+				and t.pos_type is null
+			</otherwise>
+		</choose>
+		and t.cre_date between #{map.start_date} and #{map.end_date}
+		) tt,(SELECT @rownum:=0) r order by tt.order_id  desc ) t
+		<if test="map.last_id != null and map.last_id != ''" >
+			where t.record_id > #{map.last_id}
+		</if>
+		limit 0,10
+	</select>
+
+	<!--add byqh202003-->
+	<select id="getDeductEposList" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from (
+		select cast(@rownum:=@rownum+1 as char) AS record_id,tt.* from (
+		SELECT t.order_id, t.money, t.sn, t1.assess_name, t1.start_date, t1.end_date, DATE_FORMAT(STR_TO_DATE(CONCAT(t.cre_date, t.cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime FROM t_user_trapos_deduct_record t INNER JOIN t_user_trapos_assess_info t1 on t.assess_id = t1.id
+		WHERE t.user_id = #{map.sys_user_id} and t.pos_type='03' and t.cre_date between #{map.start_date} and #{map.end_date}
+		union
+		select t.order_id, t.money, t.sn, t1.policy_name, t.begin_date,t.end_date, DATE_FORMAT(STR_TO_DATE(CONCAT(t.cre_date, t.cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime from t_user_trapos_deduct_record t INNER JOIN t_sys_pos_policy_define t1 on t.policy_id=t1.id
+		where t.user_id=#{map.sys_user_id} and t.pos_type='03' and t.cre_date between #{map.start_date} and #{map.end_date}
+		) tt,(SELECT @rownum:=0) r order by tt.order_id  desc ) t
+		<if test="map.last_id != null and map.last_id != ''" >
+			where t.record_id > #{map.last_id}
+		</if>
+		limit 0,10
+	</select>
+
+	<!-- 分润记录列表（MPOS） -->
+	<select id="getShareBenefitMposList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(id as char) as record_id,
+			order_id,
+			benefit_money,
+			sn,
+			trans_amount,
+			trans_type,
+			card_type,
+			benefit_type,
+			state_type,
+			single_amount,
+			DATE_FORMAT(STR_TO_DATE(trans_time,'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS trans_datetime,
+			DATE_FORMAT(STR_TO_DATE(CONCAT(cre_date, cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		FROM
+			t_user_mpos_share_benefit_record
+		WHERE
+			user_id = #{map.sys_user_id}
+		and cre_date between #{map.start_date} and #{map.end_date}
+			<if test="map.last_id != null and map.last_id != ''" >
+        		AND id &lt; #{map.last_id}
+      		</if>
+      	ORDER BY id desc
+		limit 0,10
+	</select>
+	
+	<!-- 机器返现记录列表（MPOS） -->
+	<select id="getMachineBackMposList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(id as char) as record_id,
+			order_id,
+			money,
+			sn,
+			frozen_time,
+			return_amt,
+			DATE_FORMAT(STR_TO_DATE(CONCAT(cre_date, cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		FROM
+			t_user_mpos_machine_back_record
+		WHERE
+			user_id = #{map.sys_user_id}
+		and cre_date between #{map.start_date} and #{map.end_date}
+			<if test="map.last_id != null and map.last_id != ''" >
+        		AND id &lt; #{map.last_id}
+      		</if>
+      	ORDER BY id desc
+		limit 0,10
+	</select>
+	
+	<!-- 活动奖励记录列表（MPOS） update byqh 201912
+	SELECT
+			cast(t.id as char) as record_id,
+			t.order_id,
+			t.money,
+			t.sn,
+			t1.activity_name,
+			t1.start_date,
+			t1.end_date,
+			DATE_FORMAT(STR_TO_DATE(CONCAT(t.cre_date, t.cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		FROM
+			t_user_mpos_activity_reward_record t
+		LEFT JOIN t_sys_mpos_activity_info t1 on t.activity_id = t1.id
+		WHERE
+			t.user_id = #{map.sys_user_id}
+		and t.cre_date between #{map.start_date} and #{map.end_date}
+			<if test="map.last_id != null and map.last_id != ''" >
+        		AND t.id &lt; #{map.last_id}
+      		</if>
+      	ORDER BY t.id desc
+		limit 0,10
+	-->
+	<select id="getActivityRewardMposList" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from (
+		select cast(@rownum:=@rownum+1 as char) AS record_id,tt.* from (
+		SELECT
+		t.order_id,
+		t.money,
+		t.sn,
+		t1.activity_name,
+		t1.start_date,
+		t1.end_date,
+		DATE_FORMAT(STR_TO_DATE(CONCAT(t.cre_date, t.cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		FROM
+		t_user_mpos_activity_reward_record t
+		LEFT JOIN t_sys_mpos_activity_info t1 on t.activity_id = t1.id
+		WHERE
+		t.user_id = #{map.sys_user_id} and t.activity_id is not null
+		and t.cre_date between #{map.start_date} and #{map.end_date}
+		union
+		select
+		t.order_id,
+		t.money,
+		t.sn,
+		t1.policy_name,
+		t.begin_date,
+		t.end_date,
+		DATE_FORMAT(STR_TO_DATE(CONCAT(t.cre_date, t.cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		from t_user_mpos_activity_reward_record t INNER JOIN t_sys_pos_policy_define t1 on t.policy_id=t1.id
+		WHERE
+		t.user_id = #{map.sys_user_id}
+		and t.cre_date between #{map.start_date} and #{map.end_date}
+		)tt,(SELECT @rownum:=0) r ORDER BY tt.cre_datetime desc)t
+		<if test="map.last_id != null and map.last_id != ''" >
+			WHERE t.record_id > #{map.last_id}
+		</if>
+		limit 0,10
+	</select>
+	
+	<!-- 扣除记录列表（MPOS）update byqh 201912
+	 SELECT
+			cast(t.id as char) as record_id,
+			t.order_id,
+			t.money,
+			t.sn,
+			t1.assess_name,
+			t1.start_date,
+			t1.end_date,
+			DATE_FORMAT(STR_TO_DATE(CONCAT(t.cre_date, t.cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		FROM
+			t_user_mpos_deduct_record t
+		LEFT JOIN t_user_mpos_assess_info t1 on t.assess_id = t1.id
+		WHERE
+			t.user_id = #{map.sys_user_id}
+		and t.cre_date between #{map.start_date} and #{map.end_date}
+			<if test="map.last_id != null and map.last_id != ''" >
+        		AND t.id &lt; #{map.last_id}
+      		</if>
+      	ORDER BY t.id desc
+		limit 0,10
+	 -->
+	<select id="getDeductMposList" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from (
+		select cast(@rownum:=@rownum+1 as char) AS record_id,tt.* from (
+		SELECT t.order_id, t.money, t.sn, t1.assess_name, t1.start_date, t1.end_date, DATE_FORMAT(STR_TO_DATE(CONCAT(t.cre_date, t.cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime FROM t_user_mpos_deduct_record t INNER JOIN t_user_mpos_assess_info t1 on t.assess_id = t1.id
+		WHERE t.user_id = #{map.sys_user_id} and t.cre_date between #{map.start_date} and #{map.end_date}
+		union
+		select t.order_id, t.money, t.sn, t1.policy_name, t.begin_date,t.end_date, DATE_FORMAT(STR_TO_DATE(CONCAT(t.cre_date, t.cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime from t_user_mpos_deduct_record t INNER JOIN t_sys_pos_policy_define t1 on t.policy_id=t1.id
+		where t.user_id=#{map.sys_user_id} and t.cre_date between #{map.start_date} and #{map.end_date}
+		) tt,(SELECT @rownum:=0) r order by tt.order_id desc) t
+		<if test="map.last_id != null and map.last_id != ''" >
+			where t.record_id > #{map.last_id}
+		</if>
+		limit 0,10
+	</select>
+	
+</mapper>

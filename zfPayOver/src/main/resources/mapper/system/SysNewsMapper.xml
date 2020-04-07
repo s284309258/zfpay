@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.longecological.mapper.system.SysNewsMapper">
+
+
+	<!-- 查询新闻资讯列表 -->
+	<select id="getNewsList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			cast(id as char) as news_id,
+			news_title,
+			news_cover,
+			cast(browse_num as char) as browse_num,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date
+		FROM
+			t_sys_news_info
+		where status=0
+		order by id desc
+		limit #{map.start},#{map.end}
+	</select>
+	
+	<!-- 查询最新新闻资讯 -->
+	<select id="getNewNews" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			cast(id as char) as news_id,
+			news_title,
+			news_cover,
+			cast(browse_num as char) as browse_num,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date
+		FROM
+			t_sys_news_info
+		where status=0
+		order by id desc
+		limit 0,3
+	</select>
+	
+	<!-- 查询资讯详情 -->
+	<select id="getNewsDetail" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			cast(id as char) as news_id,
+			news_title,
+			news_nav,
+			news_content,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date
+		FROM
+			t_sys_news_info
+		where id=#{map.news_id}
+	</select>
+	
+	<!-- 更新浏览次数 -->
+	<update id="updateNewsBrowseNum" parameterType="java.util.Map">
+		update t_sys_news_info set browse_num = browse_num + 1 where id=#{map.news_id}
+	</update>
+	
+</mapper>

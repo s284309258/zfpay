@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.user.mapper.AgentBenefitRecordMoneyMapper">
+
+	<!-- 查询用户资金流水列表 -->
+	<select id="getAgentBenefitRecordMoneyList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			t.id,
+			t.user_id,
+			t.before_money,
+			t.money,
+			t.after_money,
+			t.op_type,
+			t.op_order_id,
+			t.state_type,
+			t.pos_type,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			t1.manager_id,
+			t1.user_tel,
+			t1.real_name,
+			t2.op_name
+		FROM
+			t_benefit_record_money t
+		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
+		LEFT JOIN t_sys_benefit_name t2 ON t.op_type = t2.op_type
+		<where>
+			t1.manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.op_order_id != null and map.op_order_id != ''">
+				AND t.op_order_id = #{map.op_order_id}
+			</if>
+			<if test="map.op_type != null and map.op_type != ''">
+				AND t.op_type = #{map.op_type}
+			</if>
+			<if test="map.state_type != null and map.state_type != ''">
+				AND t.state_type = #{map.state_type}
+			</if>
+			<if test="map.pos_type != null and map.pos_type != ''">
+				AND t.pos_type = #{map.pos_type}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t1.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t1.real_name = #{map.real_name}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 导出用户资金流水信息 -->
+	<select id="selectAgentBenefitRecordMoneyList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.user.domain.AgentBenefitRecordMoney" >
+		SELECT
+			t.id,
+			t.user_id,
+			t.before_money,
+			t.money,
+			t.after_money,
+			t.op_type,
+			t.op_order_id,
+			t.state_type,
+			t.pos_type,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			t1.manager_id,
+			t1.user_tel,
+			t2.op_name
+		FROM
+			t_benefit_record_money t
+		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
+		LEFT JOIN t_sys_benefit_name t2 ON t.op_type = t2.op_type
+		<where>
+			t1.manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.op_order_id != null and map.op_order_id != ''">
+				AND t.op_order_id = #{map.op_order_id}
+			</if>
+			<if test="map.op_type != null and map.op_type != ''">
+				AND t.op_type = #{map.op_type}
+			</if>
+			<if test="map.state_type != null and map.state_type != ''">
+				AND t.state_type = #{map.state_type}
+			</if>
+			<if test="map.pos_type != null and map.pos_type != ''">
+				AND t.pos_type = #{map.pos_type}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t1.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t1.real_name = #{map.real_name}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+</mapper>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<th:block th:include="include :: header('编辑用户MPOS')" />、
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+
+	<form class="form-horizontal m" id="form-userTraditionalPosInfo-edit">
+       	<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>刷卡结算底价：</label>
+			<input type="hidden" name=user_pos_id id="user_pos_id" th:value="${id}" readonly="true">
+			<div class="col-sm-8" id="card_settle_price_location">
+			</div>
+		</div>
+		<!--add byqh 201912-->
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>VIP秒到(商圈)刷卡结算低价（%）：</label>
+			<div class="col-sm-8" id="card_settle_price_location_vip">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>云闪付结算底价（%）：</label>
+			<div class="col-sm-8" id="cloud_settle_price_location">
+			</div>
+		</div> 
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>微信结算底价（%）：</label>
+			<div class="col-sm-8" id="weixin_settle_price_location">
+			</div>
+		</div> 
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>支付宝结算底价（%）：</label>
+			<div class="col-sm-8" id="zhifubao_settle_price_location">
+			</div>
+		</div> 
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>单笔分润比例（%）：</label>
+			<div class="col-sm-8" id="single_profit_rate_location">
+			</div>
+		</div> 
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>返现比例（%）：</label>
+			<div class="col-sm-8" id="cash_back_rate_location">
+			</div>
+		</div> 
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>封顶费：</label>
+			<div class="col-sm-8" id="mer_cap_fee_location">
+			</div>
+		</div> 
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>操作备注：</label>
+			<div class="col-sm-8">
+				<textarea rows="" cols="" name="remark" id="remark" class="form-control" placeholder="请输入操作备注" required ></textarea>
+			</div>
+		</div> 
+   	</form>
+</div>
+
+<th:block th:include="include :: footer" />
+<script type="text/javascript">
+var id = [[${id}]]; 
+
+$("#form-userTraditionalPosInfo-edit").validate({
+	rules:{
+		card_settle_price: {
+	        required: true
+      	},
+		card_settle_price_vip: {
+			required: true
+		},
+      	cloud_settle_price: {
+	        required: true
+      	},
+      	weixin_settle_price: {
+	        required: true
+      	},
+      	zhifubao_settle_price: {
+	        required: true
+      	},
+      	single_profit_rate: {
+	        required: true
+      	},
+      	cash_back_rate: {
+	        required: true
+      	},
+      	mer_cap_fee: {
+	        required: true
+      	},
+      	remark: {
+	        required: true
+      	}
+	},
+	messages: {
+		card_settle_price: {
+            required: "请输入刷卡结算底价"
+        },
+		card_settle_price_vip: {
+			required: "VIP秒到(商圈)刷卡结算低价"
+		},
+        cloud_settle_price: {
+            required: "请输入云闪付结算底价"
+        },
+        weixin_settle_price: {
+            required: "请输入微信结算底价"
+        },
+        zhifubao_settle_price: {
+            required: "请输入支付宝结算底价"
+        },
+        single_profit_rate: {
+            required: "请输入单笔分润比例"
+        },
+        cash_back_rate: {
+            required: "请输入返现比例"
+        },
+        mer_cap_fee: {
+            required: "请输入封顶费"
+        },
+        remark: {
+            required: "请输入操作备注"
+        }
+ 	},
+	focusCleanup: true
+});
+
+
+function submitHandler() {
+   	if ($.validate.form()) {
+		$.operate.save("/deveagent/userTraditionalPosInfo/edit", $('#form-userTraditionalPosInfo-edit').serialize());
+   	}
+}
+
+$(document).ready(function () {
+	//查询参数基本信息
+	$.ajax({
+		url: "/deveagent/userTraditionalPosInfo/getAgentUserTraditionalPosInfoById",
+		type: 'post',
+		dataType:"json",
+		data:{
+			'id' : id,
+		},
+		success:function(data){
+			//初始化刷卡结算底价
+			initParamRate(data.card_settle_price,"card_settle_price","card_settle_price_location","2");
+			//初始化刷卡结算底价vip商圈的
+			initParamRate(data.card_settle_price_vip,"card_settle_price_vip","card_settle_price_location_vip","2");
+			//初始化云闪付结算底价
+			initParamRate(data.cloud_settle_price,"cloud_settle_price","cloud_settle_price_location","3");
+			//初始化微信结算底价
+			initParamRate(data.weixin_settle_price,"weixin_settle_price","weixin_settle_price_location","5");
+			//初始化支付宝结算底价
+			initParamRate(data.zhifubao_settle_price,"zhifubao_settle_price","zhifubao_settle_price_location","7");
+			//初始化单笔分润比例
+			initParamRate(data.single_profit_rate,"single_profit_rate","single_profit_rate_location","9");
+			//初始化返现比例
+			initParamRate(data.cash_back_rate,"cash_back_rate","cash_back_rate_location","10");
+			//初始化封顶费
+			initParamRate(data.mer_cap_fee,"mer_cap_fee","mer_cap_fee_location","11");
+  		}
+	}); 
+	
+	
+	//初始化参数信息
+	function initParamRate(value, valueName, objLocation,rateType){
+		//查询相应的业务类型列表
+		$.ajax({
+			cache : true,
+			type : "post",
+			url : "/devemana/sysParamRate/getManaParamRateListByType",
+			data : {
+				'type' : rateType
+			},
+			async : false,
+			error : function(request) {
+				parent.layer.alert("网络超时");
+			},
+			success : function(data) {
+				var obj='<select class="form-control" name="'+valueName+'" id="'+valueName+'" required  ><option value="">请选择参数值</option>';
+				for(var i=0;i<data.length;i++){
+					obj=obj+'<option value='+parseFloat(data[i].rate).toFixed(3)+'>'+parseFloat(data[i].rate).toFixed(3)+'</option>';
+				}
+				obj=obj+"</select></li>";
+				$("#"+objLocation+"").html(obj);
+				$("#"+valueName+"").find("option[value='"+parseFloat(value).toFixed(3)+"']").attr("selected",true);
+			}
+		});
+	}
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('用户线上活动(传统POS)申请记录列表')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+<body class="gray-bg">
+	
+	<!-- 系统参数列表 -->
+	<div class="container-div ui-layout-center">
+		<div class="row">
+			
+			<!-- 最上面的搜索框 -->
+			<div class="col-sm-12 search-collapse">
+				<form id="user-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								订单号：<input type="text" name="order_id" id="order_id" />
+							</li>
+							<li>
+								奖励类型编号：<input type="text" name="activity_reward_id" id="activity_reward_id" />
+							</li>
+							<li>
+								活动订单号：<input type="text" name="activity_order_id" id="activity_order_id" />
+							</li>
+							<li>
+								手机号：<input type="text" name="user_tel" id="user_tel" />
+							</li>
+							<li>
+								姓名：<input type="text" name="real_name" id="real_name" />
+							</li>
+							<li>
+								审核状态：
+								<select name="status" id="status" th:with="type=${@dict.getType('user_activity_apply_info_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li class="select-time">
+								<label>创建时间： </label>
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="beginTime"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+			
+			<!-- 上面的各项增删改查导入导出操作 -->
+	        <div class="btn-group-sm" id="toolbar" role="group">
+	        	<!-- 表格：导出数据 -->
+	            <a class="btn btn-danger" onclick="batchSysAudit();" shiro:hasPermission="deveagent:userTraposActivityApplyInfo:sysAudit">
+		            <i class="fa fa-download"></i> 批量审核
+		        </a>
+		        <!-- 表格：导出数据 -->
+	            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="deveagent:userTraposActivityApplyInfo:export">
+		            <i class="fa fa-download"></i> 导出
+		        </a>
+	        </div>
+
+	        
+	        <!-- bootstrap表格数据部分 -->
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+			
+		</div>
+	</div>
+	
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		//详情
+		var detailFlag = [[${@permission.hasPermi('deveagent:userTraposActivityApplyInfo:detail')}]];
+		//审核
+		var sysAuditFlag = [[${@permission.hasPermi('deveagent:userTraposActivityApplyInfo:sysAudit')}]];
+	
+		var datas_status = [[${@dict.getType('user_activity_apply_info_status')}]];
+	
+		//前缀路径
+		var prefix = "/deveagent/userTraposActivityApplyInfo";
+		
+		//初始化方法
+		$(function() {
+			//初始化时间范围
+			intiTime();
+		   	//查询用户线上活动(传统POS)申请记录列表
+		    queryAgentUserTraposActivityApplyInfoList();
+		});
+		
+		//查询用户线上活动(传统POS)申请记录列表
+		function queryAgentUserTraposActivityApplyInfoList() {
+		    var options = {
+		        url: prefix + "/list",//URL列表路径
+		        detailUrl: prefix + "/detail/{id}",//详情路径
+		        exportUrl: prefix + "/export",//导出路径
+		        modalName: "用户线上活动(传统POS)申请记录",//模块名称：用户
+		        showExport: true,
+		        sortName: 'id',
+	          	sortOrder: 'desc',
+		        //列信息
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+					field : 'id', 
+					title : '编号',
+					sortable: true
+				},
+				{
+		            title: '操作',
+		            align: 'center',
+		            formatter: function(value, row, index) {
+		            	//事件数组
+		                var actions = [];
+		              	//详情按钮
+		            	actions.push('<a class="btn btn-warning btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="detail(\'' + row.id + '\')"><i class="fa fa-search"></i>详细</a>');
+		            	if(row.status==00){
+			                //申请审核
+			                actions.push('<a class="btn btn-primary btn-xs ' + sysAuditFlag + '" href="javascript:void(0)" onclick="sysAudit(\'' + row.id + '\')"><i class="fa fa-edit"></i>活动申请审核 </a>');
+			           	}
+		              	return actions.join('');
+		            }
+		        },
+		        {
+					field : 'order_id', 
+					title : '订单号'
+				},
+		        {
+					field : 'manager_id', 
+					title : '代理编号'
+				},
+				{
+					field : 'user_id', 
+					title : '用户编号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailUser(\'' + row.user_id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'user_tel', 
+					title : '手机号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailUser(\'' + row.user_id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'real_name', 
+					title : '姓名'
+				},
+				{
+					field : 'activity_id', 
+					title : '活动编号'
+				},
+				{
+					field : 'activity_order_id', 
+					title : '活动订单号'
+				},
+				{
+					field : 'activity_name', 
+					title : '活动名称'
+				},
+				{
+					field : 'activity_reward_id', 
+					title : '活动奖励编号'
+				},
+				{
+					field : 'pos_num', 
+					title : '库存数量'
+				},
+				{
+					field : 'reward_money', 
+					title : '奖励金额'
+				},
+				{
+					field : 'expenditure', 
+					title : '交易额（万）'
+				},
+				{
+					field : 'status', 
+					title : '审核状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_status, value);
+		            }
+				},
+				{
+					field : 'remark', 
+					title : '操作备注',
+					align: 'center',
+				  	formatter: function(value, row, index) {
+				      	return $.table.tooltip(value);
+				  	}
+				},
+				{
+					field : 'cre_date', 
+					title : '创建时间',
+					sortable: true
+				},
+				{
+					field : 'up_date', 
+					title : '更新时间',
+					sortable: true
+				},
+				{
+					field : 'update_by', 
+					title : '更新人'
+				}]
+		    };
+		    //表格初始化
+		    $.table.init(options);
+		}
+		
+		
+		/* 查询申请详情 */
+		function detail(id){
+			var url = prefix+'/detail/'+id;
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		   	$.modal.openTab("编号"+id+"活动申请详情", url);
+		}
+		
+		
+		/* 查询用户详情 */
+		function detailUser(id){
+			var url = '/deveagent/userInfo/detail/'+id;
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		   	$.modal.openTab("编号"+id+"用户详情", url);
+		}
+
+		//系统审核（MPOS）
+		function sysAudit(activity_id){
+			var url = prefix + '/sysAudit/' + activity_id;
+		    $.modal.open("审核线上活动(传统POS)申请", url);
+		}
+		
+		
+		//批量审核线上活动申请（MPOS）
+		function batchSysAudit(){
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+    		if (rows.length == 0) {
+    			$.modal.alertWarning("请至少选择一条记录");
+    			return;
+    		}
+    		for(var i=0;i<rows.length;i++){
+    			if(rows[i].status!='00'){
+    				$.modal.alertWarning("只能选择待审核的活动申请");
+        			return;
+    			}
+    		}
+    		$.modal.confirm("确认要选中这" + rows.length + "条数据吗?", function() {
+    			var apply_ids = "";
+    			// 遍历所有选择的行数据，取每条数据对应的ID
+    			$.each(rows, function(i, row) {
+    				if(i<rows.length-1){
+    					apply_ids=apply_ids+row['id']+",";
+    				}else{
+    					apply_ids=apply_ids+row['id'];
+    				}
+    			});
+    			var url = prefix + '/sysAudit/' + apply_ids;
+    			$.modal.open("批量审核线上活动(传统POS)申请", url, '800', '450');
+    		});
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,766 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.longecological.mapper.merchant.MerchantManageMapper">
+
+	<!--完成政策的商户传统pos add byqh 201912-->
+	<select id="getCompletePolicyMerchantTraditionalPos" parameterType="java.util.Map" resultType="java.util.Map">
+		select tt.mer_name,t.policy_name,t.module_type,t.sn,t.complete_date,
+		(case when t.module_type=1 then t.module1_deduct when t.module_type=2 then t.module2_reward when t.module_type=3 then t.module3_reward when t.module_type=4 then t.module4_deduct end) as amount
+		from t_sys_pos_policy_info t inner join t_sys_traditional_pos_info tt on t.sn=tt.sn
+		where t.iscomplete=1 and t.user_id=#{map.sys_user_id}
+	</select>
+
+	<!--完成政策的商户mpos add byqh 201912-->
+	<select id="getCompletePolicyMerchantMPos" parameterType="java.util.Map" resultType="java.util.Map">
+		select tt.mer_name,t.policy_name,t.module_type,t.sn,t.complete_date,
+		(case when t.module_type=1 then t.module1_deduct when t.module_type=2 then t.module2_reward when t.module_type=3 then t.module3_reward when t.module_type=4 then t.module4_deduct end) as amount
+		from t_sys_pos_policy_info t inner join t_sys_mpos_info tt on t.sn=tt.sn
+		where t.iscomplete=1 and t.user_id=#{map.sys_user_id}
+	</select>
+	
+	<!-- 查询所有商户数量（传统POS） -->
+	<select id="getAllMerchantTraditionalPosNum" parameterType="java.util.Map" resultType="int">
+		SELECT
+			count(*)
+		FROM
+			t_user_traditional_pos_info
+		WHERE
+			user_id = #{map.sys_user_id}
+		AND state_status = '1'
+		AND del = '0'
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and pos_type='epos'
+			</when>
+			<otherwise>
+				and pos_type is null
+			</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 查询优质商户数量（传统POS） -->
+	<select id="getExcellentMerchantTraditionalPosNum" parameterType="java.util.Map" resultType="int">
+		SELECT
+			count(*)
+		FROM
+			t_user_traditional_pos_info t
+		WHERE
+			t.user_id = #{map.sys_user_id}
+		AND t.state_status = '1'
+		AND EXISTS (
+				SELECT
+					1
+				FROM
+					t_summary_traditional_pos_trans_month t1
+				WHERE
+					t1.user_id = #{map.sys_user_id}
+				AND t1.sn = t.sn
+  				AND t1.merchant_performance >= 50000
+				AND t1.cre_month = #{map.month}
+			)
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and t.pos_type='epos'
+			</when>
+			<otherwise>
+				and t.pos_type is null
+			</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 查询活跃商户数量（传统POS） -->
+	<select id="getActiveMerchantTraditionalPosNum" parameterType="java.util.Map" resultType="int">
+		SELECT
+			count(*)
+		FROM
+			t_user_traditional_pos_info t
+		WHERE
+			t.user_id = #{map.sys_user_id}
+		AND t.state_status = '1'
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and t.pos_type='epos'
+			</when>
+			<otherwise>
+				and t.pos_type is null
+			</otherwise>
+		</choose>
+		AND EXISTS (
+		SELECT 1 FROM (
+			SELECT 
+				user_id, 
+  				sn,
+				sum(merchant_performance) as merchant_performance, 
+  				sum(merchant_num) as merchant_num
+			FROM
+				t_summary_traditional_pos_trans_everyday
+			WHERE user_id = #{map.sys_user_id} AND cre_date BETWEEN #{map.start_date} AND #{map.end_date}
+			GROUP BY user_id, sn) t1 
+			WHERE t1.user_id = #{map.sys_user_id}
+  			AND t1.sn = t.sn
+  			AND t1.merchant_performance>=10
+  			AND t1.merchant_num>=2)
+	</select>
+	
+	<!-- 查询休眠商户数量（传统POS） -->
+	<select id="getDormantMerchantTraditionalPosNum" parameterType="java.util.Map" resultType="int">
+		SELECT
+			count(*)
+		FROM
+			t_user_traditional_pos_info t
+		WHERE
+			t.user_id = #{map.sys_user_id}
+		AND t.state_status = '1'
+		AND t.cre_date &lt;= #{map.start_date}
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and t.pos_type='epos'
+			</when>
+			<otherwise>
+				and t.pos_type is null
+			</otherwise>
+		</choose>
+		AND NOT EXISTS (
+		SELECT 1 FROM (
+			SELECT 
+				user_id, 
+  				sn,
+  				sum(merchant_num) as merchant_num
+			FROM
+				t_summary_traditional_pos_trans_everyday
+			WHERE user_id = #{map.sys_user_id} AND cre_date BETWEEN #{map.start_date} AND #{map.end_date}
+			GROUP BY user_id, sn) t1 
+			WHERE t1.user_id = #{map.sys_user_id}
+  			AND t1.sn = t.sn
+  			AND t1.merchant_num>0)
+	</select>
+	
+	<!-- 查询所有商户数量（MPOS） -->
+	<select id="getAllMerchantMposNum" parameterType="java.util.Map" resultType="int">
+		SELECT
+			count(*)
+		FROM
+			t_user_mpos_info
+		WHERE
+			user_id = #{map.sys_user_id}
+		AND state_status = '1'
+		AND del='0'
+	</select>
+	
+	<!-- 查询优质商户数量（MPOS） -->
+	<select id="getExcellentMerchantMposNum" parameterType="java.util.Map" resultType="int">
+		SELECT
+			count(*)
+		FROM
+			t_user_mpos_info t
+		WHERE
+			t.user_id = #{map.sys_user_id}
+		AND t.state_status = '1'
+		AND EXISTS (
+				SELECT
+					1
+				FROM
+					t_summary_mpos_trans_month t1
+				WHERE
+					t1.user_id = #{map.sys_user_id}
+				AND t1.sn = t.sn
+  				AND t1.merchant_performance >= 50000
+				AND t1.cre_month = #{map.month}
+			)
+	</select>
+	
+	<!-- 查询活跃商户数量（MPOS） -->
+	<select id="getActiveMerchantMposNum" parameterType="java.util.Map" resultType="int">
+		SELECT
+			count(*)
+		FROM
+			t_user_mpos_info t
+		WHERE
+			t.user_id = #{map.sys_user_id}
+		AND t.state_status = '1'
+		AND EXISTS (
+		SELECT 1 FROM (
+			SELECT 
+				user_id, 
+  				sn,
+				sum(merchant_performance) as merchant_performance, 
+  				sum(merchant_num) as merchant_num
+			FROM
+				t_summary_mpos_trans_everyday
+			WHERE user_id = #{map.sys_user_id} AND cre_date BETWEEN #{map.start_date} AND #{map.end_date}
+			GROUP BY user_id, sn) t1 
+			WHERE t1.user_id = #{map.sys_user_id}
+  			AND t1.sn = t.sn
+  			AND t1.merchant_performance>=10
+  			AND t1.merchant_num>=2)
+	</select>
+	
+	<!-- 查询休眠商户数量（MPOS） -->
+	<select id="getDormantMerchantMposNum" parameterType="java.util.Map" resultType="int">
+		SELECT
+			count(*)
+		FROM
+			t_user_mpos_info t
+		WHERE
+			t.user_id = #{map.sys_user_id}
+		AND t.state_status = '1'
+		AND t.cre_date &lt;= #{map.start_date}
+		AND NOT EXISTS (
+		SELECT 1 FROM (
+			SELECT 
+				user_id, 
+  				sn,
+  				sum(merchant_num) as merchant_num
+			FROM
+				t_summary_mpos_trans_everyday
+			WHERE user_id = #{map.sys_user_id} AND cre_date BETWEEN #{map.start_date} AND #{map.end_date}
+			GROUP BY user_id, sn) t1 
+			WHERE t1.user_id = #{map.sys_user_id}
+  			AND t1.sn = t.sn
+  			AND t1.merchant_num>0)
+	</select>
+	
+	<!-- 全部商户列表查询（传统POS） update byqh 201912-->
+	<select id="getAllMerchantTraditionalPosList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(t.id as char) as trapos_id,
+			t.sn,
+			t1.mer_name,
+			t1.mer_id,
+			t1.name,
+			t1.tel
+		FROM
+			t_user_traditional_pos_info t
+		LEFT JOIN t_sys_traditional_pos_info t1 on t.sn = t1.sn
+		WHERE
+			t.user_id = #{map.sys_user_id}
+		AND t.state_status = '1'
+		AND t.del = '0'
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and t1.pos_type='epos'
+			</when>
+			<otherwise>
+				and t1.pos_type is null
+			</otherwise>
+		</choose>
+		<if test="map.last_id != null and map.last_id != ''" >
+        	AND t.id &lt; #{map.last_id}
+      	</if>
+      	<if test="map.key_word != null and map.key_word != ''" >
+        	AND t.sn like concat('%', #{map.key_word}, '%')
+      	</if>
+		ORDER BY t.id desc
+		limit 0,10
+	</select>
+	
+	<!-- 优质商户列表查询（传统POS） -->
+	<select id="getExcellentMerchantTraditionalPosList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(t.id as char) as trapos_id,
+			t.sn,
+			t1.mer_name,
+			t1.mer_id,
+			t1.name,
+			t1.tel
+		FROM
+			t_user_traditional_pos_info t
+		LEFT JOIN t_sys_traditional_pos_info t1 on t.sn = t1.sn
+		WHERE
+			t.user_id = #{map.sys_user_id}
+		AND t.state_status = '1'
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and t1.pos_type='epos'
+			</when>
+			<otherwise>
+				and t1.pos_type is null
+			</otherwise>
+		</choose>
+		<if test="map.last_id != null and map.last_id != ''" >
+        	AND t.id &lt; #{map.last_id}
+      	</if>
+      	<if test="map.key_word != null and map.key_word != ''" >
+        	AND t.sn like concat('%', #{map.key_word}, '%')
+      	</if>
+		AND EXISTS (
+				SELECT
+					1
+				FROM
+					t_summary_traditional_pos_trans_month t2
+				WHERE
+					t2.user_id = #{map.sys_user_id}
+				AND t2.sn = t.sn
+  				AND t2.merchant_performance >= 50000
+				AND t2.cre_month = #{map.month}
+			)
+		ORDER BY t.id desc
+		limit 0,10
+	</select>
+	
+	<!-- 活跃商户列表查询（传统POS） -->
+	<select id="getActiveMerchantTraditionalPosList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(t.id as char) as trapos_id,
+			t.sn,
+			t1.mer_name,
+			t1.mer_id,
+			t1.name,
+			t1.tel
+		FROM
+			t_user_traditional_pos_info t
+		LEFT JOIN t_sys_traditional_pos_info t1 on t.sn = t1.sn
+		WHERE
+			t.user_id = #{map.sys_user_id}
+		AND t.state_status = '1'
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and t1.pos_type='epos'
+			</when>
+			<otherwise>
+				and t1.pos_type is null
+			</otherwise>
+		</choose>
+		<if test="map.last_id != null and map.last_id != ''" >
+        	AND t.id &lt; #{map.last_id}
+      	</if>
+      	<if test="map.key_word != null and map.key_word != ''" >
+        	AND t.sn like concat('%', #{map.key_word}, '%')
+      	</if>
+		AND EXISTS (
+		SELECT 1 FROM (
+			SELECT 
+				user_id, 
+  				sn,
+				sum(merchant_performance) as merchant_performance, 
+  				sum(merchant_num) as merchant_num
+			FROM
+				t_summary_traditional_pos_trans_everyday
+			WHERE user_id = #{map.sys_user_id} AND cre_date BETWEEN #{map.start_date} AND #{map.end_date}
+			GROUP BY user_id, sn) t2 
+			WHERE t2.user_id = #{map.sys_user_id}
+  			AND t2.sn = t.sn
+  			AND t2.merchant_performance>=10
+  			AND t2.merchant_num>=2)
+  		ORDER BY t.id desc
+		limit 0,10
+	</select>
+	
+	<!-- 休眠商户列表查询（传统POS） -->
+	<select id="getDormantMerchantTraditionalPosList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(t.id as char) as trapos_id,
+			t.sn,
+			t1.mer_name,
+			t1.mer_id,
+			t1.name,
+			t1.tel
+		FROM
+			t_user_traditional_pos_info t
+		LEFT JOIN t_sys_traditional_pos_info t1 on t.sn = t1.sn
+		WHERE
+			t.user_id = #{map.sys_user_id}
+		AND t.state_status = '1'
+		AND t.cre_date &lt;= #{map.start_date}
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and t1.pos_type='epos'
+			</when>
+			<otherwise>
+				and t1.pos_type is null
+			</otherwise>
+		</choose>
+		<if test="map.last_id != null and map.last_id != ''" >
+        	AND t.id &lt; #{map.last_id}
+      	</if>
+      	<if test="map.key_word != null and map.key_word != ''" >
+        	AND t.sn like concat('%', #{map.key_word}, '%')
+      	</if>
+		AND NOT EXISTS (
+		SELECT 1 FROM (
+			SELECT 
+				user_id, 
+  				sn,
+  				sum(merchant_num) as merchant_num
+			FROM
+				t_summary_traditional_pos_trans_everyday
+			WHERE user_id = #{map.sys_user_id} AND cre_date BETWEEN #{map.start_date} AND #{map.end_date}
+			GROUP BY user_id, sn) t2 
+			WHERE t2.user_id = #{map.sys_user_id}
+  			AND t2.sn = t.sn
+  			AND t2.merchant_num>0)
+  		ORDER BY t.id desc
+		limit 0,10
+	</select>
+	
+	<!-- 全部商户列表查询（MPOS） -->
+	<select id="getAllMerchantMposList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(t.id as char) as mpos_id,
+			t.sn,
+			t1.name,
+			t1.tel
+		FROM
+			t_user_mpos_info t
+		LEFT JOIN t_sys_mpos_info t1 on t.sn = t1.sn
+		WHERE
+			t.user_id = #{map.sys_user_id}
+		AND t.state_status = '1'
+		AND t.del = '0'
+		<if test="map.last_id != null and map.last_id != ''" >
+        	AND t.id &lt; #{map.last_id}
+      	</if>
+      	<if test="map.key_word != null and map.key_word != ''" >
+        	AND t.sn like concat('%', #{map.key_word}, '%')
+      	</if>
+		ORDER BY t.id desc
+		limit 0,10
+	</select>
+	
+	<!-- 优质商户列表查询（MPOS） -->
+	<select id="getExcellentMerchantMposList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(t.id as char) as mpos_id,
+			t.sn,
+			t1.name,
+			t1.tel
+		FROM
+			t_user_mpos_info t
+		LEFT JOIN t_sys_mpos_info t1 on t.sn = t1.sn
+		WHERE
+			t.user_id = #{map.sys_user_id}
+		AND t.state_status = '1'
+		<if test="map.last_id != null and map.last_id != ''" >
+        	AND t.id &lt; #{map.last_id}
+      	</if>
+      	<if test="map.key_word != null and map.key_word != ''" >
+        	AND t.sn like concat('%', #{map.key_word}, '%')
+      	</if>
+		AND EXISTS (
+				SELECT
+					1
+				FROM
+					t_summary_mpos_trans_month t2
+				WHERE
+					t2.user_id = #{map.sys_user_id}
+				AND t2.sn = t.sn
+  				AND t2.merchant_performance >= 50000
+				AND t2.cre_month = #{map.month}
+			)
+		ORDER BY t.id desc
+		limit 0,10
+	</select>
+	
+	<!-- 活跃商户列表查询（MPOS） -->
+	<select id="getActiveMerchantMposList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(t.id as char) as mpos_id,
+			t.sn,
+			t1.name,
+			t1.tel
+		FROM
+			t_user_mpos_info t
+		LEFT JOIN t_sys_mpos_info t1 on t.sn = t1.sn
+		WHERE
+			t.user_id = #{map.sys_user_id}
+		AND t.state_status = '1'
+		<if test="map.last_id != null and map.last_id != ''" >
+        	AND t.id &lt; #{map.last_id}
+      	</if>
+      	<if test="map.key_word != null and map.key_word != ''" >
+        	AND t.sn like concat('%', #{map.key_word}, '%')
+      	</if>
+		AND EXISTS (
+		SELECT 1 FROM (
+			SELECT 
+				user_id, 
+  				sn,
+				sum(merchant_performance) as merchant_performance, 
+  				sum(merchant_num) as merchant_num
+			FROM
+				t_summary_mpos_trans_everyday
+			WHERE user_id = #{map.sys_user_id} AND cre_date BETWEEN #{map.start_date} AND #{map.end_date}
+			GROUP BY user_id, sn) t2 
+			WHERE t2.user_id = #{map.sys_user_id}
+  			AND t2.sn = t.sn
+  			AND t2.merchant_performance>=10
+  			AND t2.merchant_num>=2)
+  		ORDER BY t.id desc
+		limit 0,10
+	</select>
+	
+	<!-- 休眠商户列表查询（MPOS） -->
+	<select id="getDormantMerchantMposList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(t.id as char) as mpos_id,
+			t.sn,
+			t1.name,
+			t1.tel
+		FROM
+			t_user_mpos_info t
+		LEFT JOIN t_sys_mpos_info t1 on t.sn = t1.sn
+		WHERE
+			t.user_id = #{map.sys_user_id}
+		AND t.state_status = '1'
+		AND t.cre_date &lt;= #{map.start_date}
+		<if test="map.last_id != null and map.last_id != ''" >
+        	AND t.id &lt; #{map.last_id}
+      	</if>
+      	<if test="map.key_word != null and map.key_word != ''" >
+        	AND t.sn like concat('%', #{map.key_word}, '%')
+      	</if>
+		AND NOT EXISTS (
+		SELECT 1 FROM (
+			SELECT 
+				user_id, 
+  				sn,
+  				sum(merchant_num) as merchant_num
+			FROM
+				t_summary_mpos_trans_everyday
+			WHERE user_id = #{map.sys_user_id} AND cre_date BETWEEN #{map.start_date} AND #{map.end_date}
+			GROUP BY user_id, sn) t2 
+			WHERE t2.user_id = #{map.sys_user_id}
+  			AND t2.sn = t.sn
+  			AND t2.merchant_num>0)
+  		ORDER BY t.id desc
+		limit 0,10
+	</select>
+	
+	<!-- 查询商户详情（传统POS） add field cash_back_status byqh add card_settle_price_vip byqh 201912 -->
+	<select id="getTraditionalPosDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+			t.sn,
+			t.card_settle_price_vip,
+			t.card_settle_price,
+			t.weixin_settle_price,
+			t.zhifubao_settle_price,
+			t.cloud_settle_price,
+			t.single_profit_rate,
+			t.cash_back_rate,
+			t.mer_cap_fee,
+			t1.mer_name,
+			t1.mer_id,
+			t1.name,
+			t1.tel,
+			t1.credit_card_rate,
+			t1.cloud_flash_rate,
+			t1.weixin_rate,
+			t1.zhifubao_rate,
+			t1.act_status,
+			DATE_FORMAT(t1.act_date, '%Y-%m-%d') AS act_date,
+			t1.cash_back_status,
+			t.is_reward
+		from
+			t_user_traditional_pos_info t
+		left join t_sys_traditional_pos_info t1 on t1.sn = t.sn
+		where
+			t.user_id = #{map.sys_user_id}
+		and t.sn = #{map.sn}
+	</select>
+
+	<!--点击商户详情金额查询商户交易数据add byqh202003-->
+	<select id="getTraditionalPosTradeDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from (
+		select DATE_FORMAT(
+				STR_TO_DATE(
+					trans_time,
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) as trans_time,trans_amount,benefit_money from t_user_trapos_share_benefit_record where user_id=#{map.sys_user_id} and sn=#{map.sn}
+		union all
+		select DATE_FORMAT(
+				STR_TO_DATE(
+					trans_time,
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) as trans_time,trans_amount,benefit_money from t_user_mpos_share_benefit_record where user_id=#{map.sys_user_id} and sn=#{map.sn}
+		) tb order by trans_time desc
+	</select>
+	
+	<!-- 查询商户详情（MPOS） add field cash_back_status byqh-->
+	<select id="getMposDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+			t.sn,
+			t.card_settle_price,
+			t.cloud_settle_price,
+			t.single_profit_rate,
+			t.cash_back_rate,
+			t1.name,
+			t1.tel,
+			t1.credit_card_rate,
+			t1.cloud_flash_rate,
+			t1.act_status,
+			t1.cash_back_status,
+			t.is_reward
+		from
+			t_user_mpos_info t
+		left join t_sys_mpos_info t1 on t1.sn = t.sn
+		where
+			t.user_id = #{map.sys_user_id}
+		and t.sn = #{map.sn}
+	</select>
+	
+	<!-- 查询直推代理 -->
+	<select id="getReferAgencyList" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+			cast(id as char) as user_id,
+			head_photo,
+			real_name,
+			user_tel
+		from
+			t_user_info
+		where
+			referer_id = #{map.sys_user_id}
+			<if test="map.key_word != null and map.key_word != ''" >
+        		AND (user_tel like concat('%',#{map.key_word},'%') or real_name like concat('%',#{map.key_word},'%'))
+      		</if>
+      		<if test="map.last_id != null and map.last_id != ''" >
+        		AND id &lt; #{map.last_id}
+      		</if>
+      	ORDER BY id desc
+		limit 0,10
+	</select>
+	
+	<!-- 查询代理头部信息（传统POS） -->
+	<select id="getReferAgencyHeadTraditionalPosInfo" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+			cast(performance as char) as performance,
+			cast(pos_num as char) as pos_num,
+			cast(trade_num as char) as trade_num
+		from
+			t_summary_user_traditional_pos_benefit_all
+		where
+			user_id = #{map.user_id}
+			<choose>
+				<when test="map.pos_type!=null and map.pos_type!=''">
+					and pos_type='epos'
+				</when>
+				<otherwise>
+					and pos_type is null
+				</otherwise>
+			</choose>
+	</select>
+	
+	<!-- 查询代理商户列表（传统POS） update byqh 201912-->
+	<select id="getReferAgencyTraditionalPosList" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+			cast(t.id as char) as trapos_id,
+			t.sn,
+			t1.mer_name,
+			t1.mer_id,
+			cast(t2.performance as char) performance,t.state_status
+		from
+			t_user_traditional_pos_info t
+		inner join t_sys_traditional_pos_info t1 on t1.sn = t.sn
+		inner join t_summary_traditional_pos_trans_all t2 on t2.user_id = #{map.user_id} and t2.sn = t.sn
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and t1.pos_type='epos' and t2.pos_type='epos'
+			</when>
+			<otherwise>
+				and t1.pos_type is null and t2.pos_type is null
+			</otherwise>
+		</choose>
+		where
+			t.user_id = #{map.user_id} and t.del = '0'
+			<if test="map.trade_status != null and map.trade_status != ''" >
+        		AND t.trade_status = #{map.trade_status}
+        		<if test="map.trade_status==0">
+					and t2.performance=0
+				</if>
+      		</if>
+			<if test="map.last_id != null and map.last_id != ''" >
+        		AND t.id &lt; #{map.last_id}
+      		</if>
+      	ORDER BY t.id desc
+		limit 0,10
+	</select>
+	
+	<!-- 查询代理头部信息（MPOS） -->
+	<select id="getReferAgencyHeadMposInfo" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+			cast(performance as char) as performance,
+			cast(pos_num as char) as pos_num,
+			cast(trade_num as char) as trade_num
+		from
+			t_summary_user_mpos_benefit_all
+		where
+			user_id = #{map.user_id}
+	</select>
+	
+	<!-- 查询代理商户列表（MPOS）修改未交易查出了已交易数据 update byqh 201912 -->
+	<select id="getReferAgencyMposList" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+			cast(t.id as char) as mpos_id,
+			t.sn,
+			t1.name,
+			cast(t2.performance as char) performance,t.state_status
+		from
+			t_user_mpos_info t
+		inner join t_sys_mpos_info t1 on t1.sn = t.sn
+		inner join t_summary_mpos_trans_all t2 on t2.user_id = #{map.user_id} and t2.sn = t.sn
+		where
+			t.user_id = #{map.user_id} and t.del = '0'
+			<if test="map.trade_status != null and map.trade_status != ''" >
+        		AND t.trade_status = #{map.trade_status}
+				<if test="map.trade_status==0">
+					and t2.performance=0
+				</if>
+      		</if>
+			<if test="map.last_id != null and map.last_id != ''" >
+        		AND t.id &lt; #{map.last_id}
+      		</if>
+      	ORDER BY t.id desc
+		limit 0,10
+	</select>
+
+	<!-- 查询代理总MPOS机具数量,未激活数量,已激活数量 byqh-->
+	<select id="getMPOSAllocateCase" parameterType="java.lang.String" resultType="java.util.Map">
+		select cast(pos_num as char) as m_pos_num,cast(act_num as char) as m_act_num,cast((pos_num-act_num) as char) as m_inact_num
+		from t_summary_user_mpos_benefit_all where user_id=#{user_id}
+	</select>
+	<!-- 查询代理总传统POS机具数量,未激活数量,已激活数量 byqh-->
+	<select id="getTraditionalPosAllocateCase" parameterType="java.lang.String" resultType="java.util.Map">
+		select cast(pos_num as char) as tra_pos_num,cast(act_num as char) as tra_act_num,cast((pos_num-act_num) as char) as tra_inact_num
+		from t_summary_user_traditional_pos_benefit_all where user_id=#{user_id} and pos_type is null
+	</select>
+	<!-- 查询代理总传统POS机具数量,未激活数量,已激活数量 byqh-->
+	<select id="getEposAllocateCase" parameterType="java.lang.String" resultType="java.util.Map">
+		select cast(pos_num as char) as e_pos_num,cast(act_num as char) as e_act_num,cast((pos_num-act_num) as char) as e_inact_num
+		from t_summary_user_traditional_pos_benefit_all where user_id=#{user_id} and pos_type='epos'
+	</select>
+	<!-- 查询直营MPOS总交易笔数,总交易金额 byqh-->
+	<select id="getMPOSTradeStatistical" parameterType="java.util.Map" resultType="java.util.Map">
+		select cast(performance as char) as performance,cast(num as char) as num FROM t_summary_mpos_trans_all
+		where 1=1
+		<if test="map.sn != null and map.sn != ''">
+			and sn=#{map.sn}
+		</if>
+		<if test="map.sys_user_id != null and map.sys_user_id != ''">
+			and user_id=#{map.sys_user_id}
+		</if>
+	</select>
+	<!-- 查询直营传统POS总交易笔数,总交易金额 byqh-->
+	<select id="getTraditionalPOSTradeStatistical" parameterType="java.util.Map" resultType="java.util.Map">
+		select cast(performance as char) as performance,cast(num as char) as num FROM t_summary_traditional_pos_trans_all
+		where 1=1
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and pos_type='epos'
+			</when>
+			<otherwise>
+				and pos_type is null
+			</otherwise>
+		</choose>
+		<if test="map.sn != null and map.sn != ''">
+			and sn=#{map.sn}
+		</if>
+		<if test="map.sys_user_id != null and map.sys_user_id != ''">
+			and user_id=#{map.sys_user_id}
+		</if>
+	</select>
+	
+</mapper>

@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.devemana.user.mapper.ManaUserInfoMapper">
+
+	<!-- 查询用户信息列表 -->
+	<select id="getManaUserInfoList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			t.id,
+			t.manager_id,
+			t.user_tel,
+			t.id_card,
+			t.card_photo,
+			t.real_name,
+			t.money,
+			t.settle_money,
+			t.deduct_money,
+			t.today_benefit,
+			t.total_benefit,
+			t.settle_single_feet_money,
+			t.single_rate_feet_money,
+			t.head_photo,
+			t.referer_id,
+			t.status,
+			t.auth_status,
+			t.report_status,
+			t.referer_num,
+			t.under_num,
+			t.algebra,
+			t.parent_chain,
+			t.device_type,
+			t.device_no,
+			t.version_no,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(
+						t.last_login_date,
+						t.last_login_time
+					),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS last_login_date,
+			t.last_login_ip,
+			t1.user_tel AS referer_user_tel,
+			t1.real_name AS referer_real_name,
+			t1.head_photo AS referer_head_photo,
+			t2.login_name AS manager_login_name,
+			t2.user_name AS manager_user_name
+		FROM
+			t_user_info t
+		LEFT JOIN t_user_info t1 ON t.referer_id = t1.id
+		LEFT JOIN sys_user t2 ON t.manager_id = t2.user_id
+		<where>
+			<if test="map.id != null and map.id != ''">
+				t.id = #{map.id}
+			</if>
+			<if test="map.manager_id != null and map.manager_id != ''">
+				AND t.manager_id = #{map.manager_id}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.id_card != null and map.id_card != ''">
+				AND t.id_card = #{map.id_card}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t.real_name like concat('%', #{map.real_name}, '%')
+			</if>
+			<if test="map.status != null and map.status != ''">
+				AND t.status = #{map.status}
+			</if>
+			<if test="map.auth_status != null and map.auth_status != ''">
+				AND t.auth_status = #{map.auth_status}
+			</if>
+			<if test="map.report_status != null and map.report_status != ''">
+				AND t.report_status = #{map.report_status}
+			</if>
+			<if test="map.device_type != null and map.device_type != ''">
+				AND t.device_type = #{map.device_type}
+			</if>
+			<if test="map.device_no != null and map.device_no != ''">
+				AND t.device_no = #{map.device_no}
+			</if>
+			<if test="map.version_no != null and map.version_no != ''">
+				AND t.version_no = #{map.version_no}
+			</if>
+			<if test="map.referer_user_tel != null and map.referer_user_tel != ''">
+				AND t1.user_tel = #{map.referer_user_tel}
+			</if>
+			<if test="map.referer_real_name != null and map.referer_real_name != ''">
+				AND t1.real_name like concat('%', #{map.referer_real_name}, '%')
+			</if>
+			<if test="map.manager_login_name != null and map.manager_login_name != ''">
+				AND t2.login_name like concat('%', #{map.manager_login_name}, '%')
+			</if>
+			<if test="map.manager_user_name != null and map.manager_user_name != ''">
+				AND t2.user_name like concat('%', #{map.manager_user_name}, '%')
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 统计用户信息 -->
+	<select id="summaryManaUserInfoList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			IFNULL(sum(t.money),0.00) AS sum_money,
+			IFNULL(sum(t.settle_money),0.00) AS sum_settle_money,
+			IFNULL(sum(t.deduct_money),0.00) AS sum_deduct_money,
+			IFNULL(sum(t.today_benefit),0.00) AS sum_today_benefit,
+			IFNULL(sum(t.total_benefit),0.00) AS sum_total_benefit,
+			IFNULL(sum(t.settle_single_feet_money),0.00) AS sum_settle_single_feet_money,
+			IFNULL(sum(t.single_rate_feet_money),0.00) AS sum_single_rate_feet_money
+		FROM
+			t_user_info t
+		LEFT JOIN t_user_info t1 ON t.referer_id = t1.id
+		LEFT JOIN sys_user t2 ON t.manager_id = t2.user_id
+		<where>
+			<if test="map.id != null and map.id != ''">
+				t.id = #{map.id}
+			</if>
+			<if test="map.manager_id != null and map.manager_id != ''">
+				AND t.manager_id = #{map.manager_id}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.id_card != null and map.id_card != ''">
+				AND t.id_card = #{map.id_card}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t.real_name like concat('%', #{map.real_name}, '%')
+			</if>
+			<if test="map.status != null and map.status != ''">
+				AND t.status = #{map.status}
+			</if>
+			<if test="map.auth_status != null and map.auth_status != ''">
+				AND t.auth_status = #{map.auth_status}
+			</if>
+			<if test="map.report_status != null and map.report_status != ''">
+				AND t.report_status = #{map.report_status}
+			</if>
+			<if test="map.device_type != null and map.device_type != ''">
+				AND t.device_type = #{map.device_type}
+			</if>
+			<if test="map.device_no != null and map.device_no != ''">
+				AND t.device_no = #{map.device_no}
+			</if>
+			<if test="map.version_no != null and map.version_no != ''">
+				AND t.version_no = #{map.version_no}
+			</if>
+			<if test="map.referer_user_tel != null and map.referer_user_tel != ''">
+				AND t1.user_tel = #{map.referer_user_tel}
+			</if>
+			<if test="map.referer_real_name != null and map.referer_real_name != ''">
+				AND t1.real_name like concat('%', #{map.referer_real_name}, '%')
+			</if>
+			<if test="map.manager_login_name != null and map.manager_login_name != ''">
+				AND t2.login_name like concat('%', #{map.manager_login_name}, '%')
+			</if>
+			<if test="map.manager_user_name != null and map.manager_user_name != ''">
+				AND t2.user_name like concat('%', #{map.manager_user_name}, '%')
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 导出用户信息 -->
+	<select id="selectManaUserInfoList" parameterType="java.util.Map" resultType="com.ruoyi.project.devemana.user.domain.ManaUserInfo" >
+		SELECT
+			t.id,
+			t.manager_id,
+			REPLACE (
+				t.user_tel,
+				SUBSTR(t.user_tel, 4, 4),
+				'****'
+			) AS user_tel,
+			REPLACE (
+				t.id_card,
+				SUBSTR(t.id_card, 4, 13),
+				'****'
+			) AS id_card,
+			t.card_photo,
+			t.real_name,
+			t.money,
+			t.settle_money,
+			t.deduct_money,
+			t.today_benefit,
+			t.total_benefit,
+			t.settle_single_feet_money,
+			t.single_rate_feet_money,
+			t.head_photo,
+			t.referer_id,
+			t.status,
+			t.auth_status,
+			t.report_status,
+			t.referer_num,
+			t.under_num,
+			t.algebra,
+			t.parent_chain,
+			t.device_type,
+			t.device_no,
+			t.version_no,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(
+						t.last_login_date,
+						t.last_login_time
+					),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS last_login_date,
+			t.last_login_ip,
+			REPLACE (
+				t1.user_tel,
+				SUBSTR(t.user_tel, 4, 4),
+				'****'
+			) AS referer_user_tel,
+			t1.real_name AS referer_real_name,
+			t1.head_photo AS referer_head_photo,
+			t2.login_name AS manager_login_name,
+			t2.user_name AS manager_user_name
+		FROM
+			t_user_info t
+		LEFT JOIN t_user_info t1 ON t.referer_id = t1.id
+		LEFT JOIN sys_user t2 ON t.manager_id = t2.user_id
+		<where>
+			<if test="map.id != null and map.id != ''">
+				t.id = #{map.id}
+			</if>
+			<if test="map.manager_id != null and map.manager_id != ''">
+				AND t.manager_id = #{map.manager_id}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.id_card != null and map.id_card != ''">
+				AND t.id_card = #{map.id_card}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t.real_name like concat('%', #{map.real_name}, '%')
+			</if>
+			<if test="map.status != null and map.status != ''">
+				AND t.status = #{map.status}
+			</if>
+			<if test="map.auth_status != null and map.auth_status != ''">
+				AND t.auth_status = #{map.auth_status}
+			</if>
+			<if test="map.report_status != null and map.report_status != ''">
+				AND t.report_status = #{map.report_status}
+			</if>
+			<if test="map.device_type != null and map.device_type != ''">
+				AND t.device_type = #{map.device_type}
+			</if>
+			<if test="map.device_no != null and map.device_no != ''">
+				AND t.device_no = #{map.device_no}
+			</if>
+			<if test="map.version_no != null and map.version_no != ''">
+				AND t.version_no = #{map.version_no}
+			</if>
+			<if test="map.referer_user_tel != null and map.referer_user_tel != ''">
+				AND t1.user_tel = #{map.referer_user_tel}
+			</if>
+			<if test="map.referer_real_name != null and map.referer_real_name != ''">
+				AND t1.real_name like concat('%', #{map.referer_real_name}, '%')
+			</if>
+			<if test="map.manager_login_name != null and map.manager_login_name != ''">
+				AND t2.login_name like concat('%', #{map.manager_login_name}, '%')
+			</if>
+			<if test="map.manager_user_name != null and map.manager_user_name != ''">
+				AND t2.user_name like concat('%', #{map.manager_user_name}, '%')
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 根据用户id查询用户详情 -->
+	<select id="getManaUserInfoById" parameterType="java.lang.String" resultType="com.ruoyi.project.devemana.user.domain.ManaUserInfo" >
+		SELECT
+			t.id,
+			t.manager_id,
+			REPLACE (
+				t.user_tel,
+				SUBSTR(t.user_tel, 4, 4),
+				'****'
+			) AS user_tel,
+			REPLACE (
+				t.id_card,
+				SUBSTR(t.id_card, 4, 13),
+				'****'
+			) AS id_card,
+			t.card_photo,
+			t.real_name,
+			t.money,
+			t.settle_money,
+			t.deduct_money,
+			t.today_benefit,
+			t.total_benefit,
+			t.settle_single_feet_money,
+			t.single_rate_feet_money,
+			t.head_photo,
+			t.referer_id,
+			t.status,
+			t.auth_status,
+			t.report_status,
+			t.referer_num,
+			t.under_num,
+			t.algebra,
+			t.parent_chain,
+			t.device_type,
+			t.device_no,
+			t.version_no,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(
+						t.last_login_date,
+						t.last_login_time
+					),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS last_login_date,
+			t.last_login_ip,
+			REPLACE (
+				t1.user_tel,
+				SUBSTR(t.user_tel, 4, 4),
+				'****'
+			) AS referer_user_tel,
+			t1.real_name AS referer_real_name,
+			t1.head_photo AS referer_head_photo,
+			t2.login_name AS manager_login_name,
+			t2.user_name AS manager_user_name
+		FROM
+			t_user_info t
+		LEFT JOIN t_user_info t1 ON t.referer_id = t1.id
+		LEFT JOIN sys_user t2 ON t.manager_id = t2.user_id
+		where t.id=#{user_id}
+	</select>
+	
+	
+	<!-- 查询用户注册量 -->
+	<select id="getManaSummaryUserRegisterList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			COUNT(*) AS register_num,
+			cre_date
+		FROM
+			t_user_info
+		<where>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		GROUP BY cre_date
+		order by cre_date DESC
+	</select>
+	
+	
+	<!-- 导出实时统计用户注册信息 -->
+	<select id="selectManaSummaryUserRegisterList" parameterType="java.util.Map" resultType="com.ruoyi.project.devemana.statistics.domain.ManaSummaryUserRegisterEvery">
+		SELECT
+			COUNT(*) AS register_num,
+			cre_date
+		FROM
+			t_user_info
+		<where>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		GROUP BY cre_date
+		order by cre_date DESC
+	</select>
+	
+	
+	<!-- 用户每日注册量统计 -->
+	<select id="getManaUserRegisterList" resultType="java.util.Map" >
+		SELECT
+			cre_date,
+			count(*) AS register_num
+		FROM
+			t_user_info
+		GROUP BY
+			cre_date
+		ORDER BY
+			cre_date
+	</select>
+	
+	<!-- 更新用户收益 -->
+	<update id="updateUserMoneyBenefit" parameterType="java.util.Map">
+		update t_user_info
+		   set money = money + #{map.money},
+		       today_benefit = today_benefit + #{map.today_benefit},
+		       total_benefit = total_benefit + #{map.total_benefit},
+		       op_type = #{map.op_type},
+		       op_order_id = #{map.op_order_id},
+		       state_type = #{map.state_type},
+		       pos_type = #{map.pos_type},
+		       sn = #{map.sn},
+		       up_date = #{map.up_date},
+		       up_time = #{map.up_time}
+		 where id = #{map.user_id}
+		   and money + #{map.money} >= 0
+	</update>
+	
+	<!-- 更新扣除金额 -->
+	<update id="updateUserDeductMoney" parameterType="java.util.Map">
+		update t_user_info
+		   set deduct_money = deduct_money + #{map.deduct_money},
+		   	   op_type = #{map.op_type},
+		       pos_type = #{map.pos_type},
+		       sn = #{map.sn},
+		       up_date = #{map.up_date},
+		       up_time = #{map.up_time}
+		 where id = #{map.user_id}
+	</update>
+	
+</mapper>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.longecological.mapper.zfback.ZhongFuBackMapper">
+
+	<!-- 查询设备号直属用户 -->
+	<select id="getMachineIdUser" parameterType="java.lang.String" resultType="java.lang.String">
+		select user_id from t_user_traditional_pos_info where sn = #{machine_id} and state_status = '1' and del='0'
+	</select>
+	
+	<!-- 保存装机记录 -->
+	<insert id="insertUserTraditionalPosInstall" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="map.install_id">
+		insert into t_user_traditional_pos_install_info
+		(
+			user_id,
+			biz_code,
+			biz_msg,
+			source,
+			merchant_name,
+			mer_code,
+			agent_id,
+			settle_flag,
+			sdk_push_key,
+			cre_date,
+			cre_time
+		)
+		values
+		(
+			#{map.user_id},
+			#{map.biz_code},
+			#{map.biz_msg},
+			#{map.source},
+			#{map.merchant_name},
+			#{map.mer_code},
+			#{map.agent_id},
+			#{map.settle_flag},
+			#{map.sdk_push_key},
+			#{map.cre_date},
+			#{map.cre_time}
+		)
+	</insert>
+	
+	<!-- 保存设备记录 -->
+	<insert id="insertUserTraditionalPosInstallDetail" parameterType="java.util.Map">
+		insert into t_user_traditional_pos_install_detail
+		(
+			install_id,
+			terminal,
+			machine_id,
+			sim_card,
+			is_take_machi
+		)
+		values
+		(
+			#{map.install_id},
+			#{map.terminal},
+			#{map.machine_id},
+			#{map.sim_card},
+			#{map.is_take_machi}
+		)
+	</insert>
+	
+	<!-- 查询进件记录 -->
+	<select id="getTraditionalPosInstallList" parameterType="java.util.Map" resultType="java.util.Map">
+		select
+			cast(id as char) as install_id,
+			merchant_name,
+			mer_code,
+			biz_msg,
+			DATE_FORMAT(STR_TO_DATE(CONCAT(cre_date, cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		from t_user_traditional_pos_install_info
+		where user_id = #{map.sys_user_id}
+		  and biz_code = #{map.biz_code}
+		   <if test="map.key_word != null and map.key_word != ''" >
+        	and merchant_name like concat('%',#{map.key_word},'%') 
+      	  </if>
+		  <if test="map.last_id != null and map.last_id != ''" >
+        	and id &lt; #{map.last_id}
+      	  </if>
+      	order by id desc
+        limit 0,10
+	</select>
+	
+	<!-- 查询进件详情 -->
+	<select id="getTraditionalPosInstallDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		select
+			biz_code,
+			biz_msg,
+			source,
+			merchant_name,
+			mer_code,
+			agent_id,
+			settle_flag,
+			sdk_push_key,
+			DATE_FORMAT(STR_TO_DATE(CONCAT(cre_date, cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		from t_user_traditional_pos_install_info
+		where id = #{map.install_id}
+	</select>
+	
+	<!-- 查询设备列表 -->
+	<select id="getTerminalList" parameterType="java.util.Map" resultType="java.util.Map">
+		select
+			terminal,
+			machine_id,
+			sim_card,
+			is_take_machi
+		from t_user_traditional_pos_install_detail
+		where install_id = #{map.install_id}
+	</select>
+	
+</mapper>

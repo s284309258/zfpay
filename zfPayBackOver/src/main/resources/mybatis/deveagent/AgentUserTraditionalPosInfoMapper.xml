@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.usertrapos.mapper.AgentUserTraditionalPosInfoMapper">
+
+	<!-- 查询用户MPOS信息列表 update byqh 201912-->
+	<select id="getAgentUserTraditionalPosInfoList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			t.id,
+			t.sn,
+			t.user_id,
+			t.card_settle_price,
+			t.cloud_settle_price,
+			t.weixin_settle_price,
+			t.zhifubao_settle_price,
+			t.card_settle_price_vip,
+			t.cloud_settle_price_vip,
+			t.weixin_settle_price_vip,
+			t.zhifubao_settle_price_vip,
+			t.single_profit_rate,
+			t.cash_back_rate,
+			t.mer_cap_fee,
+			t.state_status,
+			t.activity_status,
+			t.del,
+			t.trade_status,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.trade_date, t.trade_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS trade_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t1.id AS pos_id,
+			t1.mer_id,
+			t1.mer_name,
+			t1.name,
+			t1.tel,
+			t1.cash_back_type,
+			t1.cash_back_condition,
+			t1.cash_back_money,
+			t1.real_cash_back_money,
+			t1.cash_back_status,
+			t1.credit_card_rate,
+			t1.cloud_flash_rate,
+			t1.weixin_rate,
+			t1.zhifubao_rate,
+			t1.scan_status,
+			t1.act_status,
+			t1.act_user_id,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t1.act_date, t1.act_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS act_date,
+			t2.manager_id,
+			t2.user_tel,
+			t2.real_name 
+		FROM
+			t_user_traditional_pos_info t
+		LEFT JOIN t_sys_traditional_pos_info t1 ON t.sn = t1.sn
+		LEFT JOIN t_user_info t2 ON t.user_id = t2.id
+		<where>
+			t2.manager_id = #{map.manager_id}
+			and t1.pos_type is null
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.user_id != null and map.user_id != ''">
+				AND t.user_id = #{map.user_id}
+			</if>
+			<if test="map.sn != null and map.sn != ''">
+				AND t.sn = #{map.sn}
+			</if>
+			<if test="map.sn_list != null and map.sn_list != ''">
+				AND FIND_IN_SET(t.sn,#{map.sn_list})
+			</if>
+			<if test="map.state_status != null and map.state_status != ''">
+				AND t.state_status = #{map.state_status}
+			</if>
+			<if test="map.activity_status != null and map.activity_status != ''">
+				AND t.activity_status = #{map.activity_status}
+			</if>
+			<if test="map.del != null and map.del != ''">
+				AND t.del = #{map.del}
+			</if>
+			<if test="map.trade_status != null and map.trade_status != ''">
+				AND t.trade_status = #{map.trade_status}
+			</if>
+			<if test="map.mer_id != null and map.mer_id != ''">
+				AND t1.mer_id = #{map.mer_id}
+			</if>
+			<if test="map.mer_name != null and map.mer_name != ''">
+				AND t1.mer_name = #{map.mer_name}
+			</if>
+			<if test="map.name != null and map.name != ''">
+				AND t1.name = #{map.name}
+			</if>
+			<if test="map.tel != null and map.tel != ''">
+				AND t1.tel = #{map.tel}
+			</if>
+			<if test="map.cash_back_type != null and map.cash_back_type != ''">
+				AND t1.cash_back_type = #{map.cash_back_type}
+			</if>
+			<if test="map.cash_back_status != null and map.cash_back_status != ''">
+				AND t1.cash_back_status = #{map.cash_back_status}
+			</if>
+			<if test="map.act_status != null and map.act_status != ''">
+				AND t1.act_status = #{map.act_status}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t2.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t2.real_name = #{map.real_name}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 导出用户MPOS信息列表 -->
+	<select id="selectAgentUserTraditionalPosInfoList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.usertrapos.domain.AgentUserTraditionalPosInfo" >
+		SELECT
+			t.id,
+			t.sn,
+			t.user_id,
+			t.card_settle_price,
+			t.cloud_settle_price,
+			t.weixin_settle_price,
+			t.zhifubao_settle_price,
+			t.single_profit_rate,
+			t.cash_back_rate,
+			t.mer_cap_fee,
+			t.state_status,
+			t.activity_status,
+			t.del,
+			t.trade_status,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.trade_date, t.trade_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS trade_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t1.id AS pos_id,
+			t1.mer_id,
+			t1.mer_name,
+			t1.name,
+			t1.tel,
+			t1.cash_back_type,
+			t1.cash_back_condition,
+			t1.cash_back_money,
+			t1.real_cash_back_money,
+			t1.cash_back_status,
+			t1.credit_card_rate,
+			t1.cloud_flash_rate,
+			t1.weixin_rate,
+			t1.zhifubao_rate,
+			t1.scan_status,
+			t1.act_status,
+			t1.act_user_id,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t1.act_date, t1.act_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS act_date,
+			t2.manager_id,
+			t2.user_tel,
+			t2.real_name 
+		FROM
+			t_user_traditional_pos_info t
+		LEFT JOIN t_sys_traditional_pos_info t1 ON t.sn = t1.sn
+		LEFT JOIN t_user_info t2 ON t.user_id = t2.id
+		<where>
+			t2.manager_id = #{map.manager_id}
+			AND t1.pos_type is null
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.user_id != null and map.user_id != ''">
+				AND t.user_id = #{map.user_id}
+			</if>
+			<if test="map.sn != null and map.sn != ''">
+				AND t.sn = #{map.sn}
+			</if>
+			<if test="map.sn_list != null and map.sn_list != ''">
+				AND FIND_IN_SET(t.sn,#{map.sn_list})
+			</if>
+			<if test="map.state_status != null and map.state_status != ''">
+				AND t.state_status = #{map.state_status}
+			</if>
+			<if test="map.activity_status != null and map.activity_status != ''">
+				AND t.activity_status = #{map.activity_status}
+			</if>
+			<if test="map.del != null and map.del != ''">
+				AND t.del = #{map.del}
+			</if>
+			<if test="map.trade_status != null and map.trade_status != ''">
+				AND t.trade_status = #{map.trade_status}
+			</if>
+			<if test="map.mer_id != null and map.mer_id != ''">
+				AND t1.mer_id = #{map.mer_id}
+			</if>
+			<if test="map.mer_name != null and map.mer_name != ''">
+				AND t1.mer_name = #{map.mer_name}
+			</if>
+			<if test="map.name != null and map.name != ''">
+				AND t1.name = #{map.name}
+			</if>
+			<if test="map.tel != null and map.tel != ''">
+				AND t1.tel = #{map.tel}
+			</if>
+			<if test="map.cash_back_type != null and map.cash_back_type != ''">
+				AND t1.cash_back_type = #{map.cash_back_type}
+			</if>
+			<if test="map.cash_back_status != null and map.cash_back_status != ''">
+				AND t1.cash_back_status = #{map.cash_back_status}
+			</if>
+			<if test="map.act_status != null and map.act_status != ''">
+				AND t1.act_status = #{map.act_status}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t2.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t2.real_name = #{map.real_name}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 更新用户传统POS机是否参与活动的状态 -->
+	<update id="updateAgentUserTraditionalPosInfoActivityStatus" parameterType="java.util.Map" >
+		update 
+			t_user_traditional_pos_info
+		SET activity_status=#{map.new_activity_status},
+			up_date=#{map.up_date},up_time=#{map.up_time} 
+		WHERE FIND_IN_SET(sn,#{map.sn_list}) AND user_id=#{map.user_id} 
+			AND activity_status=#{map.old_activity_status}
+	</update>
+	
+	
+	<!-- 查询用户可以参与系统评估的pos机数量 -->
+	<select id="getAgentJoinTraditionalposAssesInfoNum" parameterType="java.util.Map" resultType="int" >
+		SELECT
+			count(t.id)
+		FROM
+			t_user_traditional_pos_info t
+		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
+		where
+			t.user_id=#{map.user_id} 
+			AND t1.manager_id=#{map.manager_id}
+			AND FIND_IN_SET(t.sn, #{map.sn_list}) 
+			AND t.del='0'
+			AND T.state_status='1'
+	</select>
+	
+	
+	<!-- 查询是否存在该用户和传统pos机的关系 -->
+	<select id="getAgentUserTraditionalPosInfo" parameterType="com.ruoyi.project.deveagent.usertrapos.domain.AgentUserTraditionalPosInfo" resultType="java.util.Map" >
+		select * from t_user_traditional_pos_info where sn=#{sn} and user_id=#{user_id}
+	</select>
+	
+	
+	<!-- 用户分配更新用户传统POS机信息update byqh 201912 -->
+	<update id="updateAgentUserTraditionalPosInfoByDis" parameterType="com.ruoyi.project.deveagent.usertrapos.domain.AgentUserTraditionalPosInfo" >
+		update 
+			t_user_traditional_pos_info
+		SET card_settle_price=#{card_settle_price},cloud_settle_price=#{cloud_settle_price},
+			weixin_settle_price=#{weixin_settle_price},zhifubao_settle_price=#{zhifubao_settle_price},
+			card_settle_price_vip=#{card_settle_price_vip},
+			single_profit_rate=#{single_profit_rate},
+			cash_back_rate=#{cash_back_rate},mer_cap_fee=#{mer_cap_fee},
+			state_status=#{state_status},del=#{del},update_by=#{create_by},
+			up_date=#{cre_date},up_time=#{cre_time}
+			<if test="remark != null and remark != ''">
+				,remark = #{remark}
+			</if>
+		WHERE id=#{id} and sn=#{sn} and user_id=#{user_id}
+	</update>
+	
+	
+	<!-- 保存系统传统POS信息 update byqh 201912-->
+	<insert id="addAgentUserTraditionalPosInfoByDis" parameterType="com.ruoyi.project.deveagent.usertrapos.domain.AgentUserTraditionalPosInfo" >
+		insert into t_user_traditional_pos_info (
+			sn, user_id, card_settle_price, cloud_settle_price, weixin_settle_price, zhifubao_settle_price, single_profit_rate, 
+			cash_back_rate, mer_cap_fee, state_status, del, remark, create_by, cre_date, cre_time,card_settle_price_vip)
+		values (
+			#{sn}, #{user_id}, #{card_settle_price}, #{cloud_settle_price}, #{weixin_settle_price}, #{zhifubao_settle_price}, #{single_profit_rate}, 
+			#{cash_back_rate},#{mer_cap_fee},  #{state_status}, #{del}, #{remark}, #{create_by}, #{cre_date}, #{cre_time},
+			#{card_settle_price_vip})
+	</insert>
+	
+	
+	<!-- 根据编号查询用户传统POS信息详情 -->
+	<select id="getAgentUserTraditionalPosInfoById" parameterType="java.lang.String" resultType="java.util.Map" >
+		select * from t_user_traditional_pos_info where id=#{user_pos_id}
+	</select>
+	
+	
+	<!-- 修改用户传统POS信息 add card_settle_price_vip byqh 201912  -->
+	<update id="updateAgentUserTraditionalPosInfo" parameterType="java.util.Map" >
+		update t_user_traditional_pos_info
+ 		<set>
+ 			<if test="map.card_settle_price != null and map.card_settle_price != ''">card_settle_price = #{map.card_settle_price},</if>
+			<if test="map.card_settle_price_vip != null and map.card_settle_price_vip != ''">card_settle_price_vip = #{map.card_settle_price_vip},</if>
+ 			<if test="map.cloud_settle_price != null and map.cloud_settle_price != ''">cloud_settle_price = #{map.cloud_settle_price},</if>
+ 			<if test="map.weixin_settle_price != null and map.weixin_settle_price != ''">weixin_settle_price = #{map.weixin_settle_price},</if>
+ 			<if test="map.zhifubao_settle_price != null and map.zhifubao_settle_price != ''">zhifubao_settle_price = #{map.zhifubao_settle_price},</if>
+ 			<if test="map.single_profit_rate != null and map.single_profit_rate != ''">single_profit_rate = #{map.single_profit_rate},</if>
+ 			<if test="map.cash_back_rate != null and map.cash_back_rate != ''">cash_back_rate = #{map.cash_back_rate},</if>
+ 			<if test="map.mer_cap_fee != null and map.mer_cap_fee != ''">mer_cap_fee = #{map.mer_cap_fee},</if>
+ 			<if test="map.remark != null and map.remark != ''">remark = #{map.remark},</if>
+			<if test="map.state_status != null and map.state_status != ''">state_status = #{map.state_status},</if>
+ 			<if test="map.update_by != null and map.update_by != ''">update_by = #{map.update_by},</if>
+ 			<if test="map.up_date != null and map.up_date != ''">up_date = #{map.up_date},</if>
+ 			<if test="map.up_time != null and map.up_time != ''">up_time = #{map.up_time},</if>
+ 		</set>
+ 		where id=#{map.user_pos_id}
+	</update>
+	
+	
+	<!-- 删除整条链上面的用户传统POS关系 -->
+	<update id="updateAgentSameChainUserTraditionalPosInfoDel" parameterType="java.util.Map" >
+		UPDATE t_user_traditional_pos_info
+			SET del=#{map.new_del},up_date=#{map.up_date},
+				up_time=#{map.up_time},update_by=#{map.update_by},remark = #{map.remark}
+			WHERE
+				sn=#{map.sn}
+				AND del=#{map.old_del}
+				AND user_id IN (
+					SELECT
+						id
+					FROM
+						t_user_info
+					WHERE
+						(
+							FIND_IN_SET(#{map.user_id}, parent_chain)
+							OR FIND_IN_SET(id, #{map.parent_chain})
+						)
+				)
+	</update>
+
+	<!--查询选中代理的二级代理byqh-->
+	<select id="selectSubAgentInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		select id,real_name from t_user_info where referer_id=#{user_id} and algebra=2 and auth_status='09'
+	</select>
+	
+</mapper>

@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.syspos.mapper.AgentSysTrafficCardInfoMapper">
+
+	<!-- 查询系统流量卡信息列表 -->
+	<select id="getAgentSysTrafficCardInfoList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			id,
+			manager_id,
+			card_no,
+			dis_status,
+			remark,
+			create_by,
+			update_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(up_date, up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date
+		FROM
+			t_sys_traffic_card_info
+		<where>
+			manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND id = #{map.id}
+			</if>
+			<if test="map.card_no != null and map.card_no != ''">
+				AND card_no = #{map.card_no}
+			</if>
+			<if test="map.dis_status != null and map.dis_status != ''">
+				AND dis_status = #{map.dis_status}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 导出系统流量卡信息列表 -->
+	<select id="selectAgentSysTrafficCardInfoList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.syspos.domain.AgentSysTrafficCardInfo" >
+		SELECT
+			id,
+			manager_id,
+			card_no,
+			dis_status,
+			remark,
+			create_by,
+			update_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(up_date, up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date
+		FROM
+			t_sys_traffic_card_info
+		<where>
+			manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND id = #{map.id}
+			</if>
+			<if test="map.card_no != null and map.card_no != ''">
+				AND card_no = #{map.card_no}
+			</if>
+			<if test="map.dis_status != null and map.dis_status != ''">
+				AND dis_status = #{map.dis_status}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 保存系统流量卡信息 -->
+	<insert id="addAgentSysTrafficCardInfo" parameterType="com.ruoyi.project.deveagent.syspos.domain.AgentSysTrafficCardInfo" >
+		insert into t_sys_traffic_card_info (
+			manager_id, card_no, remark,
+			create_by, cre_date, cre_time)
+		values (
+			#{manager_id}, #{card_no}, #{remark},
+			#{create_by}, #{cre_date}, #{cre_time})
+	</insert>
+	
+	
+	<!-- 根据设备号（机器编号）查询系统流量卡信息 -->
+	<select id="getAgentSysTrafficCardInfoByCardNo" parameterType="java.lang.String" resultType="java.util.Map" >
+		select * from t_sys_traffic_card_info where card_no=#{card_no}
+	</select>
+	
+	
+	<!-- 修改系统流量卡分配状态 -->
+	<update id="updateAgentSysTrafficCardInfoDisStatus" parameterType="java.util.Map" >
+		update t_sys_traffic_card_info 
+			set dis_status=#{map.new_dis_status},up_date=#{map.up_date},
+				up_time=#{map.up_time},update_by=#{map.update_by}
+				<if test="map.remark != null and map.remark != ''">
+					,remark = #{map.remark}
+				</if>
+		where card_no=#{map.card_no} AND manager_id=#{map.manager_id}
+	</update>
+	
+	
+	<!-- 导出可分配的流量卡导入模板 -->
+	<select id="selectAgentNoDisSysTrafficCardInfoList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.usertracard.domain.AgentSelectUserTrafficCardInfo" >
+		SELECT
+			card_no
+		FROM
+			t_sys_traffic_card_info
+		<where>
+			manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND id = #{map.id}
+			</if>
+			<if test="map.card_no != null and map.card_no != ''">
+				AND card_no = #{map.card_no}
+			</if>
+			<if test="map.dis_status != null and map.dis_status != ''">
+				AND dis_status = #{map.dis_status}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 根据编号查询系统流量卡详情 -->
+	<select id="getAgentSysTrafficCardInfoById" parameterType="java.lang.String" resultType="java.util.Map" >
+		select * from t_sys_traffic_card_info where id=#{card_id}
+	</select>
+	
+	
+	<!-- 删除系统流量卡机信息 -->
+	<delete id="deleteAgentSysTrafficCardInfo" parameterType="java.util.Map" >
+		delete from t_sys_traffic_card_info 
+		where id=#{map.card_id} AND manager_id=#{map.manager_id} and dis_status=#{map.dis_status}
+	</delete>
+	
+	
+	<!-- 根据卡号查询详情 -->
+	<select id="getAgentSysTrafficCardInfoDetailByCardNo" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT
+			id,
+			manager_id,
+			card_no,
+			dis_status,
+			remark,
+			create_by,
+			update_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(up_date, up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date
+		FROM
+			t_sys_traffic_card_info
+		where card_no=#{card_no}
+	</select>
+	
+</mapper>

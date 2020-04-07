@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.longecological.mapper.traditionalpos.TraditionalPosMapper">
+
+	<!-- 查询需要申请扫码支付的传统POS机列表 -->
+	<select id="getScanTraditionalPosList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(t.id as char) as trapos_id,
+			t.sn
+		FROM
+			t_user_traditional_pos_info t
+		WHERE
+			t.user_id = #{map.sys_user_id}
+		AND t.state_status = '1'
+		<if test="map.last_id != null and map.last_id != ''" >
+        	AND t.id &lt; #{map.last_id}
+      	</if>
+      	<if test="map.key_word != null and map.key_word != ''" >
+        	AND t.sn like concat('%', #{map.key_word}, '%')
+      	</if>
+		AND EXISTS (
+			SELECT
+				1
+			FROM
+				t_sys_traditional_pos_info t1
+			WHERE
+				t1.sn = t.sn
+			AND t1.scan_status = '0'
+		)
+		AND NOT EXISTS (
+			SELECT
+				1
+			FROM
+				t_user_apply_scan_record_info t2
+			WHERE
+				t2.user_id = #{map.sys_user_id}
+			AND t2.sn = t.sn
+			AND t2.STATUS = '00'
+		)
+		ORDER BY t.id desc
+		limit 0,10
+	</select>
+	
+	<!-- 新增申请扫码支付记录 -->
+	<insert id="addApplyScanRecord" parameterType="java.util.Map">
+		insert into t_user_apply_scan_record_info(user_id, sn, business_license, store_interior, shop_head, cashier_desk, cre_date, cre_time)
+			   select 
+			   		#{map.sys_user_id},
+			   		t.sn,
+			   		#{map.business_license},
+			   		#{map.store_interior},
+			   		#{map.shop_head},
+			   		#{map.cashier_desk},
+			   		#{map.cre_date},
+			   		#{map.cre_time}
+			   	FROM
+					t_user_traditional_pos_info t
+				WHERE
+					t.user_id = #{map.sys_user_id}
+				AND t.state_status = '1'
+				AND find_in_set(t.sn, #{map.sn_list})
+				AND EXISTS (
+					SELECT
+						1
+					FROM
+						t_sys_traditional_pos_info t1
+					WHERE
+						t1.sn = t.sn
+					AND t1.scan_status = '0'
+				)
+				AND NOT EXISTS (
+					SELECT
+						1
+					FROM
+						t_user_apply_scan_record_info t2
+					WHERE
+						t2.user_id = #{map.sys_user_id}
+					AND t2.sn = t.sn
+					AND t2.STATUS = '00'
+				)
+	</insert>
+	
+	<!-- 查询扫码支付申请记录 -->
+	<select id="getApplyScanRecordList" parameterType="java.util.Map" resultType="java.util.Map">
+		select
+			cast(id as char) as record_id, 
+			sn,
+			status,
+			DATE_FORMAT(STR_TO_DATE(CONCAT(cre_date, cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		from
+			t_user_apply_scan_record_info
+		where 
+			user_id = #{map.sys_user_id}
+			<if test="map.last_id != null and map.last_id != ''" >
+        		AND id &lt; #{map.last_id}
+      		</if>
+      		<if test="map.key_word != null and map.key_word != ''" >
+        		AND sn like concat('%', #{map.key_word}, '%')
+      		</if>
+      	ORDER BY id desc
+		limit 0,10
+	</select>
+
+	<!-- 查询代理商的结算价格等信息 byqh-->
+	<select id="getUserTraditionalPosInfoAll" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from t_user_traditional_pos_info where user_id=#{map.sys_user_id} and sn=#{map.sn}
+	</select>
+
+
+	<!--查询SN直属用户信息 add byqh 201912-->
+	<select id="getUserTraditionalPosBelongBySN" parameterType="java.lang.String" resultType="java.util.Map">
+		select * from t_user_traditional_pos_info where sn in
+		<foreach collection="sn_list.split(',')" index="index" item="item" separator="," open="(" close=")">
+			#{item}
+		</foreach>
+		and state_status='1'
+	</select>
+	
+</mapper>

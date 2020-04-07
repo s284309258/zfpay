@@ -1,0 +1,1381 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.longecological.mapper.machines.MachinesManageMapper">
+
+	<!--检查是否机器带有未完成的政策，有则不可以召回 add byqh 201912-->
+	<select id="checkPosPolicy" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(*) from t_sys_pos_policy_info where
+		sn in
+		<foreach collection="sn_list.split(',')" index="index" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+		and iscomplete='0' and isuse=1
+	</select>
+	
+	<!-- 获取待分配列表（传统POS）update byqh 201912 -->
+	<select id="getTraditionalPosAllocationList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			sn,
+			IFNULL(card_settle_price, '无') AS card_settle_price,
+			IFNULL(weixin_settle_price, '无') AS weixin_settle_price,
+			IFNULL(zhifubao_settle_price,'无') AS zhifubao_settle_price,
+			IFNULL(cloud_settle_price, '无') AS cloud_settle_price,
+			IFNULL(card_settle_price_vip, '无') AS card_settle_price_vip,
+			IFNULL(weixin_settle_price_vip, '无') AS weixin_settle_price_vip,
+			IFNULL(zhifubao_settle_price_vip,'无') AS zhifubao_settle_price_vip,
+			IFNULL(cloud_settle_price_vip, '无') AS cloud_settle_price_vip,
+			IFNULL(single_profit_rate, '无') AS single_profit_rate,
+			IFNULL(cash_back_rate, '无') AS cash_back_rate,
+			(select GROUP_CONCAT(policy_name) from t_sys_pos_policy_info tt where tt.sn=t_user_traditional_pos_info.sn) as policy_name,
+			cast((select (case when TIMESTAMPDIFF(day,CURRENT_DATE,str_to_date(max(module1_end_date),'%Y%m%d'))>=0 then TIMESTAMPDIFF(day,CURRENT_DATE,str_to_date(max(module1_end_date),'%Y%m%d')) else 0 end)  as expire_day
+			from t_sys_pos_policy_info tt where tt.sn=t_user_traditional_pos_info.sn and tt.module_type=1) as char) as expire_day
+		 FROM
+			t_user_traditional_pos_info 
+		WHERE
+			user_id = #{map.sys_user_id}
+		AND state_status = '1'
+		AND activity_status = '0'
+		AND trade_status = '0'
+		AND del = '0'
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				AND pos_type='epos'
+			</when>
+			<otherwise>
+				AND pos_type is null
+			</otherwise>
+		</choose>
+		<if test="map.start_number != null and map.start_number != ''" >
+        	AND sn >= #{map.start_number}
+      	</if>
+      	<if test="map.end_number != null and map.end_number != ''" >
+        	AND sn &lt;= #{map.end_number}
+      	</if>
+      	order by sn
+	</select>
+	
+	<!-- 获取待分配列表（MPOS） update byqh 201912-->
+	<select id="getMposAllocationList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			sn,
+			IFNULL(card_settle_price, '无') AS card_settle_price,
+			IFNULL(cloud_settle_price, '无') AS cloud_settle_price,
+			IFNULL(single_profit_rate, '无') AS single_profit_rate,
+			IFNULL(cash_back_rate, '无') AS cash_back_rate,
+			(select GROUP_CONCAT(policy_name) from t_sys_pos_policy_info tt where tt.sn=t_user_mpos_info.sn) as policy_name,
+			cast((select (case when TIMESTAMPDIFF(day,CURRENT_DATE,str_to_date(module1_end_date,'%Y%m%d'))>=0 then TIMESTAMPDIFF(day,CURRENT_DATE,str_to_date(module1_end_date,'%Y%m%d')) else 0 end)  as expire_day
+			from t_sys_pos_policy_info tt where tt.sn=t_user_mpos_info.sn and tt.module_type=1) as char) as expire_day
+		 FROM
+			t_user_mpos_info
+		WHERE
+			user_id = #{map.sys_user_id}
+		AND state_status = '1'
+		AND activity_status = '0'
+		AND trade_status = '0'
+		AND del = '0'
+		<if test="map.start_number != null and map.start_number != ''" >
+        	AND sn >= #{map.start_number}
+      	</if>
+      	<if test="map.end_number != null and map.end_number != ''" >
+        	AND sn &lt;= #{map.end_number}
+      	</if>
+      	order by sn
+	</select>
+	
+	<!-- 查询分配流量卡列表 -->
+	<select id="getTrafficCardAllocationList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			card_no
+		 FROM
+			t_user_traffic_card_info
+		WHERE
+			user_id = #{map.sys_user_id}
+		AND state_status = '1'
+		AND del = '0'
+		<if test="map.start_number != null and map.start_number != ''" >
+        	AND card_no >= #{map.start_number}
+      	</if>
+      	<if test="map.end_number != null and map.end_number != ''" >
+        	AND card_no &lt;= #{map.end_number}
+      	</if>
+      	order by card_no
+	</select>
+	
+	<!-- 获取待召回列表（传统POS） update add user_id byqh 201912-->
+	<select id="getTraditionalPosRecallList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			t.sn,
+			t.user_id
+		  FROM
+			t_user_traditional_pos_info t
+		 WHERE
+			t.state_status = '1'
+		AND t.activity_status = '0'
+		AND t.trade_status = '0'
+		AND del = '0'
+		AND t.user_id in (select id from t_user_info where referer_id = #{map.sys_user_id})
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and t.pos_type='epos'
+			</when>
+			<otherwise>
+				and t.pos_type is null
+			</otherwise>
+		</choose>
+		<if test="map.start_number != null and map.start_number != ''" >
+        	AND t.sn >= #{map.start_number}
+      	</if>
+      	<if test="map.end_number != null and map.end_number != ''" >
+        	AND t.sn &lt;= #{map.end_number}
+      	</if>
+      	AND NOT EXISTS (
+			SELECT
+				1
+			FROM
+				t_user_trapos_recall_record_info t1
+			WHERE
+				t1.send_user_id = #{map.sys_user_id}
+			AND t1.sn = t.sn
+			AND t1.status = '00')
+      	order by t.sn
+	</select>
+	
+	<!-- 获取待召回列表（MPOS） update add user_id byqh 201912 -->
+	<select id="getMposRecallList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			t.sn,
+			t.user_id
+		  FROM
+			t_user_mpos_info t
+		 WHERE
+			t.state_status = '1'
+		AND t.activity_status = '0'
+		AND t.trade_status = '0'
+		AND del = '0'
+		AND t.user_id in (select id from t_user_info where referer_id = #{map.sys_user_id})
+		<if test="map.start_number != null and map.start_number != ''" >
+        	AND t.sn >= #{map.start_number}
+      	</if>
+      	<if test="map.end_number != null and map.end_number != ''" >
+        	AND t.sn &lt;= #{map.end_number}
+      	</if>
+      	AND NOT EXISTS (
+			SELECT
+				1
+			FROM
+				t_user_mpos_recall_record_info t1
+			WHERE
+				t1.send_user_id = #{map.sys_user_id}
+			AND t1.sn = t.sn
+			AND t1.status = '00')
+      	order by t.sn
+	</select>
+	
+	<!-- 获取待召回列表（流量卡） add user_id byqh 201912-->
+	<select id="getTrafficCardRecallList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			t.card_no,
+			t.user_id
+		  FROM
+			t_user_traffic_card_info t
+		 WHERE
+			t.state_status = '1'
+		AND del = '0'
+		AND t.user_id in (select id from t_user_info where referer_id = #{map.sys_user_id})
+		<if test="map.start_number != null and map.start_number != ''" >
+        	AND t.card_no >= #{map.start_number}
+      	</if>
+      	<if test="map.end_number != null and map.end_number != ''" >
+        	AND t.card_no &lt;= #{map.end_number}
+      	</if>
+      	AND NOT EXISTS (
+			SELECT
+				1
+			FROM
+				t_user_trafficcard_recall_record_info t1
+			WHERE
+				t1.send_user_id = #{map.sys_user_id}
+			AND t1.card_no = t.card_no
+			AND t1.status = '00')
+      	order by t.card_no
+	</select>
+	
+	<!-- 添加新的分配记录（传统POS）byqh 201912 -->
+	<insert id="addAllocationTraditionalPos" parameterType="java.util.Map">
+		INSERT INTO t_user_traditional_pos_info (
+						user_id,
+						sn,
+						card_settle_price,
+						weixin_settle_price,
+						zhifubao_settle_price,
+						cloud_settle_price,
+						single_profit_rate,
+						cash_back_rate,
+						mer_cap_fee,
+						cre_date,
+						cre_time,
+						card_settle_price_vip,
+						pos_type,
+						is_reward
+					) SELECT
+						#{map.acce_user_id},
+						t.sn,
+						#{map.card_settle_price},
+						#{map.weixin_settle_price},
+						#{map.zhifubao_settle_price},
+						#{map.cloud_settle_price},
+						#{map.single_profit_rate},
+						#{map.cash_back_rate},
+						#{map.mer_cap_fee},
+						#{map.cre_date},
+						#{map.cre_time},
+						#{map.card_settle_price_vip},
+						t.pos_type,
+						#{map.is_reward}
+						FROM
+							t_user_traditional_pos_info t
+						WHERE
+							t.user_id = #{map.sys_user_id}
+						AND t.activity_status = '0'
+						AND t.state_status = '1'
+						AND FIND_IN_SET(t.sn, #{map.sn_list})
+						AND NOT EXISTS (
+							SELECT
+								1
+							FROM
+								t_user_traditional_pos_info t1
+							WHERE
+								t1.user_id = #{map.acce_user_id}
+							AND t1.sn = t.sn
+						)
+	
+	</insert>
+	
+	<!-- 修改旧的分配记录及归属 （传统POS）-->
+	<update id="updateOldAllocationTraditionalPos" parameterType="java.util.Map">
+		UPDATE t_user_traditional_pos_info
+		   SET card_settle_price = #{map.card_settle_price},
+ 			   weixin_settle_price = #{map.weixin_settle_price},
+ 			   zhifubao_settle_price = #{map.zhifubao_settle_price},
+ 		       cloud_settle_price = #{map.cloud_settle_price},
+ 			   single_profit_rate = #{map.single_profit_rate},
+ 			   cash_back_rate = #{map.cash_back_rate},
+ 			   mer_cap_fee = #{map.mer_cap_fee},
+ 			   state_status = '1',
+ 			   del = '0',
+ 			   up_date = #{map.up_date},
+ 			   up_time = #{map.up_time}
+		WHERE
+			   del = '1'
+		   AND user_id = #{map.acce_user_id}
+		   AND FIND_IN_SET(sn, #{map.sn_list})
+	</update>
+	
+	<!-- 修改归属状态（传统POS） -->
+	<update id="updateTraditionalPosStateStatus" parameterType="java.util.Map">
+		UPDATE t_user_traditional_pos_info
+		   SET state_status = '0',
+		   	   up_date = #{map.up_date},
+ 			   up_time = #{map.up_time}
+ 		  WHERE
+			   user_id = #{map.sys_user_id}
+		   AND activity_status = '0'
+		   AND state_status = '1'
+		   AND FIND_IN_SET(sn, #{map.sn_list})
+	</update>
+	
+	<!-- 添加召回记录（传统POS） -->
+	<insert id="addRecallTraditionalPos" parameterType="java.util.Map">
+		INSERT INTO t_user_trapos_recall_record_info (
+					send_user_id,
+					acce_user_id,
+					sn,
+					cre_date,
+					cre_time,
+					pos_type
+					) SELECT
+							#{map.sys_user_id},
+							user_id,
+							sn,
+							#{map.cre_date},
+							#{map.cre_time},
+							pos_type
+					   FROM
+							t_user_traditional_pos_info
+					  WHERE
+							state_status = '1'
+						AND del='0'
+						AND FIND_IN_SET(sn, #{map.sn_list})
+						AND user_id in (select id from t_user_info where referer_id = #{map.sys_user_id})
+	</insert>
+	
+	<!-- 添加解绑记录（传统POS）update byqh 201912 -->
+	<insert id="addUnbindTraditionalPos" parameterType="java.util.Map">
+		INSERT INTO t_user_trapos_unbind_record_info (
+					user_id,
+					sn,
+					cre_date,
+					cre_time,
+					pos_type
+					) values
+		<foreach collection="map.sn.split(',')" item="tem" separator="," index="index">
+			(#{map.sys_user_id},#{tem},#{map.cre_date},#{map.cre_time},
+			<choose>
+				<when test="map.pos_type!=null and map.pos_type!=''">
+					'epos'
+				</when>
+				<otherwise>
+					null
+				</otherwise>
+			</choose>)
+		</foreach>
+	</insert>
+	
+	<!-- 添加新的分配记录（MPOS） -->
+	<insert id="addAllocationMpos" parameterType="java.util.Map">
+		INSERT INTO t_user_mpos_info (
+						user_id,
+						sn,
+						card_settle_price,
+						cloud_settle_price,
+						single_profit_rate,
+						cash_back_rate,
+						cre_date,
+						cre_time,
+						is_reward
+					) SELECT
+						#{map.acce_user_id},
+						t.sn,
+						#{map.card_settle_price},
+						#{map.cloud_settle_price},
+						#{map.single_profit_rate},
+						#{map.cash_back_rate},
+						#{map.cre_date},
+						#{map.cre_time},
+						#{map.is_reward}
+						FROM
+							t_user_mpos_info t
+						WHERE
+							t.user_id = #{map.sys_user_id}
+						AND t.activity_status = '0'
+						AND t.state_status = '1'
+						AND FIND_IN_SET(t.sn, #{map.sn_list})
+						AND NOT EXISTS (
+							SELECT
+								1
+							FROM
+								t_user_mpos_info t1
+							WHERE
+								t1.user_id = #{map.acce_user_id}
+							AND t1.sn = t.sn
+						)
+	
+	</insert>
+	
+	<!-- 修改旧的分配记录及归属 （MPOS）-->
+	<update id="updateOldAllocationMpos" parameterType="java.util.Map">
+		UPDATE t_user_mpos_info
+		   SET card_settle_price = #{map.card_settle_price},
+ 		       cloud_settle_price = #{map.cloud_settle_price},
+ 			   single_profit_rate = #{map.single_profit_rate},
+ 			   cash_back_rate = #{map.cash_back_rate},
+ 			   state_status = '1',
+ 			   del = '0',
+ 			   up_date = #{map.up_date},
+ 			   up_time = #{map.up_time}
+		WHERE
+			   del = '1'
+		   AND user_id = #{map.acce_user_id}
+		   AND FIND_IN_SET(sn, #{map.sn_list})
+	</update>
+	
+	<!-- 修改归属状态（MPOS） -->
+	<update id="updateMposStateStatus" parameterType="java.util.Map">
+		UPDATE t_user_mpos_info
+		   SET state_status = '0',
+		   	   up_date = #{map.up_date},
+ 			   up_time = #{map.up_time}
+ 		  WHERE
+			   user_id = #{map.sys_user_id}
+		   AND activity_status = '0'
+		   AND state_status = '1'
+		   AND FIND_IN_SET(sn, #{map.sn_list})
+	</update>
+	
+	<!-- 添加召回记录（MPOS） -->
+	<insert id="addRecallMpos" parameterType="java.util.Map">
+		INSERT INTO t_user_mpos_recall_record_info (
+					send_user_id,
+					acce_user_id,
+					sn,
+					cre_date,
+					cre_time
+					) SELECT
+							#{map.sys_user_id},
+							user_id,
+							sn,
+							#{map.cre_date},
+							#{map.cre_time}
+					   FROM
+							t_user_mpos_info
+					  WHERE
+							state_status = '1'
+						AND FIND_IN_SET(sn, #{map.sn_list})
+						AND user_id in (select id from t_user_info where referer_id = #{map.sys_user_id})
+	</insert>
+	
+	<!-- 添加解绑记录（MPOS） update byqh 201912-->
+	<insert id="addUnbindMpos" parameterType="java.util.Map">
+		INSERT INTO t_user_mpos_unbind_record_info (
+					user_id,
+					sn,
+					cre_date,
+					cre_time
+					) values
+		<foreach collection="map.sn.split(',')" item="tem" separator="," index="index">
+			(#{map.sys_user_id},#{tem},#{map.cre_date},#{map.cre_time})
+		</foreach>
+	</insert>
+	
+	<!-- 添加新的分配记录（流量卡） -->
+	<insert id="addAllocationTrafficCard" parameterType="java.util.Map">
+		INSERT INTO t_user_traffic_card_info (
+						user_id,
+						card_no,
+						cre_date,
+						cre_time
+					) SELECT
+						#{map.acce_user_id},
+						t.card_no,
+						#{map.cre_date},
+						#{map.cre_time}
+						FROM
+							t_user_traffic_card_info t
+						WHERE
+							t.user_id = #{map.sys_user_id}
+						AND t.state_status = '1'
+						AND FIND_IN_SET(t.card_no, #{map.card_list})
+						AND NOT EXISTS (
+							SELECT
+								1
+							FROM
+								t_user_traffic_card_info t1
+							WHERE
+								t1.user_id = #{map.acce_user_id}
+							AND t1.card_no = t.card_no
+						)
+	
+	</insert>
+	
+	<!-- 修改旧的分配记录及归属 （流量卡）-->
+	<update id="updateOldAllocationTrafficCard" parameterType="java.util.Map">
+		UPDATE t_user_traffic_card_info
+		   SET state_status = '1',
+		   	   del = '0',
+ 			   up_date = #{map.up_date},
+ 			   up_time = #{map.up_time}
+		WHERE
+			   user_id = #{map.acce_user_id}
+		   AND state_status = '0'
+		   AND FIND_IN_SET(card_no, #{map.card_list})
+	</update>
+	
+	<!-- 修改归属状态（流量卡） -->
+	<update id="updateTrafficCardStateStatus" parameterType="java.util.Map">
+		UPDATE t_user_traffic_card_info
+		   SET state_status = '0',
+		   	   up_date = #{map.up_date},
+ 			   up_time = #{map.up_time}
+ 		  WHERE
+			   user_id = #{map.sys_user_id}
+		   AND state_status = '1'
+		   AND FIND_IN_SET(card_no, #{map.card_list})
+	</update>
+	
+	<!-- 添加召回记录（MPOS） -->
+	<insert id="addRecallTrafficCard" parameterType="java.util.Map">
+		INSERT INTO t_user_trafficcard_recall_record_info (
+					send_user_id,
+					acce_user_id,
+					card_no,
+					cre_date,
+					cre_time
+					) SELECT
+							#{map.sys_user_id},
+							user_id,
+							card_no,
+							#{map.cre_date},
+							#{map.cre_time}
+					   FROM
+							t_user_traffic_card_info
+					  WHERE
+							state_status = '1'
+						AND FIND_IN_SET(card_no, #{map.card_list})
+						AND user_id in (select id from t_user_info where referer_id = #{map.sys_user_id})
+	</insert>
+
+	<!--查询SN直属用户信息 add byqh 201912-->
+	<select id="getUserTrafficBelongBySN" parameterType="java.lang.String" resultType="java.util.Map">
+		select * from t_user_traffic_card_info where card_no in
+		<foreach collection="card_list.split(',')" index="index" item="item" separator="," open="(" close=")">
+			#{item}
+		</foreach>
+		and state_status='1'
+	</select>
+	
+	<!-- 查询直推代理 -->
+	<select id="getRefererAgency" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(id as char) as user_id,
+			user_tel,
+			real_name,
+			head_photo
+		 FROM
+			t_user_info
+		WHERE
+			referer_id = #{map.sys_user_id} and auth_status = '09'
+			<if test="map.key_word != null and map.key_word != ''" >
+        		AND (user_tel like concat('%',#{map.key_word},'%') or real_name like concat('%',#{map.key_word},'%'))
+      		</if>
+	</select>
+	
+	<!-- 查询解绑记录（传统POS） -->
+	<select id="getUnbindRecordTraditionalPosList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			cast(id as char) as unbind_id,
+			sn,
+			status,
+			DATE_FORMAT(STR_TO_DATE(CONCAT(cre_date, cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		  FROM
+		  	t_user_trapos_unbind_record_info
+		 WHERE
+		  	user_id = #{map.sys_user_id}
+		  	<choose>
+				<when test="map.pos_type!=null and map.pos_type!=''">
+					and pos_type='epos'
+				</when>
+				<otherwise>
+					and pos_type is null
+				</otherwise>
+			</choose>
+		  	<if test="map.last_id != null and map.last_id != ''" >
+        		AND id &lt; #{map.last_id}
+      		</if>
+      		<if test="map.key_word != null and map.key_word != ''" >
+        		AND sn like concat('%',#{map.key_word},'%')
+      		</if>
+      	ORDER BY id desc
+      	limit 0,10
+	</select>
+	
+	<!-- 查询解绑记录（MPOS） -->
+	<select id="getUnbindRecordMposList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			cast(id as char) as unbind_id,
+			sn,
+			status,
+			DATE_FORMAT(STR_TO_DATE(CONCAT(cre_date, cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		  FROM
+		  	t_user_mpos_unbind_record_info
+		 WHERE
+		  	user_id = #{map.sys_user_id}
+		  	<if test="map.last_id != null and map.last_id != ''" >
+        		AND id &lt; #{map.last_id}
+      		</if>
+      		<if test="map.key_word != null and map.key_word != ''" >
+        		AND sn like concat('%',#{map.key_word},'%')
+      		</if>
+      	ORDER BY id desc
+      	limit 0,10
+	</select>
+	
+	<!-- 查询分配记录（传统POS） -->
+	<select id="getAllocationTraditionalPosList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(t.id as char) as allocation_id,
+			t1.real_name,
+			t.sn,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_datetime
+		FROM
+			t_user_traditional_pos_info t
+		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
+		WHERE
+			t.state_status = '1'
+		AND del = '0'
+		AND t.user_id IN (
+			SELECT
+				id
+			FROM
+				t_user_info
+			WHERE
+				referer_id = #{map.sys_user_id}
+		)
+		<if test="map.last_id != null and map.last_id != ''" >
+        	AND t.id &lt; #{map.last_id}
+      	</if>
+      	<if test="map.key_word != null and map.key_word != ''" >
+        	AND (t.sn like concat('%', #{map.key_word}, '%') or t1.real_name like concat('%', #{map.key_word}, '%'))
+      	</if>
+      	ORDER BY t.id desc
+      	limit 0,10
+	</select>
+	
+	<!-- 查询分配详情（传统POS） -->
+	<select id="getAllocationTraditionalPosDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(t.id as char) as allocation_id,
+			t1.real_name,
+			t.sn,
+			t.card_settle_price,
+			t.weixin_settle_price,
+			t.zhifubao_settle_price,
+			t.cloud_settle_price,
+			t.single_profit_rate,
+			t.cash_back_rate,
+			t.mer_cap_fee
+		FROM
+			t_user_traditional_pos_info t
+		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
+		WHERE t.id = #{map.allocation_id}
+	</select>
+	
+	<!-- 修改分配记录（传统POS） -->
+	<update id="updateAllocationTraditionalPos" parameterType="java.util.Map">
+		UPDATE t_user_traditional_pos_info
+		   SET card_settle_price = #{map.card_settle_price},
+		   		card_settle_price_vip = #{map.card_settle_price_vip},
+ 			   weixin_settle_price = #{map.weixin_settle_price},
+ 			   zhifubao_settle_price = #{map.zhifubao_settle_price},
+ 		       cloud_settle_price = #{map.cloud_settle_price},
+ 			   single_profit_rate = #{map.single_profit_rate},
+ 			   cash_back_rate = #{map.cash_back_rate},
+ 			   mer_cap_fee = #{map.mer_cap_fee},
+ 			   up_date = #{map.up_date},
+ 			   up_time = #{map.up_time}
+		WHERE id = #{map.allocation_id}
+	</update>
+	
+	<!-- 查询分配记录（MPOS） -->
+	<select id="getAllocationMposList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(t.id as char) as allocation_id,
+			t1.real_name,
+			t.sn,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_datetime
+		FROM
+			t_user_mpos_info t
+		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
+		WHERE
+			t.state_status = '1'
+		AND del = '0'
+		AND t.user_id IN (
+			SELECT
+				id
+			FROM
+				t_user_info
+			WHERE
+				referer_id = #{map.sys_user_id}
+		)
+		<if test="map.last_id != null and map.last_id != ''" >
+        	AND t.id &lt; #{map.last_id}
+      	</if>
+      	<if test="map.key_word != null and map.key_word != ''" >
+        	AND (t.sn like concat('%', #{map.key_word}, '%') or t1.real_name like concat('%', #{map.key_word}, '%'))
+      	</if>
+      	ORDER BY t.id desc
+      	limit 0,10
+	</select>
+	
+	<!-- 查询分配详情（MPOS） -->
+	<select id="getAllocationMposDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(t.id as char) as allocation_id,
+			t1.real_name,
+			t.sn,
+			t.card_settle_price,
+			t.cloud_settle_price,
+			t.single_profit_rate,
+			t.cash_back_rate
+		FROM
+			t_user_mpos_info t
+		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
+		WHERE t.id = #{map.allocation_id}
+	</select>
+	
+	<!-- 修改分配记录（MPOS） -->
+	<update id="updateAllocationMpos" parameterType="java.util.Map">
+		UPDATE t_user_mpos_info
+		   SET card_settle_price = #{map.card_settle_price},
+ 		       cloud_settle_price = #{map.cloud_settle_price},
+ 			   single_profit_rate = #{map.single_profit_rate},
+ 			   cash_back_rate = #{map.cash_back_rate},
+ 			   up_date = #{map.up_date},
+ 			   up_time = #{map.up_time}
+		WHERE id = #{map.allocation_id}
+	</update>
+	
+	<!-- 查询分配记录（流量卡） -->
+	<select id="getAllocationTrafficCardList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(t.id as char) as allocation_id,
+			t1.real_name,
+			t.card_no,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_datetime
+		FROM
+			t_user_traffic_card_info t
+		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
+		WHERE
+			t.state_status = '1'
+		AND del = '0'
+		AND t.user_id IN (
+			SELECT
+				id
+			FROM
+				t_user_info
+			WHERE
+				referer_id = #{map.sys_user_id}
+		)
+		<if test="map.last_id != null and map.last_id != ''" >
+        	AND t.id &lt; #{map.last_id}
+      	</if>
+      	<if test="map.key_word != null and map.key_word != ''" >
+        	AND (t.card_no like concat('%', #{map.key_word}, '%') or t1.real_name like concat('%', #{map.key_word}, '%'))
+      	</if>
+      	ORDER BY t.id desc
+      	limit 0,10
+	</select>
+	
+	<!-- 查询召回记录（传统POS） -->
+	<select id="getRecallTraditionalPosList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(id as char) as recall_id,
+			sn,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_datetime
+		FROM
+			t_user_trapos_recall_record_info 
+		WHERE acce_user_id = #{map.sys_user_id}
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and pos_type='epos'
+			</when>
+			<otherwise>
+				and pos_type is null
+			</otherwise>
+		</choose>
+		AND status = #{map.status}
+      	ORDER BY id desc
+	</select>
+
+
+	<!-- 查询召回记录（传统POS）add byqh202003 -->
+	<select id="getRecallEposList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+		cast(id as char) as recall_id,
+		sn,
+		DATE_FORMAT(
+		STR_TO_DATE(
+		CONCAT(cre_date, cre_time),
+		'%Y%m%d%H%i%s'
+		),
+		'%Y-%m-%d %H:%i:%s'
+		) AS cre_datetime
+		FROM
+		t_user_trapos_recall_record_info
+		WHERE acce_user_id = #{map.sys_user_id} and pos_type='epos' AND status = #{map.status}
+		ORDER BY id desc
+	</select>
+	
+	<!-- 更新召回状态（传统POS） -->
+	<update id="updateRecallTraditionalPosStatus" parameterType="java.util.Map">
+		UPDATE t_user_trapos_recall_record_info
+		   SET status = #{map.status}, 
+		   	   up_date = #{map.up_date},
+		   	   up_time = #{map.up_time}
+		 WHERE acce_user_id = #{map.sys_user_id} and find_in_set(id, #{map.ids_list}) and status = '00'
+	</update>
+	
+	<!-- 更新召回人的归属状态（传统POS） -->
+	<update id="updateRecallTraditionalPosSendState" parameterType="java.util.Map">
+		UPDATE t_user_traditional_pos_info t
+		   SET t.state_status = '1',
+		   	   t.up_date = #{map.up_date},
+		   	   t.up_time = #{map.up_time}
+		 WHERE t.state_status = '0'
+		   and EXISTS (select 
+		   					1 
+		   			   from 
+		   			   		t_user_trapos_recall_record_info t1
+		   			   where 
+		   			   		find_in_set(t1.id, #{map.ids_list})
+		   			   	and t1.send_user_id = t.user_id
+		   			    and t1.sn = t.sn
+		   			   )
+	</update>
+	
+	<!-- 更新接收人的归属状态（传统POS） -->
+	<update id="updateRecallTraditionalPosAcceState" parameterType="java.util.Map">
+		UPDATE t_user_traditional_pos_info t
+		   SET t.state_status = '0',
+		   	   t.del = '1',
+		   	   t.up_date = #{map.up_date},
+		   	   t.up_time = #{map.up_time}
+		 WHERE t.state_status = '1'
+		   and EXISTS (select 
+		   					1 
+		   			   from 
+		   			   		t_user_trapos_recall_record_info t1
+		   			   where 
+		   			   		find_in_set(t1.id, #{map.ids_list})
+		   			   	and t1.acce_user_id = t.user_id
+		   			    and t1.sn = t.sn
+		   			   )
+	</update>
+	
+	<!-- 查询召回记录（MPOS） -->
+	<select id="getRecallMposList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(id as char) as recall_id,
+			sn,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_datetime
+		FROM
+			t_user_mpos_recall_record_info 
+		WHERE acce_user_id = #{map.sys_user_id} AND status = #{map.status}
+		<if test="map.last_id != null and map.last_id != ''" >
+        	AND id &lt; #{map.last_id}
+      	</if>
+      	ORDER BY id desc
+      	limit 0,10
+	</select>
+	
+	<!-- 更新召回状态（MPOS） -->
+	<update id="updateRecallMposStatus" parameterType="java.util.Map">
+		UPDATE t_user_mpos_recall_record_info
+		   SET status = #{map.status}, 
+		   	   up_date = #{map.up_date},
+		   	   up_time = #{map.up_time}
+		 WHERE acce_user_id = #{map.sys_user_id} and find_in_set(id, #{map.ids_list}) and status = '00'
+	</update>
+	
+	<!-- 更新召回人的归属状态（MPOS） -->
+	<update id="updateRecallMposSendState" parameterType="java.util.Map">
+		UPDATE t_user_mpos_info t
+		   SET t.state_status = '1',
+		   	   t.up_date = #{map.up_date},
+		   	   t.up_time = #{map.up_time}
+		 WHERE t.state_status = '0'
+		   and EXISTS (select 
+		   					1 
+		   			   from 
+		   			   		t_user_mpos_recall_record_info t1
+		   			   where 
+		   			   		find_in_set(t1.id, #{map.ids_list})
+		   			   	and t1.send_user_id = t.user_id
+		   			    and t1.sn = t.sn
+		   			   )
+	</update>
+	
+	<!-- 更新接收人的归属状态（MPOS） -->
+	<update id="updateRecallMposAcceState" parameterType="java.util.Map">
+		UPDATE t_user_mpos_info t
+		   SET t.state_status = '0',
+		   	   t.del = '1',
+		   	   t.up_date = #{map.up_date},
+		   	   t.up_time = #{map.up_time}
+		 WHERE t.state_status = '1'
+		    and EXISTS (select 
+		   					1 
+		   			   from 
+		   			   		t_user_mpos_recall_record_info t1
+		   			   where 
+		   			   		find_in_set(t1.id, #{map.ids_list})
+		   			   	and t1.acce_user_id = t.user_id
+		   			    and t1.sn = t.sn
+		   			   )
+	</update>
+	
+	<!-- 查询召回记录（流量卡） -->
+	<select id="getRecallTrafficCardList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(id as char) as recall_id,
+			card_no,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_datetime
+		FROM
+			t_user_trafficcard_recall_record_info 
+		WHERE acce_user_id = #{map.sys_user_id} AND status = #{map.status}
+		<if test="map.last_id != null and map.last_id != ''" >
+        	AND id &lt; #{map.last_id}
+      	</if>
+      	ORDER BY id desc
+      	limit 0,10
+	</select>
+	
+	<!-- 更新召回状态（流量卡） -->
+	<update id="updateRecallTrafficCardStatus" parameterType="java.util.Map">
+		UPDATE t_user_trafficcard_recall_record_info
+		   SET status = #{map.status}, 
+		   	   up_date = #{map.up_date},
+		   	   up_time = #{map.up_time}
+		 WHERE acce_user_id = #{map.sys_user_id} and find_in_set(id, #{map.ids_list}) and status = '00'
+	</update>
+	
+	<!-- 更新召回人的归属状态（流量卡） -->
+	<update id="updateRecallTrafficCardSendState" parameterType="java.util.Map">
+		UPDATE t_user_traffic_card_info t
+		   SET t.state_status = '1',
+		   	   t.up_date = #{map.up_date},
+		   	   t.up_time = #{map.up_time}
+		 WHERE t.state_status = '0'
+		   and EXISTS (select 
+		   					1 
+		   			   from 
+		   			   		t_user_trafficcard_recall_record_info t1
+		   			   where 
+		   			   		find_in_set(t1.id, #{map.ids_list})
+		   			   	and t1.send_user_id = t.user_id
+		   			    and t1.card_no = t.card_no
+		   			   )
+	</update>
+	
+	<!-- 更新接收人的归属状态（流量卡） -->
+	<update id="updateRecallTrafficCardAcceState" parameterType="java.util.Map">
+		UPDATE t_user_traffic_card_info t
+		   SET t.state_status = '0',
+		   	   t.del = '1',
+		   	   t.up_date = #{map.up_date},
+		   	   t.up_time = #{map.up_time}
+		 WHERE t.state_status = '1'
+		   and EXISTS (select 
+		   					1 
+		   			   from 
+		   			   		t_user_trafficcard_recall_record_info t1
+		   			   where 
+		   			   		find_in_set(t1.id, #{map.ids_list})
+		   			   	and t1.acce_user_id = t.user_id
+		   			    and t1.card_no = t.card_no
+		   			   )
+	</update>
+	
+	<!-- 校验分配参数（传统POS） -->
+	<select id="checkAllocationTraditionalPos" parameterType="java.util.Map" resultType="int">
+		SELECT
+			count(*)
+		FROM
+			t_user_traditional_pos_info 
+		WHERE
+			user_id = #{map.sys_user_id}
+		AND state_status = '1'
+		AND activity_status = '0'
+		AND trade_status = '0'
+		AND del = '0'
+		AND find_in_set(sn, #{map.sn_list})
+		AND cast(card_settle_price as decimal) &lt;= cast(#{map.card_settle_price} as decimal)
+		AND cast(weixin_settle_price as decimal) &lt;= cast(#{map.weixin_settle_price} as decimal)
+		AND cast(zhifubao_settle_price as decimal) &lt;= cast(#{map.zhifubao_settle_price} as decimal)
+		AND cast(cloud_settle_price as decimal) &lt;= cast(#{map.cloud_settle_price} as decimal)
+		AND cast(single_profit_rate as decimal) >= cast(#{map.single_profit_rate} as decimal)
+		AND cast(cash_back_rate as decimal) >= cast(#{map.cash_back_rate} as decimal)
+		AND cast(mer_cap_fee as decimal) &lt;= cast(#{map.mer_cap_fee} as decimal)
+	</select>
+	
+	<!-- 校验分配参数（MPOS） -->
+	<select id="checkAllocationMpos" parameterType="java.util.Map" resultType="int">
+		SELECT
+			count(*)
+		FROM
+			t_user_mpos_info 
+		WHERE
+			user_id = #{map.sys_user_id}
+		AND state_status = '1'
+		AND activity_status = '0'
+		AND trade_status = '0'
+		AND del = '0'
+		AND find_in_set(sn, #{map.sn_list})
+		AND cast(card_settle_price as decimal) &lt;= cast(#{map.card_settle_price} as decimal)
+		AND cast(cloud_settle_price as decimal) &lt;= cast(#{map.cloud_settle_price} as decimal)
+		AND cast(single_profit_rate as decimal) >= cast(#{map.single_profit_rate} as decimal)
+		AND cast(cash_back_rate as decimal) >= cast(#{map.cash_back_rate} as decimal)
+	</select>
+
+	<!--查询可以解绑的传统pos add byqh 201912-->
+	<select id="selectUnbindTraditionalPos" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			sn
+		FROM
+			t_user_traditional_pos_info t
+		WHERE
+			t.user_id = #{map.sys_user_id}
+		AND t.state_status = '1'
+		AND t.activity_status = '0'
+		AND t.trade_status = '0'
+		AND t.del = '0'
+		AND NOT EXISTS(SELECT 1 FROM t_user_trapos_unbind_record_info tt WHERE tt.SN=t.sn AND tt.status='00')
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and t.pos_type='epos'
+			</when>
+			<otherwise>
+				and t.pos_type is null
+			</otherwise>
+		</choose>
+		<if test="map.start_number != null and map.start_number != ''" >
+			AND sn >= #{map.start_number}
+		</if>
+		<if test="map.end_number != null and map.end_number != ''" >
+			AND sn &lt;= #{map.end_number}
+		</if>
+	</select>
+	
+	<!-- 校验解绑参数（传统POS） -->
+	<select id="checkUnbindTraditionalPos" parameterType="java.util.Map" resultType="int">
+		SELECT
+			count(*)
+		FROM
+			t_user_traditional_pos_info t
+		WHERE
+			t.user_id = #{map.sys_user_id}
+		AND t.state_status = '1'
+		AND t.activity_status = '0'
+		AND t.trade_status = '0'
+		AND t.sn = #{map.sn}
+		AND t.del = '0'
+	</select>
+	
+	<!-- 查询是否有解绑审核记录（传统POS） -->
+	<select id="checkExistsUnbindTraditionalPos" parameterType="java.util.Map" resultType="int">
+		SELECT
+			count(*)
+		FROM
+			t_user_trapos_unbind_record_info t1
+		WHERE
+			t1.sn = #{map.sn}
+		AND t1.status = '00'
+	</select>
+
+	<!-- 查询所有政策3 add byqh 201912 -->
+	<select id="selectPolicy3List" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from t_sys_pos_policy_define where policy_type=3 and manager_id=#{map.manager_id}
+		 and id in(select policy_id from t_sys_pos_policy_info where sn=#{map.sn} and module_type=3 and isuse=1)
+		 order by policy_quantity asc
+	</select>
+
+	<!-- 查询政策达标商户 add byqh 201912 -->
+	<select id="selectPolicy3Record" parameterType="java.util.Map" resultType="java.util.Map">
+		select sn,mer_id,mer_name,max(trade_amount) as trade_amount,(case when TIMESTAMPDIFF(day,CURRENT_DATE,str_to_date(end_date,'%Y%m%d'))>=0 then TIMESTAMPDIFF(day,CURRENT_DATE,str_to_date(end_date,'%Y%m%d')) else 0 end)  as expire_day,
+		max(begin_date) as begin_date,max(end_date) as end_date,max(choose) as choose,GROUP_CONCAT(policy_id) as policy_id
+		from t_sys_pos_policy3_record where user_id=#{map.sys_user_id} and pos_type=#{map.pos_type}
+		group by sn,mer_id,mer_name,begin_date,end_date,choose order by choose
+	</select>
+
+	<!-- 查询达标商户所有字段 add byqh 201912 -->
+	<select id="selectPolicy3RecordAll" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from t_sys_pos_policy3_record where mer_id=#{map.mer_id} and choose=0
+	</select>
+
+
+	<!-- 更新用户收益 add byqh 201912 -->
+	<update id="updateUserMoneyBenefit" parameterType="java.util.Map">
+		update t_user_info
+		   set money = money + #{map.money},
+		       today_benefit = today_benefit + #{map.today_benefit},
+		       total_benefit = total_benefit + #{map.today_benefit},
+		       op_type = #{map.op_type},
+		       op_order_id = #{map.op_order_id},
+		       state_type = #{map.state_type},
+		       pos_type = #{map.pos_type},
+		       sn = #{map.sn},
+		       up_date = #{map.up_date},
+		       up_time = #{map.up_time}
+		 where id = #{map.user_id}
+		   and money + #{map.money} >= 0
+	</update>
+
+	<!-- 保存活动奖励记录（传统POS） add byqh 201912 -->
+	<insert id="insertUserTraposActivityRewardRecord" parameterType="java.util.Map">
+		insert into t_user_trapos_activity_reward_record
+		(
+			order_id,
+			user_id,
+			activity_id,
+			activity_reward_id,
+			apply_id,
+			sn,
+			money,
+			expenditure,
+			cre_date,
+			cre_time,
+			policy_id,
+			begin_date,
+			end_date
+		)
+		values
+		(
+			#{map.op_order_id},
+			#{map.user_id},
+			#{map.activity_id},
+			#{map.activity_reward_id},
+			#{map.apply_id},
+			#{map.sn},
+			#{map.money},
+			#{map.expenditure},
+			#{map.cre_date},
+			#{map.cre_time},
+			#{map.policy_id},
+			#{map.begin_date},
+			#{map.end_date}
+		)
+	</insert>
+
+	<!-- 保存活动奖励记录（MPOS） add byqh 201912 -->
+	<insert id="insertUserMposActivityRewardRecord" parameterType="java.util.Map">
+		insert into t_user_mpos_activity_reward_record
+		(
+			order_id,
+			user_id,
+			activity_id,
+			activity_reward_id,
+			apply_id,
+			sn,
+			money,
+			expenditure,
+			cre_date,
+			cre_time,
+			policy_id,
+			begin_date,
+			end_date
+		)
+		values
+		(
+			#{map.op_order_id},
+			#{map.user_id},
+			#{map.activity_id},
+			#{map.activity_reward_id},
+			#{map.apply_id},
+			#{map.sn},
+			#{map.money},
+			#{map.expenditure},
+			#{map.cre_date},
+			#{map.cre_time},
+			#{map.policy_id},
+			#{map.begin_date},
+			#{map.end_date}
+		)
+	</insert>
+
+	<!--查询可以解绑的mpos add byqh 201912-->
+	<select id="selectUnbindMpos" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			sn
+		FROM
+			t_user_mpos_info t
+		WHERE
+			t.user_id = #{map.sys_user_id}
+		AND t.state_status = '1'
+		AND t.activity_status = '0'
+		AND t.trade_status = '0'
+		AND t.del = '0'
+		AND NOT EXISTS(SELECT 1 FROM t_user_mpos_unbind_record_info tt WHERE tt.SN=t.sn AND tt.status='00')
+		<if test="map.start_number != null and map.start_number != ''" >
+			AND sn >= #{map.start_number}
+		</if>
+		<if test="map.end_number != null and map.end_number != ''" >
+			AND sn &lt;= #{map.end_number}
+		</if>
+	</select>
+	
+	<!-- 校验解绑参数（MPOS） -->
+	<select id="checkUnbindMpos" parameterType="java.util.Map" resultType="int">
+		SELECT
+			count(*)
+		FROM
+			t_user_mpos_info t
+		WHERE
+			t.user_id = #{map.sys_user_id}
+		AND t.state_status = '1'
+		AND t.activity_status = '0'
+		AND t.trade_status = '0'
+		AND t.sn = #{map.sn}
+		AND t.del = '0'
+	</select>
+	
+	<!-- 查询是否有解绑审核记录（MPOS） -->
+	<select id="checkExistsUnbindMpos" parameterType="java.util.Map" resultType="int">
+		SELECT
+			count(*)
+		FROM
+			t_user_mpos_unbind_record_info t1
+		WHERE
+			t1.sn = #{map.sn}
+		AND t1.status = '00'
+	</select>
+	
+	<!-- 查询修改分配详情（传统POS） -->
+	<select id="getCheckEditAllocationTraditionalPosDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			t.user_id,
+			t1.card_settle_price,
+			t1.weixin_settle_price,
+			t1.zhifubao_settle_price,
+			t1.cloud_settle_price,
+			t1.single_profit_rate,
+			t1.cash_back_rate,
+			t1.mer_cap_fee
+		FROM
+			t_user_traditional_pos_info t
+		LEFT JOIN t_user_traditional_pos_info t1 on t.sn = t1.sn and t1.user_id = #{map.sys_user_id}
+		WHERE t.id = #{map.allocation_id}
+	</select>
+
+	<!-- 查询修改分配详情（MPOS） -->
+	<select id="getCheckEditAllocationMposDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			t.user_id,
+			t1.card_settle_price,
+			t1.cloud_settle_price,
+			t1.single_profit_rate,
+			t1.cash_back_rate
+		FROM
+			t_user_mpos_info t
+		LEFT JOIN t_user_mpos_info t1 on t.sn = t1.sn and t1.user_id = #{map.sys_user_id}
+		WHERE t.id = #{map.allocation_id}
+	</select>
+
+	<!--add byqh202003-->
+    <select id="checkIsReward" parameterType="java.util.Map" resultType="int">
+        select count(distinct is_reward) as cnt from t_user_traditional_pos_info where user_id=#{map.sys_user_id}
+        <choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and pos_type='epos'
+			</when>
+			<otherwise>
+				and pos_type is null
+			</otherwise>
+		</choose>
+        and sn in
+        <foreach collection="map.sn_list.split(',')" item="tem" separator="," index="index" open="(" close=")">
+            #{tem}
+        </foreach>
+    </select>
+	<!--add byqh202003-->
+	<select id="checkRepeatSetReward" parameterType="java.util.Map" resultType="int">
+		select count(*) as cnt from t_user_traditional_pos_info where user_id=#{map.sys_user_id}
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and pos_type='epos'
+			</when>
+			<otherwise>
+				and pos_type is null
+			</otherwise>
+		</choose>
+		and is_reward='0'
+		and sn in
+		<foreach collection="map.sn_list.split(',')" item="tem" separator="," index="index" open="(" close=")">
+			#{tem}
+		</foreach>
+	</select>
+
+	<!--add byqh202003-->
+	<select id="checkIsRewardMpos" parameterType="java.util.Map" resultType="java.lang.String">
+		select count(distinct is_reward) as cnt from t_user_mpos_info where user_id=#{map.sys_user_id}
+		and sn in
+		<foreach collection="map.sn_list.split(',')" item="tem" separator="," index="index" open="(" close=")">
+			#{tem}
+		</foreach>
+	</select>
+	<!--add byqh202003-->
+	<select id="checkIsPolicy3" parameterType="java.util.Map" resultType="java.lang.String">
+		select GROUP_CONCAT(policy_name) as policy_name from t_sys_pos_policy_info where module_type=3 and isuse=1
+		and sn in
+		<foreach collection="map.sn_list.split(',')" item="tem" separator="," index="index" open="(" close=")">
+			#{tem}
+		</foreach>
+	</select>
+	<!--add byqh202003-->
+	<select id="checkRepeatSetRewardMpos" parameterType="java.util.Map" resultType="int">
+		select count(*) as cnt from t_user_mpos_info where user_id=#{map.sys_user_id}
+		and is_reward='0'
+		and sn in
+		<foreach collection="map.sn_list.split(',')" item="tem" separator="," index="index" open="(" close=")">
+			#{tem}
+		</foreach>
+	</select>
+
+	<!--分配pos时插入批次表，记录分配属于哪个批次方便按批次修改结算价格 add byqh-->
+	<insert id="insertPosBatchAllocate" parameterType="java.util.Map">
+		insert into t_user_pos_batch_allocate(batch_no,sn,user_id,pos_type,allocate_date,allocate_by) values
+		<foreach collection="map.sn.split(',')" item="tem" separator="," index="index">
+			(#{map.batch_no},#{tem},#{map.user_id},#{map.pos_type},#{map.allocate_date},#{map.allocate_by})
+		</foreach>
+	</insert>
+
+	<!--新增查询pos分配记录的方法 add byqh update byqh 201912-->
+	<select id="selectPosBatchAllocate" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from (
+		select cast(@rownum:=@rownum+1 as char) AS id,tt.* from (
+		select cast(count(*) as char) as cnt,cast(min(sn) as char) as min_sn,cast(max(sn) as char) as max_sn,allocate_date,(select real_name from t_user_info where id=user_id) as real_name,
+		cast(user_id as char) as user_id,batch_no,cast(allocate_by as char) as allocate_by from t_user_pos_batch_allocate where allocate_by=#{map.sys_user_id} and pos_type=#{map.pos_type}
+		group by allocate_date,user_id,batch_no,allocate_by order by allocate_date desc
+		) tt,(SELECT @rownum:=0) r) t where 1=1
+		<if test="map.last_id != null and map.last_id != ''" >
+			and t.id > ${map.last_id}
+		</if>
+		<if test="map.key_word != null and map.key_word !=''">
+			and (min_sn like concat('%',#{map.key_word},'%') or max_sn like concat('%',#{map.key_word},'%'))
+		</if>
+		order by t.allocate_date desc limit 0,10
+	</select>
+
+	<!--新增查询批次详情的方法 add byqh-->
+	<select id="selectPosBatchAllocateDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from t_user_pos_batch_allocate where allocate_by=#{map.sys_user_id} and batch_no=#{map.batch_no}
+	</select>
+
+	<!--新增查询批次SN列表的方法 add byqh-->
+	<select id="selectPosBatchSNList" parameterType="java.util.Map" resultType="java.util.Map">
+		select GROUP_CONCAT(sn) as sns from t_user_pos_batch_allocate where batch_no=#{map.batch_no}
+	</select>
+
+	<!--查询政策名称 add byqh 201912-->
+	<select id="selectAllocatePolicyName" parameterType="java.lang.String" resultType="java.lang.String">
+		select GROUP_CONCAT(policy_name) as policy_name from t_sys_pos_policy_info
+		where sn in(select sn from t_user_pos_batch_allocate where batch_no=#{batch_no})
+	</select>
+
+
+</mapper>

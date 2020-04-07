@@ -1,0 +1,760 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.develop.task.mapper.TransactionDataProcessingMapper">
+
+	<!-- 查询传统POS机待处理数据 -->
+	<select id="getTraposTradeList" resultType="java.util.Map">
+		select 
+				* 
+		  from 
+		 	   t_data_trapos_transaction_record_deal 
+		 where status = '00'
+	</select>
+	
+	<!-- 更新待处理交易数据状态(传统POS) -->
+	<update id="updateTraposTransactionRecordDealStatus" parameterType="java.util.Map">
+		update t_data_trapos_transaction_record_deal 
+		   set status = #{map.new_status} 
+		 where tran_ref_code = #{map.tran_ref_code} 
+		   and status = #{map.old_status}
+	</update>
+	
+	<!-- 查询POS系统参数(传统POS) -->
+	<select id="getTraposDetailInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		select 
+			  *
+		  from 
+		  	  t_sys_traditional_pos_info
+		 where sn = #{sn}
+	</select>
+	
+	<!-- 查询直属会员分润信息(传统POS) -->
+	<select id="getTraposMerchantInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		select
+			t.*,
+			t1.parent_chain,
+			t1.algebra
+		  from 
+		  	t_user_traditional_pos_info t
+		  left join t_user_info t1 on t.user_id = t1.id
+		 where t.sn = #{sn} and t.state_status = '1' and t.del = '0'
+	</select>
+	
+	<!-- 查询代理分润信息(传统POS) -->
+	<select id="getTraposAgencyList" parameterType="java.util.Map" resultType="java.util.Map">
+		select
+			t.*,
+			t1.parent_chain,
+			t1.algebra
+		  from 
+		  	t_user_traditional_pos_info t
+		  left join t_user_info t1 on t.user_id = t1.id
+		 where t.sn = #{map.sn} and find_in_set(t.user_id, #{map.parent_chain}) and t.del = '0'
+		 order by t1.algebra desc
+	</select>
+	
+	<!-- 记录传统POS分润记录 -->
+	<insert id="insertUserTraposShareBenefitRecord" parameterType="java.util.Map">
+		insert into t_user_trapos_share_benefit_record
+		(
+			order_id,
+			user_id,
+			sn,
+			trans_amount,
+			trans_type,
+			card_type,
+			trans_time,
+			benefit_type,
+			state_type,
+			single_amount,
+			benefit_money,
+			tran_ref_code,
+			card_settle_price,
+			weixin_settle_price,
+			zhifubao_settle_price,
+			cloud_settle_price,
+			single_profit_rate,
+			mer_cap_fee,
+			credit_card_rate,
+			cloud_flash_rate,
+			weixin_rate,
+			zhifubao_rate,
+			trade_mer_cap_fee,
+			cre_date,
+			cre_time,
+			trans_product,
+			pos_type
+		)
+		values
+		(
+			#{map.order_id},
+			#{map.user_id},
+			#{map.sn},
+			#{map.trans_amount},
+			#{map.trans_type},
+			#{map.card_type},
+			#{map.trans_time},
+			#{map.benefit_type},
+			#{map.state_type},
+			#{map.single_amount},
+			#{map.benefit_money},
+			#{map.tran_ref_code},
+			#{map.card_settle_price},
+			#{map.weixin_settle_price},
+			#{map.zhifubao_settle_price},
+			#{map.cloud_settle_price},
+			#{map.single_profit_rate},
+			#{map.mer_cap_fee},
+			#{map.credit_card_rate},
+			#{map.cloud_flash_rate},
+			#{map.weixin_rate},
+			#{map.zhifubao_rate},
+			#{map.trade_mer_cap_fee},
+			#{map.cre_date},
+			#{map.cre_time},
+			#{map.trans_product},
+			#{map.pos_type}
+		)
+	</insert>
+	
+	<!-- 记录收益通知 -->
+	<insert id="insertUserMessageInfo" parameterType="java.util.Map">
+		insert into t_user_message_info
+		(
+			user_id,
+			order_id,
+			op_type,
+			money,
+			sn,
+			pos_type,
+			cre_date,
+			cre_time
+		)
+		values
+		(
+			#{map.user_id},
+			#{map.order_id},
+			#{map.op_type},
+			#{map.money},
+			#{map.sn},
+			#{map.pos_type},
+			#{map.cre_date},
+			#{map.cre_time}
+		)
+	</insert>
+	
+	<!-- 交易状态更新 (传统POS)-->
+	<update id="updateTraposTradeStatus" parameterType="java.util.Map">
+		update t_user_traditional_pos_info
+		   set trade_status = '1',
+		       trade_date = #{map.up_date},
+		       trade_time = #{map.up_time},
+		       up_date = #{map.up_date},
+		       up_time = #{map.up_time}
+		 where id = #{map.id}
+	</update>
+	
+	<!-- 汇总直属商户交易额(传统POS) -->
+	<update id="updateSummaryTraditionalPosMerchantPerformance" parameterType="java.util.Map">
+		update t_summary_traditional_pos_trans_all
+		   set performance = performance + #{map.performance},
+		       num = num + 1,
+		       merchant_performance = merchant_performance + #{map.performance},
+		       merchant_num = merchant_num + 1,
+		       up_date = #{map.up_date},
+		       up_time = #{map.up_time}
+		 where user_id = #{map.user_id}
+		   and sn = #{map.sn} and pos_type is null
+	</update>
+
+	<!-- 汇总直属商户交易额(传统POS) -->
+	<update id="updateSummaryEposMerchantPerformance" parameterType="java.util.Map">
+		update t_summary_traditional_pos_trans_all
+		   set performance = performance + #{map.performance},
+		       num = num + 1,
+		       merchant_performance = merchant_performance + #{map.performance},
+		       merchant_num = merchant_num + 1,
+		       up_date = #{map.up_date},
+		       up_time = #{map.up_time}
+		 where user_id = #{map.user_id}
+		   and sn = #{map.sn} and pos_type='epos'
+	</update>
+	
+	<!-- 汇总直属会员交易额(传统POS) -->
+	<update id="updateSummaryTraposUserMerchantPerformance" parameterType="java.util.Map">
+		update t_summary_user_traditional_pos_benefit_all
+		   set performance = performance + #{map.performance},
+		       num = num + 1,
+		       merchant_performance = merchant_performance + #{map.performance},
+		       merchant_num = merchant_num + 1,
+		       trade_num = trade_num + #{map.trade_num},
+		       merchant_trade_num = merchant_trade_num + #{map.trade_num},
+		       up_date = #{map.up_date},
+		       up_time = #{map.up_time}
+		 where user_id = #{map.user_id} and pos_type is null
+	</update>
+
+	<!-- 汇总直属会员交易额(传统POS)add byqh202003 -->
+	<update id="updateSummaryEposUserMerchantPerformance" parameterType="java.util.Map">
+		update t_summary_user_traditional_pos_benefit_all
+		   set performance = performance + #{map.performance},
+		       num = num + 1,
+		       merchant_performance = merchant_performance + #{map.performance},
+		       merchant_num = merchant_num + 1,
+		       trade_num = trade_num + #{map.trade_num},
+		       merchant_trade_num = merchant_trade_num + #{map.trade_num},
+		       up_date = #{map.up_date},
+		       up_time = #{map.up_time}
+		 where user_id = #{map.user_id} and pos_type='epos'
+	</update>
+	
+	<!-- 汇总代理商户交易额(传统POS) -->
+	<update id="updateSummaryTraditionalPosAgencyPerformance" parameterType="java.util.Map">
+		update t_summary_traditional_pos_trans_all
+		   set performance = performance + #{map.performance},
+		       num = num + 1,
+		       agency_performance = agency_performance + #{map.performance},
+		       agency_num = agency_num + 1,
+		       up_date = #{map.up_date},
+		       up_time = #{map.up_time}
+		 where user_id = #{map.user_id}
+		   and sn = #{map.sn} and pos_type is null
+	</update>
+
+	<!-- 汇总代理商户交易额(传统POS) -->
+	<update id="updateSummaryEposAgencyPerformance" parameterType="java.util.Map">
+		update t_summary_traditional_pos_trans_all
+		   set performance = performance + #{map.performance},
+		       num = num + 1,
+		       agency_performance = agency_performance + #{map.performance},
+		       agency_num = agency_num + 1,
+		       up_date = #{map.up_date},
+		       up_time = #{map.up_time}
+		 where user_id = #{map.user_id}
+		   and sn = #{map.sn} and pos_type='epos'
+	</update>
+	
+	<!-- 汇总代理会员交易额(传统POS) -->
+	<update id="updateSummaryTraposUserAgencyPerformance" parameterType="java.util.Map">
+		update t_summary_user_traditional_pos_benefit_all
+		   set performance = performance + #{map.performance},
+		       num = num + 1,
+		       agency_performance = agency_performance + #{map.performance},
+		       agency_num = agency_num + 1,
+		       trade_num = trade_num + #{map.trade_num},
+		       agency_trade_num = agency_trade_num + #{map.trade_num},
+		       up_date = #{map.up_date},
+		       up_time = #{map.up_time}
+		 where user_id = #{map.user_id} and pos_type is null
+	</update>
+
+	<!-- 汇总代理会员交易额(传统POS) -->
+	<update id="updateSummaryEposUserAgencyPerformance" parameterType="java.util.Map">
+		update t_summary_user_traditional_pos_benefit_all
+		   set performance = performance + #{map.performance},
+		       num = num + 1,
+		       agency_performance = agency_performance + #{map.performance},
+		       agency_num = agency_num + 1,
+		       trade_num = trade_num + #{map.trade_num},
+		       agency_trade_num = agency_trade_num + #{map.trade_num},
+		       up_date = #{map.up_date},
+		       up_time = #{map.up_time}
+		 where user_id = #{map.user_id} and pos_type='epos'
+	</update>
+	
+	<!-- 移入正式表(传统POS) -->
+	<insert id="backupTraposTransactionRecord" parameterType="java.util.Map">
+		insert into t_data_trapos_transaction_record
+		(
+			affiliation_agent_account,
+		    sn,
+			mer_id,
+			trml_id,
+		    trans_amount,
+		    trans_time,
+		    tran_ref_code,
+			trans_type,
+		    trans_product,
+			card_type,
+			mer_sett_rate,
+			mer_withdraw_fee,
+			mer_cap_fee,
+			agent_cost_rate,
+			agent_cap_cost_fee,
+			sett_status,
+			card_no,
+			process_flag,
+			mer_name,
+			is_authentication,
+			account_id,
+			manager_id,
+			cre_date,
+			cre_time
+		)
+		select
+			affiliation_agent_account,
+		    sn,
+			mer_id,
+			trml_id,
+		    trans_amount,
+		    trans_time,
+		    tran_ref_code,
+			trans_type,
+		    trans_product,
+			card_type,
+			mer_sett_rate,
+			mer_withdraw_fee,
+			mer_cap_fee,
+			agent_cost_rate,
+			agent_cap_cost_fee,
+			sett_status,
+			card_no,
+			process_flag,
+			mer_name,
+			is_authentication,
+			account_id,
+			manager_id,
+			cre_date,
+			cre_time
+		from t_data_trapos_transaction_record_deal
+		where id = #{map.id} 
+	</insert>
+	
+	<!-- 删除待处理表交易数据(传统POS) -->
+	<delete id="deleteTraposTransactionRecordDeal" parameterType="java.util.Map">
+		delete from t_data_trapos_transaction_record_deal where id = #{map.id}
+	</delete>
+	
+	<!-- 查询MPOS机待处理数据 -->
+	<select id="getMposTradeList" resultType="java.util.Map">
+		select 
+				* 
+		  from 
+		 	   t_data_mpos_transaction_record_deal 
+		 where status = '00'
+	</select>
+	
+	<!-- 更新待处理交易数据状态(MPOS) -->
+	<update id="updateMposTransactionRecordDealStatus" parameterType="java.util.Map">
+		update t_data_mpos_transaction_record_deal 
+		   set status = #{map.new_status} 
+		 where tran_ref_code = #{map.tran_ref_code} 
+		   and status = #{map.old_status}
+	</update>
+	
+	<!-- 查询POS系统参数(MPOS) -->
+	<select id="getMposDetailInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		select 
+			  *
+		  from 
+		  	  t_sys_mpos_info
+		 where sn = #{sn}
+	</select>
+	
+	<!-- 查询直属会员分润信息(MPOS) -->
+	<select id="getMposMerchantInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		select
+			t.*,
+			t1.parent_chain,
+			t1.algebra
+		  from 
+		  	t_user_mpos_info t
+		  left join t_user_info t1 on t.user_id = t1.id
+		 where t.sn = #{sn} and t.state_status = '1' and t.del = '0'
+	</select>
+	
+	<!-- 查询代理分润信息(MPOS) -->
+	<select id="getMposAgencyList" parameterType="java.util.Map" resultType="java.util.Map">
+		select
+			t.*,
+			t1.parent_chain,
+			t1.algebra
+		  from 
+		  	t_user_mpos_info t
+		  left join t_user_info t1 on t.user_id = t1.id
+		 where t.sn = #{map.sn} and find_in_set(t.user_id, #{map.parent_chain}) and t.del = '0'
+		 order by t1.algebra desc
+	</select>
+	
+	<!-- 记录MPOS分润记录 -->
+	<insert id="insertUserMposShareBenefitRecord" parameterType="java.util.Map">
+		insert into t_user_mpos_share_benefit_record
+		(
+			order_id,
+			user_id,
+			sn,
+			trans_amount,
+			trans_type,
+			card_type,
+			trans_time,
+			benefit_type,
+			state_type,
+			single_amount,
+			benefit_money,
+			tran_ref_code,
+			card_settle_price,
+			cloud_settle_price,
+			single_profit_rate,
+			credit_card_rate,
+			cloud_flash_rate,
+			cre_date,
+			cre_time
+		)
+		values
+		(
+			#{map.order_id},
+			#{map.user_id},
+			#{map.sn},
+			#{map.trans_amount},
+			#{map.trans_type},
+			#{map.card_type},
+			#{map.trans_time},
+			#{map.benefit_type},
+			#{map.state_type},
+			#{map.single_amount},
+			#{map.benefit_money},
+			#{map.tran_ref_code},
+			#{map.card_settle_price},
+			#{map.cloud_settle_price},
+			#{map.single_profit_rate},
+			#{map.credit_card_rate},
+			#{map.cloud_flash_rate},
+			#{map.cre_date},
+			#{map.cre_time}
+		)
+	</insert>
+	
+	<!-- 交易状态更新 (MPOS)-->
+	<update id="updateMposTradeStatus" parameterType="java.util.Map">
+		update t_user_mpos_info
+		   set trade_status = '1',
+		       trade_date = #{map.up_date},
+		       trade_time = #{map.up_time},
+		       up_date = #{map.up_date},
+		       up_time = #{map.up_time}
+		 where id = #{map.id}
+	</update>
+	
+	<!-- 汇总直属商户交易额(MPOS) -->
+	<update id="updateSummaryMposMerchantPerformance" parameterType="java.util.Map">
+		update t_summary_mpos_trans_all
+		   set performance = performance + #{map.performance},
+		       num = num + 1,
+		       merchant_performance = merchant_performance + #{map.performance},
+		       merchant_num = merchant_num + 1,
+		       up_date = #{map.up_date},
+		       up_time = #{map.up_time}
+		 where user_id = #{map.user_id}
+		   and sn = #{map.sn}
+	</update>
+	
+	<!-- 汇总直属会员交易额(MPOS) -->
+	<update id="updateSummaryMposUserMerchantPerformance" parameterType="java.util.Map">
+		update t_summary_user_mpos_benefit_all
+		   set performance = performance + #{map.performance},
+		       num = num + 1,
+		       merchant_performance = merchant_performance + #{map.performance},
+		       merchant_num = merchant_num + 1,
+		       trade_num = trade_num + #{map.trade_num},
+		       merchant_trade_num = merchant_trade_num + #{map.trade_num},
+		       up_date = #{map.up_date},
+		       up_time = #{map.up_time}
+		 where user_id = #{map.user_id}
+	</update>
+	
+	<!-- 汇总代理商户交易额(MPOS) -->
+	<update id="updateSummaryMposAgencyPerformance" parameterType="java.util.Map">
+		update t_summary_mpos_trans_all
+		   set performance = performance + #{map.performance},
+		       num = num + 1,
+		       agency_performance = agency_performance + #{map.performance},
+		       agency_num = agency_num + 1,
+		       up_date = #{map.up_date},
+		       up_time = #{map.up_time}
+		 where user_id = #{map.user_id}
+		   and sn = #{map.sn}
+	</update>
+	
+	<!-- 汇总代理会员交易额(MPOS) -->
+	<update id="updateSummaryMposUserAgencyPerformance" parameterType="java.util.Map">
+		update t_summary_user_mpos_benefit_all
+		   set performance = performance + #{map.performance},
+		       num = num + 1,
+		       agency_performance = agency_performance + #{map.performance},
+		       agency_num = agency_num + 1,
+		       trade_num = trade_num + #{map.trade_num},
+		       agency_trade_num = agency_trade_num + #{map.trade_num},
+		       up_date = #{map.up_date},
+		       up_time = #{map.up_time}
+		 where user_id = #{map.user_id}
+	</update>
+	
+	<!-- 移入正式表(MPOS) -->
+	<insert id="backupMposTransactionRecord" parameterType="java.util.Map">
+		insert into t_data_mpos_transaction_record
+		(
+			affiliation_agent_account,
+		    sn,
+			mer_id,
+			trml_id,
+		    trans_amount,
+		    trans_time,
+		    tran_ref_code,
+			trans_type,
+		    trans_product,
+			card_type,
+			mer_sett_rate,
+			mer_withdraw_fee,
+			mer_cap_fee,
+			agent_cost_rate,
+			agent_cap_cost_fee,
+			sett_status,
+			card_no,
+			process_flag,
+			mer_name,
+			is_authentication,
+			account_id,
+			manager_id,
+			cre_date,
+			cre_time
+		)
+		select
+			affiliation_agent_account,
+		    sn,
+			mer_id,
+			trml_id,
+		    trans_amount,
+		    trans_time,
+		    tran_ref_code,
+			trans_type,
+		    trans_product,
+			card_type,
+			mer_sett_rate,
+			mer_withdraw_fee,
+			mer_cap_fee,
+			agent_cost_rate,
+			agent_cap_cost_fee,
+			sett_status,
+			card_no,
+			process_flag,
+			mer_name,
+			is_authentication,
+			account_id,
+			manager_id,
+			cre_date,
+			cre_time
+		from t_data_mpos_transaction_record_deal
+		where id = #{map.id} 
+	</insert>
+	
+	<!-- 删除待处理表交易数据(MPOS) -->
+	<delete id="deleteMposTransactionRecordDeal" parameterType="java.util.Map">
+		delete from t_data_mpos_transaction_record_deal where id = #{map.id}
+	</delete>
+	
+	<!-- 查询传统POS机待处理返现 -->
+	<select id="getTraposMachineBackList" resultType="java.util.Map">
+		select 
+				t.* 
+		  from 
+		 	   t_data_trapos_machine_cashback_record_deal t
+		  left join sys_user_account t1 on t.account_id = t1.id
+		 where t.status = '00'
+		   and t1.is_start = '0'
+	</select>
+	
+	<!-- 更新待处理返现数据状态(传统POS) -->
+	<update id="updateTraposMachineBackDealStatus" parameterType="java.util.Map">
+		update t_data_trapos_machine_cashback_record_deal 
+		   set status = #{map.new_status} 
+		 where sn = #{map.sn} 
+		   and status = #{map.old_status}
+	</update>
+	
+	<!-- 更新返现状态（传统POS） -->
+	<update id="updateTraposCashBackStatus" parameterType="java.util.Map">
+		update t_sys_traditional_pos_info
+		   set cash_back_status = '1',
+		   	   real_cash_back_money = #{map.cash_back_money}
+		 where sn = #{map.sn}
+		   and cash_back_status = '0'
+	</update>
+	
+	<!-- 记录传统POS返现记录 -->
+	<insert id="insertUserTraposMachineBackRecord" parameterType="java.util.Map">
+		insert into t_user_trapos_machine_back_record
+		(
+			order_id,
+			user_id,
+			sn,
+			frozen_time,
+			money,
+			tran_ref_code,
+			return_amt,
+			cash_back_rate,
+			cre_date,
+			cre_time,
+			pos_type
+		)
+		values
+		(
+			#{map.order_id},
+			#{map.user_id},
+			#{map.sn},
+			#{map.frozen_time},
+			#{map.money},
+			#{map.tran_ref_code},
+			#{map.return_amt},
+			#{map.cash_back_rate},
+			#{map.cre_date},
+			#{map.cre_time},
+			#{map.pos_type}
+		)
+	</insert>
+	
+	<!-- 移入返现至正式表(传统POS) -->
+	<insert id="backupTraposMachineBackRecord" parameterType="java.util.Map">
+		insert into t_data_trapos_machine_cashback_record
+		(
+			sn,
+		    mer_id,
+			frozen_time,
+			return_amt,
+		    policy_name,
+		    policy_code,
+		    is_first_activate,
+			tran_ref_code,
+		    account_id,
+			manager_id,
+			cre_date,
+			cre_time
+		)
+		select
+			sn,
+		    mer_id,
+			frozen_time,
+			return_amt,
+		    policy_name,
+		    policy_code,
+		    is_first_activate,
+			tran_ref_code,
+		    account_id,
+			manager_id,
+			cre_date,
+			cre_time
+		from t_data_trapos_machine_cashback_record_deal
+		where id = #{map.id} 
+	</insert>
+	
+	<!-- 删除待处理表返现记录（传统POS） -->
+	<delete id="deleteTraposMachineBackRecordDeal" parameterType="java.util.Map">
+		delete from t_data_trapos_machine_cashback_record_deal where id = #{map.id}
+	</delete>
+	
+	<!-- 查询MPOS机待处理返现 -->
+	<select id="getMposMachineBackList" resultType="java.util.Map">
+		select 
+				t.* 
+		  from 
+		 	   t_data_mpos_machine_cashback_record_deal t
+		  left join sys_user_account t1 on t.account_id = t1.id
+		 where t.status = '00'
+		   and t1.is_start = '0'
+	</select>
+	
+	<!-- 更新待处理返现数据状态(MPOS) -->
+	<update id="updateMposMachineBackDealStatus" parameterType="java.util.Map">
+		update t_data_mpos_machine_cashback_record_deal 
+		   set status = #{map.new_status} 
+		 where sn = #{map.sn} 
+		   and status = #{map.old_status}
+	</update>
+	
+	<!-- 更新返现状态（MPOS） -->
+	<update id="updateMposCashBackStatus" parameterType="java.util.Map">
+		update t_sys_mpos_info
+		   set cash_back_status = '1',
+		   	   real_cash_back_money = #{map.cash_back_money}
+		 where sn = #{map.sn}
+		   and cash_back_status = '0'
+	</update>
+	
+	<!-- 记录MPOS返现记录 -->
+	<insert id="insertUserMposMachineBackRecord" parameterType="java.util.Map">
+		insert into t_user_mpos_machine_back_record
+		(
+			order_id,
+			user_id,
+			sn,
+			frozen_time,
+			money,
+			tran_ref_code,
+			return_amt,
+			cash_back_rate,
+			cre_date,
+			cre_time
+		)
+		values
+		(
+			#{map.order_id},
+			#{map.user_id},
+			#{map.sn},
+			#{map.frozen_time},
+			#{map.money},
+			#{map.tran_ref_code},
+			#{map.return_amt},
+			#{map.cash_back_rate},
+			#{map.cre_date},
+			#{map.cre_time}
+		)
+	</insert>
+	
+	<!-- 移入返现至正式表(MPOS) -->
+	<insert id="backupMposMachineBackRecord" parameterType="java.util.Map">
+		insert into t_data_mpos_machine_cashback_record
+		(
+			sn,
+		    mer_id,
+			frozen_time,
+			return_amt,
+		    policy_name,
+		    policy_code,
+		    is_first_activate,
+			tran_ref_code,
+		    account_id,
+			manager_id,
+			cre_date,
+			cre_time
+		)
+		select
+			sn,
+		    mer_id,
+			frozen_time,
+			return_amt,
+		    policy_name,
+		    policy_code,
+		    is_first_activate,
+			tran_ref_code,
+		    account_id,
+			manager_id,
+			cre_date,
+			cre_time
+		from t_data_mpos_machine_cashback_record_deal
+		where id = #{map.id} 
+	</insert>
+	
+	<!-- 删除待处理表返现记录（MPOS） -->
+	<delete id="deleteMposMachineBackRecordDeal" parameterType="java.util.Map">
+		delete from t_data_mpos_machine_cashback_record_deal where id = #{map.id}
+	</delete>
+	
+	<!-- 更新商户名称(传统POS) -->
+	<update id="updateTraposMerName" parameterType="java.util.Map">
+		update t_sys_traditional_pos_info 
+		   set mer_name = #{map.mer_name},
+		   	   mer_id = #{map.mer_id}
+		 where sn = #{map.sn}
+	</update>
+	
+</mapper>

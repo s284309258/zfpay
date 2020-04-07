@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.longecological.mapper.system.SysNoticeMapper">
+
+	
+	<!-- 查询系统最新公告 -->
+	<select id="getNewNotice" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			cast(t.id as char) as notice_id,
+			t.notice_title,
+			cast((select count(*) from t_user_read_notice_info where user_id = #{map.sys_user_id} and notice_id = t.id) as char) as is_read,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date
+		FROM
+			t_sys_notice_info t
+		where t.status=0
+		order by t.id desc
+		limit 0,2
+	</select>
+	
+	
+	<!-- 查询系统公告列表 -->
+	<select id="getNoticeList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			cast(t.id as char) as notice_id,
+			t.notice_title,
+			cast((select count(*) from t_user_read_notice_info where user_id = #{map.sys_user_id} and notice_id = t.id) as char) as is_read,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date
+		FROM
+			t_sys_notice_info t
+		where t.status=0
+		order by t.id desc
+		LIMIT #{map.start},#{map.end}
+	</select>
+	
+	<!-- 查询系统公告详情 -->
+	<select id="getNoticeDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(t.id as char) as notice_id,
+			t.notice_title,
+			t.notice_content,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date
+		FROM
+			t_sys_notice_info t
+		where t.id=#{map.notice_id}
+	</select>
+	
+	<!-- 新增读取记录 -->
+	<insert id="addUserNoticeReadInfo" parameterType="java.util.Map">
+		insert into t_user_read_notice_info(user_id, notice_id, cre_date, cre_time) values(#{map.sys_user_id}, #{map.notice_id}, #{map.cre_date}, #{map.cre_time})
+	</insert>
+
+	<!--add byqh 201912-->
+	<update id="updateNewsReadFlagBatch">
+		update t_news_read_state set read_flag=#{read_flag} where user_id in
+		<foreach collection="list" item="item" separator="," open="(" close=")" index="index">
+			#{item.user_id}
+		</foreach>
+		and news_type=#{news_type}
+	</update>
+	
+</mapper>

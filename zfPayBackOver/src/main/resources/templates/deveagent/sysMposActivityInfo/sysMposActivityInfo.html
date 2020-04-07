@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('线上活动(MPOS)列表')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+<body class="gray-bg">
+	
+	<!-- 系统参数列表 -->
+	<div class="container-div ui-layout-center">
+		<div class="row">
+			
+			<!-- 最上面的搜索框 -->
+			<div class="col-sm-12 search-collapse">
+				<form id="user-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								订单号：<input type="text" name="order_id" id="order_id" />
+							</li>
+							<li>
+								活动类型：
+								<select name="activity_type" id="activity_type" th:with="type=${@dict.getType('sys_activity_info_activity_type')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								活动状态：
+								<select name="status" id="status" th:with="type=${@dict.getType('sys_activity_info_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								删除状态：
+								<select name="del" id="del" th:with="type=${@dict.getType('sys_all_table_del')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li class="select-time">
+								<label>活动时间： </label>
+								<input type="text" class="time-input" id="activityBeginTime" placeholder="开始时间" name="activityBeginTime"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="activityEndTime" placeholder="结束时间" name="activityEndTime"/>
+							</li>
+							<li class="select-time">
+								<label>创建时间： </label>
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="beginTime"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+			
+			<!-- 上面的各项增删改查导入导出操作 -->
+	        <div class="btn-group-sm" id="toolbar" role="group">
+	        	<!-- 操作封装：添加信息 全屏 -->
+		        <a class="btn btn-success" onclick="$.operate.addTab()" shiro:hasPermission="deveagent:sysMposActivityInfo:add">
+		            <i class="fa fa-plus"></i> 新增
+		        </a>
+		        <!-- 操作封装：批量删除信息 -->
+		        <a class="btn btn-danger" onclick="batchRemove()" shiro:hasPermission="deveagent:sysMposActivityInfo:remove">
+		            <i class="fa fa-remove"></i> 删除
+		        </a>
+		        <!-- 操作封装：批量发布线上活动 -->
+		        <a class="btn btn-success" onclick="batchSysRelease()" shiro:hasPermission="deveagent:sysMposActivityInfo:sysRelease">
+		            <i class="fa fa-remove"></i> 批量发布活动
+		        </a>
+		        <!-- 操作封装：批量取消线上活动 -->
+		        <a class="btn btn-primary" onclick="batchSysNoRelease()" shiro:hasPermission="deveagent:sysMposActivityInfo:sysRelease">
+		            <i class="fa fa-remove"></i> 批量取消活动
+		        </a>
+		        <!-- 表格：导出数据 -->
+	            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="deveagent:sysMposActivityInfo:export">
+		            <i class="fa fa-download"></i> 导出
+		        </a>
+	        </div>
+
+	        
+	        <!-- bootstrap表格数据部分 -->
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+			
+		</div>
+	</div>
+	
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		//编辑
+		var editFlag = [[${@permission.hasPermi('deveagent:sysMposActivityInfo:edit')}]];
+		//删除
+		var removeFlag = [[${@permission.hasPermi('deveagent:sysMposActivityInfo:remove')}]];
+		//详情
+		var detailFlag = [[${@permission.hasPermi('deveagent:sysMposActivityInfo:detail')}]];
+		//发布和取消
+		var sysReleaseFlag = [[${@permission.hasPermi('deveagent:sysMposActivityInfo:sysRelease')}]];
+		//设置奖励类型
+		var addRewardFlag = [[${@permission.hasPermi('deveagent:sysMposActivityRewardInfo:add')}]];	
+	
+		var datas_activity_type = [[${@dict.getType('sys_activity_info_activity_type')}]];
+		var datas_status = [[${@dict.getType('sys_activity_info_status')}]];
+		var datas_open_status = [[${@dict.getType('sys_activity_info_open_status')}]];
+		var datas_del = [[${@dict.getType('sys_all_table_del')}]];
+	
+		//前缀路径
+		var prefix = "/deveagent/sysMposActivityInfo";
+		
+		//初始化方法
+		$(function() {
+			//初始化时间范围
+			intiTime();
+		   	//查询线上活动(MPOS)列表
+		    queryAgentSysMposActivityInfoList();
+		});
+		
+		//查询线上活动(MPOS)列表
+		function queryAgentSysMposActivityInfoList() {
+		    var options = {
+		        url: prefix + "/list",//URL列表路径
+		        createUrl: prefix + "/add",//新增路径
+                updateUrl: prefix + "/edit/{id}",//编辑路径
+                detailUrl: prefix + "/detail/{id}",//详情路径
+                removeUrl: prefix + "/remove",//删除路径
+                exportUrl: prefix + "/export",//导出路径
+		        modalName: "线上活动(MPOS)",//模块名称：用户
+		        showExport: true,
+		        sortName: 'id',
+	          	sortOrder: 'desc',
+		        //列信息
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+					field : 'id', 
+					title : '编号',
+					sortable: true
+				},
+				{
+					title: '&#12288;&#12288;&#12288;操作&#12288;&#12288;&#12288;',
+		            align: 'center',
+		            formatter: function(value, row, index) {
+		            	//事件数组
+		                var actions = [];
+		            	//待发布且未删除
+		            	if(row.status=='00' && row.del=='0'){
+		            		//编辑按钮：修改信息 全屏
+			            	actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="#" onclick="$.operate.editTab(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+			            	//删除按钮：删除信息
+			            	actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="#" onclick="remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a> ');
+		            	}
+		            	//待发布且未删除且未结束
+		            	if(row.status=='00' && row.del=='0' && row.open_status!='2'){
+		            		//发布活动
+			            	actions.push('<a class="btn btn-primary btn-xs ' + sysReleaseFlag + '" href="#" onclick="sysRelease(\'' + row.id + '\')"><i class="fa fa-plus"></i>发布活动</a><br> ');
+		            	}
+		            	//待发布且未删除且未结束
+		            	if(row.status=='09' && row.del=='0'){
+		            		//取消活动
+			            	actions.push('<a class="btn btn-warning btn-xs ' + sysReleaseFlag + '" href="#" onclick="sysNoRelease(\'' + row.id + '\')"><i class="fa fa-plus"></i>取消活动</a><br> ');
+		            	}
+		            	if(row.open_status!='2'){
+		              		//设置活动奖励类型信息
+			              	actions.push('<a class="btn btn-info btn-xs ' + addRewardFlag + '" href="javascript:void(0)" onclick="addReward(\'' + row.id + '\')"><i class="fa fa-user"></i>设置奖励类型</a> ');
+		              	}
+		            	//查看帕点用户
+		              	actions.push('<a class="btn btn-danger btn-xs ' + addRewardFlag + '" href="javascript:void(0)" onclick="listReward(\'' + row.id + '\')"><i class="fa fa-user"></i>查看奖励类型</a> ');
+		              	return actions.join('');
+		            }
+		        },
+		        {
+					field : 'manager_id', 
+					title : '代理编号'
+				},
+				{
+					field : 'order_id', 
+					title : '订单号'
+				},
+				{
+					field : 'activity_name', 
+					title : '活动名称'
+				},
+				{
+					field : 'activity_type', 
+					title : '活动类型',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_activity_type, value);
+		            }
+				},
+				{
+					field : 'start_date', 
+					title : '开始日期'
+				},
+				{
+					field : 'end_date', 
+					title : '结束日期'
+				},
+				{
+					field : 'cover_url', 
+					title: '活动封面图',
+		            formatter: function(value, row, index) {
+						return $.table.imageView(qiniu_domain+value);
+					}
+				},
+				{
+					field : 'status', 
+					title : '活动状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_status, value);
+		            }
+				},
+				/* {
+					field : 'open_status', 
+					title : '进行状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_open_status, value);
+		            }
+				}, */
+				{
+					field : 'del', 
+					title : '删除状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_del, value);
+		            }
+				},
+				{
+					field : 'remark', 
+					title : '操作备注',
+					align: 'center',
+				  	formatter: function(value, row, index) {
+				      	return $.table.tooltip(value);
+				  	}
+				},
+				{
+					field : 'cre_date', 
+					title : '创建时间',
+					sortable: true
+				},
+				{
+					field : 'up_date', 
+					title : '更新时间',
+					sortable: true
+				},
+				{
+					field : 'update_by', 
+					title : '更新人'
+				}]
+		    };
+		    //表格初始化
+		    $.table.init(options);
+		}
+
+		
+		//删除线上活动（MPOS）
+		function remove(activity_id){
+			var url = prefix + '/del/' + activity_id;
+		    $.modal.open("删除线上活动(MPOS)", url);
+		}
+		
+		
+		//批量删除线上活动（MPOS）
+		function batchRemove(){
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+    		if (rows.length == 0) {
+    			$.modal.alertWarning("请至少选择一条记录");
+    			return;
+    		}
+    		for(var i=0;i<rows.length;i++){
+    			if(rows[i].status!='00' || rows[i].del!='0'){
+    				$.modal.alertWarning("只能删除未删除且待发布的活动");
+        			return;
+    			}
+    		}
+    		$.modal.confirm("确认要删除选中的" + rows.length + "数据吗?", function() {
+    			var activity_ids = "";
+    			// 遍历所有选择的行数据，取每条数据对应的ID
+    			$.each(rows, function(i, row) {
+    				if(i<rows.length-1){
+    					activity_ids=activity_ids+row['id']+",";
+    				}else{
+    					activity_ids=activity_ids+row['id'];
+    				}
+    			});
+    			var url = prefix + '/del/' + activity_ids;
+    			$.modal.open("批量删除线上活动(MPOS)", url, '800', '450');
+    		});
+		}
+		
+		
+		//发布线上活动（MPOS）
+		function sysRelease(activity_id){
+			var url = prefix + '/sysRelease/' + activity_id+"?operParam=09";
+		    $.modal.open("发布线上活动(MPOS)", url);
+		}
+		
+		
+		//取消线上活动（MPOS）
+		function sysNoRelease(activity_id){
+			var url = prefix + '/sysRelease/' + activity_id+"?operParam=00";
+		    $.modal.open("取消线上活动(MPOS)", url);
+		}
+		
+		
+		//批量发布线上活动（MPOS）
+		function batchSysRelease(){
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+    		if (rows.length == 0) {
+    			$.modal.alertWarning("请至少选择一条记录");
+    			return;
+    		}
+    		for(var i=0;i<rows.length;i++){
+    			if(rows[i].status!='00' || rows[i].del!='0' || rows[i].open_status=='2'){
+    				$.modal.alertWarning("只能发布未删除未结束且未发布的活动");
+        			return;
+    			}
+    		}
+    		$.modal.confirm("确认要选中这" + rows.length + "条数据吗?", function() {
+    			var activity_ids = "";
+    			// 遍历所有选择的行数据，取每条数据对应的ID
+    			$.each(rows, function(i, row) {
+    				if(i<rows.length-1){
+    					activity_ids=activity_ids+row['id']+",";
+    				}else{
+    					activity_ids=activity_ids+row['id'];
+    				}
+    			});
+    			var url = prefix + '/sysRelease/' + activity_ids+"?operParam=09";
+    			$.modal.open("批量发布线上活动(MPOS)", url, '800', '450');
+    		});
+		}
+		
+		
+		//批量取消线上活动（MPOS）
+		function batchSysNoRelease(){
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+    		if (rows.length == 0) {
+    			$.modal.alertWarning("请至少选择一条记录");
+    			return;
+    		}
+    		for(var i=0;i<rows.length;i++){
+    			if(rows[i].status!='09' || rows[i].del!='0'){
+    				$.modal.alertWarning("只能取消未删除且已发布的活动");
+        			return;
+    			}
+    		}
+    		$.modal.confirm("确认要选中这" + rows.length + "条数据吗?", function() {
+    			var activity_ids = "";
+    			// 遍历所有选择的行数据，取每条数据对应的ID
+    			$.each(rows, function(i, row) {
+    				if(i<rows.length-1){
+    					activity_ids=activity_ids+row['id']+",";
+    				}else{
+    					activity_ids=activity_ids+row['id'];
+    				}
+    			});
+    			var url = prefix + '/sysRelease/' + activity_ids+"?operParam=00";
+    			$.modal.open("批量取消线上活动(MPOS)", url, '800', '450');
+    		});
+		}
+		
+		
+		//设置奖励类型
+		function addReward(id) {
+		    var url = '/deveagent/sysMposActivityRewardInfo/addReward/' + id;
+		    $.modal.open("设置奖励类型", url);
+		}
+		
+		
+		//查看奖励类型
+		function listReward(id) {
+		    var url = '/deveagent/sysMposActivityInfo/listReward/' + id;
+		    $.modal.openTab("查看奖励类型", url);
+		}
+		
+	</script>
+</body>
+</html>

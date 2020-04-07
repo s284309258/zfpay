@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.activitympos.mapper.AgentUserMposActivityApplyInfoMapper">
+
+	<!-- 查询已经审核通过的活动申请数量 -->
+	<select id="getAgentUserMposActivityApplyNum" parameterType="java.lang.String" resultType="java.lang.Integer" >
+		select count(*) from t_user_mpos_activity_apply_info where activity_id=#{activity_id} and status='09'
+	</select>
+	
+	
+	<!-- 查询用户线上活动(MPOS)申请记录列表 -->
+	<select id="getAgentUserMposActivityApplyInfoList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			t.id,
+			t.order_id,
+			t.user_id,
+			t.activity_id,
+			t.activity_reward_id,
+			t.sn_list,
+			t.status,
+			t.remark,
+			t.update_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t1.pos_num,
+			t1.reward_money,
+			t1.expenditure,
+			t2.order_id AS activity_order_id,
+			t2.activity_name,
+			t3.manager_id,
+			t3.user_tel,
+			t3.real_name
+		FROM
+			t_user_mpos_activity_apply_info t
+		LEFT JOIN t_sys_mpos_activity_reward_info t1 ON t.activity_reward_id = t1.id
+		LEFT JOIN t_sys_mpos_activity_info t2 ON t.activity_id = t2.id
+		LEFT JOIN t_user_info t3 ON t.user_id = t3.id
+		<where>
+			t3.manager_id = #{map.manager_id} AND t2.manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.order_id != null and map.order_id != ''">
+				AND t.order_id = #{map.order_id}
+			</if>
+			<if test="map.activity_reward_id != null and map.activity_reward_id != ''">
+				AND t.activity_reward_id = #{map.activity_reward_id}
+			</if>
+			<if test="map.status != null and map.status != ''">
+				AND t.status = #{map.status}
+			</if>
+			<if test="map.activity_order_id != null and map.activity_order_id != ''">
+				AND t2.order_id = #{map.activity_order_id}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t3.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t3.real_name = #{map.real_name}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 导出用户线上活动(MPOS)申请记录列表-->
+	<select id="selectAgentUserMposActivityApplyInfoList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.activitympos.domain.AgentUserMposActivityApplyInfo" >
+		SELECT
+			t.id,
+			t.order_id,
+			t.user_id,
+			t.activity_id,
+			t.activity_reward_id,
+			t.sn_list,
+			t.status,
+			t.remark,
+			t.update_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t1.pos_num,
+			t1.reward_money,
+			t1.expenditure,
+			t2.order_id AS activity_order_id,
+			t2.activity_name,
+			t3.manager_id,
+			t3.user_tel,
+			t3.real_name
+		FROM
+			t_user_mpos_activity_apply_info t
+		LEFT JOIN t_sys_mpos_activity_reward_info t1 ON t.activity_reward_id = t1.id
+		LEFT JOIN t_sys_mpos_activity_info t2 ON t.activity_id = t2.id
+		LEFT JOIN t_user_info t3 ON t.user_id = t3.id
+		<where>
+			t3.manager_id = #{map.manager_id} AND t2.manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.order_id != null and map.order_id != ''">
+				AND t.order_id = #{map.order_id}
+			</if>
+			<if test="map.activity_reward_id != null and map.activity_reward_id != ''">
+				AND t.activity_reward_id = #{map.activity_reward_id}
+			</if>
+			<if test="map.status != null and map.status != ''">
+				AND t.status = #{map.status}
+			</if>
+			<if test="map.activity_order_id != null and map.activity_order_id != ''">
+				AND t2.order_id = #{map.activity_order_id}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t3.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t3.real_name = #{map.real_name}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 查询用户线上活动(MPOS)申请记录详情 -->
+	<select id="getAgentUserMposActivityApplyInfoDetailById" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT
+			t.id,
+			t.order_id,
+			t.user_id,
+			t.activity_id,
+			t.activity_reward_id,
+			t.sn_list,
+			t.status,
+			t.remark,
+			t.update_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t1.order_id AS activity_order_id,
+			t1.activity_name,
+			t1.activity_type,
+			t1.start_date,
+			t1.end_date,
+			t1.cover_url,
+			t1.detail_url,
+			t1.status AS activity_status,
+			t1.del AS activity_del,
+			t2.pos_num,
+			t2.reward_money,
+			t2.expenditure,
+			t2.del AS activity_reward_del,
+			t3.user_tel,
+			t3.manager_id,
+			t3.id_card,
+			t3.card_photo,
+			t3.real_name,
+			t3.money,
+			t3.settle_money,
+			t3.deduct_money,
+			t3.today_benefit,
+			t3.total_benefit,
+			t3.settle_single_feet_money,
+			t3.single_rate_feet_money,
+			t3.head_photo,
+			t3.status AS user_status,
+			t3.auth_status,
+			t3.auth_remark,
+			t3.referer_num,
+			t3.under_num,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t3.cre_date, t3.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS reg_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(
+						t3.last_login_date,
+						t3.last_login_time
+					),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS last_login_date
+		FROM
+			t_user_mpos_activity_apply_info t
+		LEFT JOIN t_sys_mpos_activity_info t1 ON t.activity_id = t1.id
+		LEFT JOIN t_sys_mpos_activity_reward_info t2 ON t.activity_reward_id = t2.id
+		LEFT JOIN t_user_info t3 ON t.user_id = t3.id
+		where t.id=#{apply_id}
+	</select>
+	
+	
+	<!-- 更新审核状态 -->
+	<update id="updateAgentUserMposActivityApplyInfoStatus" parameterType="java.util.Map" >
+		update 
+			t_user_mpos_activity_apply_info t
+			LEFT JOIN t_sys_mpos_activity_info t1 ON t.activity_id=t1.id
+		SET t.status=#{map.new_status},
+			t.up_date=#{map.up_date},t.up_time=#{map.up_time},t.remark=#{map.remark},t.update_by=#{map.update_by} 
+		where 
+			t.id=#{map.apply_id} and t.status=#{map.old_status} 
+			and t1.manager_id=#{map.manager_id}
+	</update>
+	
+	
+	<!-- 查询申请表对象信息 -->
+	<select id="getAgentUserMposActivityApplyInfoMapById" parameterType="java.lang.String" resultType="java.util.Map" >
+		select * from t_user_mpos_activity_apply_info where id=#{apply_id}
+	</select>
+	
+</mapper>

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.activitytrapos.mapper.AgentSysEposActivityRewardInfoMapper">
+
+	<!-- 查询线上活动(传统POS)奖励类型列表 -->
+	<select id="getAgentSysTraposActivityRewardInfoList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			t.id,
+			t.activity_id,
+			t.pos_num,
+			t.reward_money,
+			t.expenditure,
+			t.del,
+			t.remark,
+			t.create_by,
+			t.update_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t1.manager_id,
+			t1.order_id,
+			t1.activity_name,
+			t1.activity_type,
+			t1.start_date,
+			t1.end_date,
+			t1.status,
+			t1.del AS activity_del
+		FROM
+			t_sys_trapos_activity_reward_info t
+		LEFT JOIN t_sys_trapos_activity_info t1 ON t.activity_id = t1.id
+		<where>
+			t1.manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{id}
+			</if>
+			<if test="map.activity_id != null and map.activity_id != ''">
+				AND t.activity_id = #{map.activity_id}
+			</if>
+			<if test="map.del != null and map.del != ''">
+				AND t.del = #{map.del}
+			</if>
+			<if test="map.order_id != null and map.order_id != ''">
+				AND t1.order_id = #{map.order_id}
+			</if>
+			<if test="map.activity_type != null and map.activity_type != ''">
+				AND t1.activity_type = #{map.activity_type}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 导出线上活动(传统POS)奖励类型列表 -->
+	<select id="selectAgentSysTraposActivityRewardInfoList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.activitytrapos.domain.AgentSysTraposActivityRewardInfo" >
+		SELECT
+			t.id,
+			t.activity_id,
+			t.pos_num,
+			t.reward_money,
+			t.expenditure,
+			t.del,
+			t.remark,
+			t.create_by,
+			t.update_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t1.manager_id,
+			t1.order_id,
+			t1.activity_name,
+			t1.activity_type,
+			t1.start_date,
+			t1.end_date
+		FROM
+			t_sys_trapos_activity_reward_info t
+		LEFT JOIN t_sys_trapos_activity_info t1 ON t.activity_id = t1.id
+		<where>
+			t1.manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{id}
+			</if>
+			<if test="map.activity_id != null and map.activity_id != ''">
+				AND t.activity_id = #{map.activity_id}
+			</if>
+			<if test="map.del != null and map.del != ''">
+				AND t.del = #{map.del}
+			</if>
+			<if test="map.order_id != null and map.order_id != ''">
+				AND t1.order_id = #{map.order_id}
+			</if>
+			<if test="map.activity_type != null and map.activity_type != ''">
+				AND t1.activity_type = #{map.activity_type}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 根据id查看线上活动(传统POS)奖励类型详情 -->
+	<select id="getAgentSysTraposActivityRewardInfoById" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT
+			*
+		FROM
+			t_sys_trapos_activity_reward_info 
+		where id=#{reward_id}
+	</select>
+	
+	
+	<!-- 新增保存线上活动（传统POS）奖励类型 -->
+	<insert id="addAgentSysTraposActivityRewardInfo" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="map.id" >
+		insert into t_sys_trapos_activity_reward_info 
+			(activity_id,pos_num,reward_money,expenditure,
+			 cre_date,cre_time,create_by,remark)
+			values 
+			(#{map.activity_id},#{map.pos_num},#{map.reward_money},#{map.expenditure},
+			#{map.cre_date},#{map.cre_time},#{map.create_by},#{map.remark})
+	</insert>
+	
+	
+	<!-- 更新线上活动（传统POS）奖励信息 -->
+	<update id="updateAgentSysTraposActivityRewardInfo" parameterType="java.util.Map" >
+		update 
+			t_sys_trapos_activity_reward_info t
+			LEFT JOIN t_sys_trapos_activity_info t1 ON t.activity_id=t1.id
+		SET t.pos_num=#{map.pos_num},t.reward_money=#{map.reward_money},t.expenditure=#{map.expenditure},
+			t.up_date=#{map.up_date},t.up_time=#{map.up_time},t.remark=#{map.remark},t.update_by=#{map.update_by} 
+		where 
+			t.id=#{map.reward_id} and t.del=#{map.old_del} 
+			and t1.status=#{map.old_status} and t1.del=#{map.old_activity_del} 
+			and t1.manager_id=#{map.maneger_id}
+	</update>
+	
+	
+	<!-- 更新删除状态 -->
+	<update id="updateAgentSysTraposActivityRewardInfoDel" parameterType="java.util.Map" >
+		update 
+			t_sys_trapos_activity_reward_info t
+			LEFT JOIN t_sys_trapos_activity_info t1 ON t.activity_id=t1.id
+		SET t.del=#{map.new_del},
+			t.up_date=#{map.up_date},t.up_time=#{map.up_time},t.remark=#{map.remark},t.update_by=#{map.update_by} 
+		where 
+			t.id=#{map.reward_id} and t.del=#{map.old_del} 
+			and t1.status=#{map.old_status} 
+			and t1.manager_id=#{map.manager_id}
+	</update>
+	
+	
+</mapper>

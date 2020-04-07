@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.longecological.mapper.mpos.MposMapper">
+
+
+	<!-- 查询MPOS列表 -->
+	<select id="getMposList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			cast(t.id as char) as mpos_id,
+			t1.sn,
+			t1.name,
+			t1.tel
+		FROM
+			t_user_mpos_info t
+		LEFT JOIN t_sys_mpos_info t1 on t.sn = t1.sn
+		where t.user_id = #{map.sys_user_id} and t.state_status = '1'
+		<if test="map.key_word != null and map.key_word != ''" >
+        	AND t1.sn like concat('%',#{map.key_word},'%')
+      	</if>
+      	<if test="map.last_id != null and map.last_id != ''" >
+        	AND t.id &lt; #{map.last_id}
+      	</if>
+		order by t.id desc 
+		limit 0,10
+	</select>
+	
+	<!-- 查询用户MPOS信息 -->
+	<select id="getUserMpos" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			t.sn,
+			t.state_status,
+			t1.name,
+			t1.tel
+		FROM
+			t_user_mpos_info t
+		LEFT JOIN t_sys_mpos_info t1 on t.sn = t1.sn
+	   WHERE t.user_id = #{map.sys_user_id} and t.sn = #{map.sn}
+	</select>
+	
+	<!-- 修改商户信息 -->
+	<update id="editMposMerInfo" parameterType="java.util.Map">
+		update t_sys_mpos_info set name = #{map.name}, tel = #{map.tel} where sn = #{map.sn}
+	</update>
+
+	<!-- 查询代理商的结算价格等信息 byqh-->
+	<select id="getUserMposInfoAll" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from t_user_mpos_info where user_id=#{map.sys_user_id} and sn=#{map.sn}
+	</select>
+
+	<!--查询SN直属用户信息 add byqh 201912-->
+	<select id="getUserMposBelongBySN" parameterType="java.lang.String" resultType="java.util.Map">
+		select * from t_user_mpos_info where sn in
+		<foreach collection="sn_list.split(',')" index="index" item="item" separator="," open="(" close=")">
+			#{item}
+		</foreach>
+		and state_status='1'
+	</select>
+	
+</mapper>

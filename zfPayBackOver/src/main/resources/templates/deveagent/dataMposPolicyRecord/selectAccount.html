@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('更新MPOS账号政策')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+<body class="gray-bg">
+	
+	<!-- 系统参数列表 -->
+	<div class="container-div ui-layout-center">
+		<div class="row">
+			
+			<!-- 最上面的搜索框 -->
+			<div class="col-sm-12 search-collapse">
+				<form id="user-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								<input type="hidden" name="is_start" id="is_start" value="0" >
+								appId：<input type="text" name="app_id" id="app_id" />
+							</li>
+							<li>
+								appKey：<input type="text" name="app_key" id="app_key" />
+							</li>
+							<li class="select-time">
+								<label>创建时间： </label>
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="beginTime"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+			
+			<!-- 上面的各项增删改查导入导出操作 -->
+	        <div class="btn-group-sm" id="toolbar" role="group">
+				<!-- 操作封装：修改信息，以tab页展现 -->
+	            <a class="btn btn-danger single disabled" onclick="selectAccount()" shiro:hasPermission="deveagent:userTrafficCardInfo:add">
+		            <i class="fa fa-plus"></i> 选择代理账号更新账号政策
+		        </a>
+	        </div>
+
+	        <!-- bootstrap表格数据部分 -->
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+			
+		</div>
+	</div>
+	
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+	var datas_is_start = [[${@dict.getType('sys_user_account_is_start')}]];
+	
+	//前缀路径
+	var prefix = "/deveagent/userAccount";
+	
+	//初始化方法
+	$(function() {
+		//初始化时间范围
+		intiTime();
+	   	//查询中付账号列表
+	    queryAgentUserAccountList();
+	});
+	
+	//查询中付账号列表
+	function queryAgentUserAccountList() {
+	    var options = {
+		        url: prefix + "/list",//URL列表路径
+		        modalName: "中付账号信息",//模块名称：用户
+		        showExport: true,
+		        sortName: 'id',
+	          	sortOrder: 'desc',
+		        //列信息
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+					field : 'id', 
+					title : '编号',
+					sortable: true,
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detail(\'' + row.id + '\')">' + value + '</a>';
+		            }
+				},
+		        {
+					field : 'manager_id', 
+					title : '代理编号'
+				},
+				{
+					field : 'app_id', 
+					title : 'appId'
+				},
+				{
+					field : 'app_key', 
+					title : 'appKey'
+				},
+				{
+					field : 'app_name', 
+					title : '名称'
+				},
+				{
+					field : 'is_start', 
+					title : '状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_is_start, value);
+		            }
+				},
+				{
+					field : 'remark', 
+					title : '操作备注',
+					align: 'center',
+				  	formatter: function(value, row, index) {
+				      	return $.table.tooltip(value);
+				  	}
+				},
+				{
+					field : 'cre_date', 
+					title : '创建时间',
+					sortable: true
+				},
+				{
+					field : 'create_by', 
+					title : '创建人'
+				},
+				{
+					field : 'up_date', 
+					title : '更新时间',
+					sortable: true
+				},
+				{
+					field : 'update_by', 
+					title : '更新人'
+				}]
+		    };
+		    //表格初始化
+		    $.table.init(options);
+		}
+		
+		
+		//参数处理
+		function queryParams(params) {
+			var search = $.table.queryParams(params);
+			search.is_start = $('#is_start').val();//选中的值
+			return search;
+		}
+		
+		
+		/* 选择账号 */
+		function selectAccount(){
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+    		if (rows.length == 0) {
+    			$.modal.alertWarning("请选择一个账号更新账号政策");
+    			return;
+    		}
+    		$.modal.confirm("确认要选中该账号更新吗?", function() {
+    			$.operate.post('/deveagent/dataMposPolicyRecord/edit/' + rows[0].id);
+    		});
+		}
+		
+	</script>
+</body>
+</html>

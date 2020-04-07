@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.longecological.mapper.moneylocker.MoneyLockerCollegeMapper">
+
+
+	<!-- 查询钱柜列表 -->
+	<select id="getMoneyLockerCollegeList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			cast(id as char) as money_locker_id,
+			money_locker_title,
+			money_locker_cover,
+			DATE_FORMAT(STR_TO_DATE(CONCAT(cre_date, cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		FROM
+			t_sys_money_locker_college_info
+		order by id desc
+	</select>
+	
+	<!-- 查询钱柜详情 -->
+	<select id="getMoneyLockerCollegeDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(id as char) as money_locker_id,
+			money_locker_title,
+			money_locker_cover,
+			money_locker_nav,
+			money_locker_content,
+			DATE_FORMAT(STR_TO_DATE(CONCAT(cre_date, cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		FROM
+			t_sys_money_locker_college_info 
+	   WHERE id = #{map.money_locker_id}
+	</select>
+	
+</mapper>

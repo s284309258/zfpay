@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.longecological.mapper.user.UserCashRecordMapper">
+
+	<resultMap type="com.example.longecological.entity.cash.CashRecordDetail" id="cashRecordDetailListMap">
+		<id column="cash_detail_id" property="cash_detail_id"/>
+		<result column="cash_id" property="cash_id"/>
+		<result column="cash_status" property="cash_status"/>
+		<result column="note" property="note"/>
+		<result column="cre_date" property="cre_date"/>
+	</resultMap>
+	
+	
+	<resultMap type="com.example.longecological.entity.cash.CashRecord" id="cashRecordMap">
+		<id column="cash_id" property="cash_id"/>
+		<id column="order_id" property="order_id"/>
+		<id column="user_id" property="user_id"/>
+		<id column="account" property="account"/>
+		<id column="cash_money" property="cash_money"/>
+		<id column="cash_actual_money" property="cash_actual_money"/>
+		<id column="feet_rate" property="feet_rate"/>
+		<id column="rate_feet_money" property="rate_feet_money"/>
+		<id column="single_feet_money" property="single_feet_money"/>
+		<id column="deduct_money" property="deduct_money"/>
+		<id column="status" property="status"/>
+		<id column="cre_date" property="cre_date"/>
+		<collection property="cashRecordDetailList" ofType="com.example.longecological.entity.cash.CashRecord" select="getCashRecordDetailList"
+			column="{cash_id=cash_id}">
+		</collection>
+	</resultMap>
+
+	
+	<!-- 保存用户提现申请记录-->
+	<insert id="addUserCashRecord" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="map.cash_id" >
+		insert into t_user_cash_record (
+			order_id, user_id, cash_money, cash_actual_money, feet_rate, 
+			rate_feet_money, single_feet_money, deduct_money, account, 
+			account_name, id_card, bank_code, bank_name, batch_no, status, 
+			cre_date, cre_time)
+		values (
+			#{map.order_id}, #{map.sys_user_id}, #{map.cash_money}, #{map.cash_actual_money}, #{map.feet_rate}, 
+			#{map.rate_feet_money}, #{map.single_feet_money}, #{map.deduct_money}, #{map.account}, 
+			#{map.account_name}, #{map.id_card}, #{map.bank_code}, #{map.bank_name}, #{map.batch_no}, #{map.status}, 
+			#{map.cre_date}, #{map.cre_time})
+	</insert>
+	
+	
+	<!-- 保存用户提现记录详情-->
+	<insert id="addUserCashRecordDetail" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="map.cash_id" >
+		insert into t_user_cash_record_detail (
+			cash_id, cash_status, note, cre_date, cre_time)
+		values (
+			#{map.cash_id}, #{map.cash_status}, #{map.note}, #{map.cre_date}, #{map.cre_time})
+	</insert>
+	
+	
+	<!-- 查询提现记录列表 -->
+	<select id="getCashRecordList" parameterType="java.util.Map" resultMap="cashRecordMap" >
+		SELECT
+			id AS cash_id,
+			order_id,
+			user_id,
+			account,
+			cash_money,
+			cash_actual_money,
+			feet_rate,
+			rate_feet_money,
+			single_feet_money,
+			deduct_money,
+			status,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y/%m/%d %H:%i:%s'
+			) AS cre_date
+		FROM
+			t_user_cash_record
+		<where>
+			user_id=#{map.sys_user_id}
+			<if test="map.last_id != null and map.last_id != '' " >
+        		 AND id &lt; #{map.last_id}
+      		</if>
+		</where>
+		order by id desc
+		<if test="map.pageSize != null and map.pageSize != '' " >
+        	LIMIT 0,#{map.pageSize}
+      	</if>
+	</select>
+	
+	
+	<!-- 一对多查询：查询提现记录详情列表 -->
+	<select id="getCashRecordDetailList" parameterType="java.util.Map" resultMap="cashRecordDetailListMap">
+		SELECT
+			id AS cash_detail_id,
+			cash_id,
+			cash_status,
+			note,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y/%m/%d %H:%i:%s'
+			) AS cre_date
+		FROM
+			t_user_cash_record_detail
+		where cash_id=#{cash_id}
+		order by id
+	</select>
+	
+</mapper>

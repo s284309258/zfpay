@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.longecological.mapper.reportforms.ReportFormsMapper">
+
+	<!-- 报表中心-首页传统POS act_num***t1.merchant_trade_num+t1.agency_trade_num,act_num***trade_num byqh update byqh 201912-->
+	<select id="getHomePageInfoByTraditionalPos" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			cast(IFNULL(truncate((t1.performance/t.trade_num),2),0) as char) as pos_avg,
+			cast(t.trade_num as char) as pos_num,
+			cast(IFNULL(t1.performance,0.00) as char) as performance,
+			cast(IFNULL(t1.merchant_trade_num+t1.agency_trade_num,0) as char) as act_num
+		FROM
+			(select * from t_summary_user_traditional_pos_benefit_all t where t.pos_type is null ) t
+		LEFT JOIN (select * from t_summary_user_traditional_pos_benefit_month t where t.pos_type is null) t1 ON t.user_id = t1.user_id
+		AND t1.cre_month = #{map.month}
+		WHERE t.user_id = #{map.sys_user_id}
+	</select>
+
+	<!-- 报表中心-首页传统POS act_num***t1.merchant_trade_num+t1.agency_trade_num,act_num***trade_num byqh update byqh 201912-->
+	<select id="getHomePageInfoByEpos" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			cast(IFNULL(truncate((t1.performance/t.trade_num),2),0) as char) as pos_avg,
+			cast(t.trade_num as char) as pos_num,
+			cast(IFNULL(t1.performance,0.00) as char) as performance,
+			cast(IFNULL(t1.merchant_trade_num+t1.agency_trade_num,0) as char) as act_num
+		FROM
+			(select * from t_summary_user_traditional_pos_benefit_all t where t.pos_type='epos' ) t
+		LEFT JOIN (select * from t_summary_user_traditional_pos_benefit_month t where t.pos_type='epos') t1 ON t.user_id = t1.user_id
+		AND t1.cre_month = #{map.month}
+		WHERE t.user_id = #{map.sys_user_id}
+	</select>
+
+	
+	
+	<!-- 报表中心-首页MPOS act_num***t1.merchant_trade_num+t1.agency_trade_num,act_num***trade_num update byqh-->
+	<select id="getHomePageInfoByMpos" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			cast(IFNULL(truncate((t1.performance/t.trade_num),2),0) as char) as pos_avg,
+			cast(t.trade_num as char) as pos_num,
+			cast(IFNULL(t1.performance,0.00) as char) as performance,
+			cast(IFNULL(t1.merchant_trade_num+t1.agency_trade_num,0) as char) as act_num
+		FROM
+			t_summary_user_mpos_benefit_all t
+		LEFT JOIN t_summary_user_mpos_benefit_month t1 ON t.user_id = t1.user_id
+		AND t1.cre_month = #{map.month}
+		WHERE t.user_id = #{map.sys_user_id}
+	</select>
+	
+	<!-- 代理每天详情（传统POS） agency_act_num *** agency_trade_num byqh-->
+	<select id="getDayAgencyTraditionalPosDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+			cast(agency_performance as char) as performance, 
+			cast((under_num - refer_num) as char) as user_num, 
+			cast(agency_trade_num as char) as act_num
+		from 
+			t_summary_user_traditional_pos_benefit_everyday 
+		where user_id = #{map.sys_user_id} and cre_date = #{map.date} 
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and pos_type='epos'
+			</when>
+			<otherwise>
+				and pos_type is null
+			</otherwise>
+		</choose>
+	</select>
+
+	<!-- 代理每天详情（传统POS） agency_act_num *** agency_trade_num byqh add byqh202003-->
+	<select id="getDayAgencyEposDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		select
+			cast(agency_performance as char) as performance,
+			cast((under_num - refer_num) as char) as user_num,
+			cast(agency_trade_num as char) as act_num
+		from
+			t_summary_user_traditional_pos_benefit_everyday
+		where user_id = #{map.sys_user_id} and cre_date = #{map.date} and pos_type='epos'
+	</select>
+	
+	<!-- 代理每月详情（传统POS）agency_act_num *** agency_trade_num byqh-->
+	<select id="getMonthAgencyTraditionalPosDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+			cast(agency_performance as char) as performance, 
+			cast((under_num - refer_num) as char) as user_num, 
+			cast(agency_trade_num as char) as act_num
+		from 
+			t_summary_user_traditional_pos_benefit_month 
+		where user_id = #{map.sys_user_id} and cre_month = #{map.date}
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and pos_type='epos'
+			</when>
+			<otherwise>
+				and pos_type is null
+			</otherwise>
+		</choose>
+	</select>
+
+	<!-- 代理每月详情（传统POS）agency_act_num *** agency_trade_num byqh add byqh202003-->
+	<select id="getMonthAgencyEposDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		select
+			cast(agency_performance as char) as performance,
+			cast((under_num - refer_num) as char) as user_num,
+			cast(agency_trade_num as char) as act_num
+		from
+			t_summary_user_traditional_pos_benefit_month
+		where user_id = #{map.sys_user_id} and cre_month = #{map.date} and pos_type='epos'
+	</select>
+	
+	<!-- 商户每天详情（传统POS） --><!--update cast(merchant_act_num as char) as act_num *** cast(merchant_trade_num as char) as act_num byqh 统计-->
+	<select id="getDayMerchantTraditionalPosDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+			cast(merchant_performance as char) as performance, 
+			cast(refer_num as char) as user_num, 
+			cast(merchant_trade_num as char) as act_num
+		from 
+			t_summary_user_traditional_pos_benefit_everyday 
+		where user_id = #{map.sys_user_id} and cre_date = #{map.date}
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and pos_type='epos'
+			</when>
+			<otherwise>
+				and pos_type is null
+			</otherwise>
+		</choose>
+	</select>
+
+	<!-- 商户每天详情（传统POS） --><!--update cast(merchant_act_num as char) as act_num *** cast(merchant_trade_num as char) as act_num byqh 统计 add byqh202003-->
+	<select id="getDayMerchantEposDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		select
+			cast(merchant_performance as char) as performance,
+			cast(refer_num as char) as user_num,
+			cast(merchant_trade_num as char) as act_num
+		from
+			t_summary_user_traditional_pos_benefit_everyday
+		where user_id = #{map.sys_user_id} and cre_date = #{map.date} and pos_type='epos'
+	</select>
+	
+	<!-- 商户每月详情（传统POS）update cast(merchant_act_num as char) as user_num, **** cast(merchant_trade_num as char) as user_num -->
+	<select id="getMonthMerchantTraditionalPosDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+			cast(merchant_performance as char) as performance, 
+			cast(refer_num as char) as user_num,
+			cast(merchant_trade_num as char) as act_num
+		from 
+			t_summary_user_traditional_pos_benefit_month 
+		where user_id = #{map.sys_user_id} and cre_month = #{map.date}
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and pos_type='epos'
+			</when>
+			<otherwise>
+				and pos_type is null
+			</otherwise>
+		</choose>
+	</select>
+
+	<!-- 商户每月详情（传统POS）update cast(merchant_act_num as char) as user_num, **** cast(merchant_trade_num as char) as user_num,  byqh202003 -->
+	<select id="getMonthMerchantEposDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		select
+			cast(merchant_performance as char) as performance,
+			cast(refer_num as char) as user_num,
+			cast(merchant_trade_num as char) as act_num
+		from
+			t_summary_user_traditional_pos_benefit_month
+		where user_id = #{map.sys_user_id} and cre_month = #{map.date} and pos_type='epos'
+	</select>
+	
+	<!-- 代理每天走势列表（传统POS） -->
+	<select id="getDayAgencyTraditionalPosList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			 t1.date,
+	 		 cast(IFNULL(t2.agency_performance,0.00) as char) as performance,
+	 		 cast(IFNULL(t2.agency_act_num,0) as char) as act_num,
+	 		 cast(IFNULL((t2.under_num - t2.refer_num),0) as char) as user_num
+ 		from (
+			SELECT
+				@num :=@num - 1,
+				date_format(
+					adddate(str_to_date(#{map.date},'%Y%m%d'), INTERVAL @num DAY),
+					'%Y%m%d'
+				) AS date
+			 FROM
+				t_sys_assist_query,
+				(SELECT @num := 1) t) t1
+		left join t_summary_user_traditional_pos_benefit_everyday t2 on t1.date = t2.cre_date and t2.user_id = #{map.sys_user_id}
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and t2.pos_type='epos'
+			</when>
+			<otherwise>
+				and t2.pos_type is null
+			</otherwise>
+		</choose>
+		order by t1.date
+	</select>
+	
+	<!-- 代理每月走势列表（传统POS） -->
+	<select id="getMonthAgencyTraditionalPosList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			 t1.date,
+	 		 cast(IFNULL(t2.agency_performance,0.00) as char) as performance,
+	 		 cast(IFNULL(t2.agency_act_num,0) as char) as act_num,
+	 		 cast(IFNULL((t2.under_num - t2.refer_num),0) as char) as user_num
+ 		from (
+			SELECT
+				@num :=@num - 1,
+				date_format(
+					adddate(str_to_date(#{map.date},'%Y%m%d'), INTERVAL @num MONTH),
+					'%Y%m'
+				) AS date
+			 FROM
+				t_sys_assist_query,
+				(SELECT @num := 1) t) t1
+		left join t_summary_user_traditional_pos_benefit_month t2 on t1.date = t2.cre_month and t2.user_id = #{map.sys_user_id}
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and t2.pos_type='epos'
+			</when>
+			<otherwise>
+				and t2.pos_type is null
+			</otherwise>
+		</choose>
+		order by t1.date
+	</select>
+	
+	<!-- 商户每天走势列表（传统POS） -->
+	<select id="getDayMerchantTraditionalPosList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			 t1.date,
+	 		 cast(IFNULL(t2.merchant_performance,0.00) as char) as performance,
+	 		 cast(IFNULL(t2.merchant_act_num,0) as char) as act_num,
+	 		 cast(IFNULL(t2.refer_num,0) as char) as user_num
+ 		from (
+			SELECT
+				@num :=@num - 1,
+				date_format(
+					adddate(str_to_date(#{map.date},'%Y%m%d'), INTERVAL @num DAY),
+					'%Y%m%d'
+				) AS date
+			 FROM
+				t_sys_assist_query,
+				(SELECT @num := 1) t) t1
+		left join t_summary_user_traditional_pos_benefit_everyday t2 on t1.date = t2.cre_date and t2.user_id = #{map.sys_user_id}
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and t2.pos_type='epos'
+			</when>
+			<otherwise>
+				and t2.pos_type is null
+			</otherwise>
+		</choose>
+		order by t1.date
+	</select>
+	
+	<!-- 商户每月走势列表（传统POS） -->
+	<select id="getMonthMerchantTraditionalPosList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			 t1.date,
+	 		 cast(IFNULL(t2.merchant_performance,0.00) as char) as performance,
+	 		 cast(IFNULL(t2.merchant_act_num,0) as char) as act_num,
+	 		 cast(IFNULL(t2.refer_num,0) as char) as user_num
+ 		from (
+			SELECT
+				@num :=@num - 1,
+				date_format(
+					adddate(str_to_date(#{map.date},'%Y%m%d'), INTERVAL @num MONTH),
+					'%Y%m'
+				) AS date
+			 FROM
+				t_sys_assist_query,
+				(SELECT @num := 1) t) t1
+		left join t_summary_user_traditional_pos_benefit_month t2 on t1.date = t2.cre_month and t2.user_id = #{map.sys_user_id}
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and t2.pos_type='epos'
+			</when>
+			<otherwise>
+				and t2.pos_type is null
+			</otherwise>
+		</choose>
+		order by t1.date
+	</select>
+	
+	<!-- 代理每天详情（MPOS） agency_act_num***agency_trade_num-->
+	<select id="getDayAgencyMposDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+			cast(agency_performance as char) as performance, 
+			cast((under_num - refer_num) as char) as user_num, 
+			cast(agency_trade_num as char) as act_num
+		from 
+			t_summary_user_mpos_benefit_everyday 
+		where user_id = #{map.sys_user_id} and cre_date = #{map.date}
+	</select>
+	
+	<!-- 代理每月详情（MPOS）agency_act_num***agency_trade_num byqh -->
+	<select id="getMonthAgencyMposDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+			cast(agency_performance as char) as performance, 
+			cast((under_num - refer_num) as char) as user_num, 
+			cast(agency_trade_num as char) as act_num
+		from 
+			t_summary_user_mpos_benefit_month 
+		where user_id = #{map.sys_user_id} and cre_month = #{map.date}
+	</select>
+	
+	<!-- 商户每天详情（MPOS） merchant_act_num***merchant_trade_num byqh-->
+	<select id="getDayMerchantMposDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+			cast(merchant_performance as char) as performance, 
+			cast(refer_num as char) as user_num, 
+			cast(merchant_trade_num as char) as act_num
+		from 
+			t_summary_user_mpos_benefit_everyday 
+		where user_id = #{map.sys_user_id} and cre_date = #{map.date}
+	</select>
+	
+	<!-- 商户每月详情（MPOS） merchant_act_num***merchant_trade_num byqh-->
+	<select id="getMonthMerchantMposDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+			cast(merchant_performance as char) as performance, 
+			cast(refer_num as char) as user_num, 
+			cast(merchant_trade_num as char) as act_num
+		from 
+			t_summary_user_mpos_benefit_month 
+		where user_id = #{map.sys_user_id} and cre_month = #{map.date}
+	</select>
+	
+	<!-- 代理每天走势列表（MPOS） -->
+	<select id="getDayAgencyMposList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			 t1.date,
+	 		 cast(IFNULL(t2.agency_performance,0.00) as char) as performance,
+	 		 cast(IFNULL(t2.agency_act_num,0) as char) as act_num,
+	 		 cast(IFNULL((t2.under_num - t2.refer_num),0) as char) as user_num
+ 		from (
+			SELECT
+				@num :=@num - 1,
+				date_format(
+					adddate(str_to_date(#{map.date},'%Y%m%d'), INTERVAL @num DAY),
+					'%Y%m%d'
+				) AS date
+			 FROM
+				t_sys_assist_query,
+				(SELECT @num := 1) t) t1
+		left join t_summary_user_mpos_benefit_everyday t2 on t1.date = t2.cre_date and t2.user_id = #{map.sys_user_id}
+		order by t1.date
+	</select>
+	
+	<!-- 代理每月走势列表（MPOS） -->
+	<select id="getMonthAgencyMposList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			 t1.date,
+	 		 cast(IFNULL(t2.agency_performance,0.00) as char) as performance,
+	 		 cast(IFNULL(t2.agency_act_num,0) as char) as act_num,
+	 		 cast(IFNULL((t2.under_num - t2.refer_num),0) as char) as user_num
+ 		from (
+			SELECT
+				@num :=@num - 1,
+				date_format(
+					adddate(str_to_date(#{map.date},'%Y%m%d'), INTERVAL @num MONTH),
+					'%Y%m'
+				) AS date
+			 FROM
+				t_sys_assist_query,
+				(SELECT @num := 1) t) t1
+		left join t_summary_user_mpos_benefit_month t2 on t1.date = t2.cre_month and t2.user_id = #{map.sys_user_id}
+		order by t1.date
+	</select>
+	
+	<!-- 商户每天走势列表（MPOS） -->
+	<select id="getDayMerchantMposList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			 t1.date,
+	 		 cast(IFNULL(t2.merchant_performance,0.00) as char) as performance,
+	 		 cast(IFNULL(t2.merchant_act_num,0) as char) as act_num,
+	 		 cast(IFNULL(t2.refer_num,0) as char) as user_num
+ 		from (
+			SELECT
+				@num :=@num - 1,
+				date_format(
+					adddate(str_to_date(#{map.date},'%Y%m%d'), INTERVAL @num DAY),
+					'%Y%m%d'
+				) AS date
+			 FROM
+				t_sys_assist_query,
+				(SELECT @num := 1) t) t1
+		left join t_summary_user_mpos_benefit_everyday t2 on t1.date = t2.cre_date and t2.user_id = #{map.sys_user_id}
+		order by t1.date
+	</select>
+	
+	<!-- 商户每月走势列表（MPOS） -->
+	<select id="getMonthMerchantMposList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			 t1.date,
+	 		 cast(IFNULL(t2.merchant_performance,0.00) as char) as performance,
+	 		 cast(IFNULL(t2.merchant_act_num,0) as char) as act_num,
+	 		 cast(IFNULL(t2.refer_num,0) as char) as user_num
+ 		from (
+			SELECT
+				@num :=@num - 1,
+				date_format(
+					adddate(str_to_date(#{map.date},'%Y%m%d'), INTERVAL @num MONTH),
+					'%Y%m'
+				) AS date
+			 FROM
+				t_sys_assist_query,
+				(SELECT @num := 1) t) t1
+		left join t_summary_user_mpos_benefit_month t2 on t1.date = t2.cre_month and t2.user_id = #{map.sys_user_id}
+		order by t1.date
+	</select>
+	
+</mapper>

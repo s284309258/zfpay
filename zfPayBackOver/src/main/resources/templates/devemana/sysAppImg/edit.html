@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('编辑APP图片')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+	<th:block th:include="include :: bootstrap-fileinput-css" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+	<form class="form-horizontal m" id="form-sysAppImg-edit">
+		
+		<div class="form-group">
+			<label class="col-sm-1 control-label ">排序：</label>
+			<div class="col-sm-10">
+				<input type="hidden" id="appImg_id" name="appImg_id" th:value="${appImg.id}" readonly="true" >
+				<input type="hidden" name="img_url" id="img_url" th:value="${appImg.img_url}" readonly="true" >
+				<input type="hidden" name="img_type" id="img_type" th:value="${appImg.img_type}" readonly="true" >
+				<input class="form-control" type="text" name="order_num" id="order_num" th:value="${appImg.order_num}" >
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-1 control-label">备注说明：</label>
+			<div class="col-sm-10">
+				<textarea rows="5" cols="180" name="note" id="note" th:text="${appImg.note}" placeholder="请输入备注说明" >
+				</textarea>
+			</div>
+		</div>
+	
+		<div class="form-group"> 
+        	<label class="col-sm-1 control-label ">图片：</label>  
+            <div class="col-sm-10">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="form-group">
+	                        <div class="file-loading">
+					            <input id="fileinput-demo-img_url" name="file"  type="file" >
+					        </div>
+                        </div>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+       	</div>
+   	</form>	
+</div>
+
+<div class="row">
+	<div class="col-sm-offset-5 col-sm-10">
+	    <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保 存</button>&nbsp;
+	    <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭 </button>
+	</div>
+</div>
+
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: bootstrap-fileinput-js" />
+
+<script th:inline="javascript">
+$("#form-sysAppImg-edit").validate({
+	rules:{
+		note: {
+	        required: true
+      	},
+      	order_num: {
+	        required: true
+      	}
+	},
+	messages: {
+        note: {
+            required: "请输入备注说明"
+        },
+        order_num: {
+            required: "请输入排序"
+        }
+ 	},
+	focusCleanup: true
+});
+
+function submitHandler() {
+   	if ($.validate.form()) {
+		if($("#img_url").val()==""){
+			layer.msg("请选择并上传图片",{icon:5,time : 1000});
+			return;
+		}else{
+			$.operate.saveTab("/devemana/sysAppImg/edit", $('#form-sysAppImg-edit').serialize());
+		}
+   	}
+}
+
+$(document).ready(function () {
+	var img_url_data = [];
+	img_url_data.push(qiniu_domain+$("#img_url").val());
+	initFileInput1(img_url_data,"img_url","支持单图片拖拽上传<br>建议图片格式：jpg<br>首页 banner图尺寸：1035 x 450px(或 690 x 300px)<br>推广背景图建议尺寸：1080 x 1920 px");
+	
+	
+	function initFileInput1(initDataArray,inputId,description){
+		//初始化fileinput控件（第一次初始化）
+	    $("#fileinput-demo-"+inputId+"").fileinput({
+	    	dropZoneTitle : description,
+	        'theme': 'explorer-fas',
+	        'uploadUrl': '/develop/upload/photopUpload',//上传的地址
+	        allowedFileExtensions : ['jpg', 'png','gif'],//接收的文件后缀,
+	        uploadAsync:true,//false 同步上传，后台用数组接收，true 异步上传，每次上传一个file,会调用多次接口
+	        removeFromPreviewOnError:true, //当选择的文件不符合规则时，例如不是指定后缀文件、大小超出配置等，选择的文件不会出现在预览框中，只会显示错误信息
+	        maxFileCount: 1,//表示允许同时上传的最大文件个数
+	        validateInitialCount:true,
+	        overwriteInitial: true,
+	        initialPreviewAsData: true,
+	        initialPreview: initDataArray,
+	        msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+	        layoutTemplates :{
+	            actionDelete:'', //去除上传预览的缩略图中的删除图标
+	            actionUpload:'',//去除上传预览缩略图中的上传图片；
+	            //actionZoom:''   //去除上传预览缩略图中的查看详情预览的缩略图标。
+	       }
+	    })
+	       .on("fileuploaded", function(event, data) {
+	       	data=data.response;
+	       	if(data.code=='0'){
+	       		$("#img_url").val(data.url);
+	       	}else{
+	       		layer.msg(data.msg,{icon:5,time : 1000});
+	       	}
+	   	})
+	   	.on('fileerror', function(event, data, msg) {  //一个文件上传失败
+	       	alert('文件上传失败！'+msg);
+	   	}); 
+	}   
+});
+</script>
+
+	
+</body>
+
+</html>

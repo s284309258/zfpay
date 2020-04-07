@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('代理用户信息列表')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+<body class="gray-bg">
+	
+	<!-- 系统参数列表 -->
+	<div class="container-div ui-layout-center">
+		<div class="row">
+			
+			<!-- 最上面的搜索框 -->
+			<div class="col-sm-12 search-collapse">
+				<form id="user-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								appId：<input type="text" name="app_id" id="app_id" />
+							</li>
+							<li>
+								appKey：<input type="text" name="app_key" id="app_key" />
+							</li>
+							<li>
+								启用状态：
+								<select name="is_start" id="is_start" th:with="type=${@dict.getType('sys_user_account_is_start')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li class="select-time">
+								<label>创建时间： </label>
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="beginTime"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+			
+			<!-- 上面的各项增删改查导入导出操作 -->
+	        <div class="btn-group-sm" id="toolbar" role="group">
+	        	<!-- 操作封装：新增 -->
+				<a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="deveagent:userAccount:add">
+	                <i class="fa fa-plus"></i> 新增
+	            </a>
+	            <!-- 操作封装：修改信息，全屏 -->
+		        <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="deveagent:userAccount:edit">
+		            <i class="fa fa-edit"></i> 修改
+		        </a>
+		        <!-- 表格：导出数据 -->
+	            <a class="btn btn-danger" onclick="batchSysOpen();" shiro:hasPermission="deveagent:userAccount:sysOpen">
+		            <i class="fa fa-download"></i> 批量开启
+		        </a>
+		        <!-- 表格：导出数据 -->
+	            <a class="btn btn-primary" onclick="batchSysNoOpen();" shiro:hasPermission="develop:userAccount:sysOpen">
+		            <i class="fa fa-download"></i> 批量停用
+		        </a>
+		        <!-- 表格：导出数据 -->
+	            <a class="btn btn-danger" onclick="removeAll()" shiro:hasPermission="develop:userAccount:remove">
+		            <i class="fa fa-remove"></i> 批量删除
+		        </a>
+		        <!-- 表格：导出数据 -->
+	            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="deveagent:userAccount:export">
+		            <i class="fa fa-download"></i> 导出
+		        </a>
+	        </div>
+
+	        
+	        <!-- bootstrap表格数据部分 -->
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+			
+		</div>
+	</div>
+	
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		//开启停用
+		var sysOpenFlag = [[${@permission.hasPermi('deveagent:userAccount:sysOpen')}]];
+		//编辑
+		var editFlag = [[${@permission.hasPermi('deveagent:userAccount:edit')}]];
+		//删除
+		var removeFlag = [[${@permission.hasPermi('develop:userAccount:remove')}]];
+	
+		var datas_is_start = [[${@dict.getType('sys_user_account_is_start')}]];
+	
+		//前缀路径
+		var prefix = "/deveagent/userAccount";
+		
+		//初始化方法
+		$(function() {
+			//初始化时间范围
+			intiTime();
+		   	//查询中付账号列表
+		    queryAgentUserAccountList();
+		});
+		
+		//查询中付账号列表
+		function queryAgentUserAccountList() {
+		    var options = {
+		        url: prefix + "/list",//URL列表路径
+		        createUrl: prefix + "/add",//新增路径
+		        updateUrl: prefix + "/edit/{id}",//编辑路径
+		        exportUrl: prefix + "/export",//导出路径
+		        modalName: "中付账号信息",//模块名称：用户
+		        showExport: true,
+		        sortName: 'id',
+	          	sortOrder: 'desc',
+		        //列信息
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+					field : 'id', 
+					title : '编号',
+					sortable: true,
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detail(\'' + row.id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					title: '操作',
+		            align: 'center',
+		            formatter: function(value, row, index) {
+		            	//事件数组
+		                var actions = [];
+		            	//编辑按钮：修改信息 全屏
+		            	actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑  </a> ');
+		            	//删除按钮：删除信息
+		              	actions.push('<a class="btn btn-primary btn-xs ' + removeFlag + '" href="#" onclick="remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除   </a>');
+		            	if(row.is_start==1){
+			                //开启
+			                actions.push('<a class="btn btn-warning btn-xs ' + sysOpenFlag + '" href="javascript:void(0)" onclick="sysOpen(\'' + row.id + '\')"><i class="fa fa-key"></i>开启  </a>');
+			           	}else{
+			              	//停用
+			               	actions.push('<a class="btn btn-danger btn-xs ' + sysOpenFlag + '" href="javascript:void(0)" onclick="sysNoOpen(\'' + row.id + '\')"><i class="fa fa-key"></i>停用  </a>');
+			           	}
+		              	return actions.join('');
+		            }
+		        },
+		        {
+					field : 'manager_id', 
+					title : '代理编号'
+				},
+				{
+					field : 'app_id', 
+					title : 'appId'
+				},
+				{
+					field : 'app_key', 
+					title : 'appKey'
+				},
+				{
+					field : 'app_name', 
+					title : '名称'
+				},
+				{
+					field : 'is_start', 
+					title : '状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_is_start, value);
+		            }
+				},
+				{
+					field : 'remark', 
+					title : '操作备注',
+					align: 'center',
+				  	formatter: function(value, row, index) {
+				      	return $.table.tooltip(value);
+				  	}
+				},
+				{
+					field : 'cre_date', 
+					title : '创建时间',
+					sortable: true
+				},
+				{
+					field : 'create_by', 
+					title : '创建人'
+				},
+				{
+					field : 'up_date', 
+					title : '更新时间',
+					sortable: true
+				},
+				{
+					field : 'update_by', 
+					title : '更新人'
+				}]
+		    };
+		    //表格初始化
+		    $.table.init(options);
+		}
+		
+		
+		//开启中付账号
+		function sysOpen(id) {
+		    var url = prefix + '/sysOpen/' + id+"?operParam=0";
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		    $.modal.open("开启账号", url, '800', '450');
+		}
+		
+		
+		//停用中付账号
+		function sysNoOpen(id) {
+		    var url = prefix + '/sysOpen/' + id+"?operParam=1";
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		    $.modal.open("停用账号", url, '800', '450');
+		}
+		
+		
+		//批量开启中付账号
+		function batchSysOpen(){
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+    		if (rows.length == 0) {
+    			$.modal.alertWarning("请至少选择一条记录");
+    			return;
+    		}
+    		for(var i=0;i<rows.length;i++){
+    			if(rows[i].is_start==0){
+    				$.modal.alertWarning("不能选择已开启的账号");
+    				return;
+    			}
+    		}
+    		$.modal.confirm("确认要开启选中的" + rows.length + "个账号吗?", function() {
+    			var account_ids = "";
+    			// 遍历所有选择的行数据，取每条数据对应的ID
+    			$.each(rows, function(i, row) {
+    				if(i<rows.length-1){
+    					account_ids=account_ids+row['id']+",";
+    				}else{
+    					account_ids=account_ids+row['id'];
+    				}
+    			});
+    			var url = prefix + '/sysOpen/' + account_ids+"?operParam=0";
+    			$.modal.open("批量启用账号", url, '800', '450');
+    		});
+		}
+		
+		
+		//批量停用中付账号
+		function batchSysNoOpen(){
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+    		if (rows.length == 0) {
+    			$.modal.alertWarning("请至少选择一条记录");
+    			return;
+    		}
+    		for(var i=0;i<rows.length;i++){
+    			if(rows[i].is_start==1){
+    				$.modal.alertWarning("不能选择已停用的账号");
+    				return;
+    			}
+    		}
+    		$.modal.confirm("确认要停用选中的" + rows.length + "个账号吗?", function() {
+    			var account_ids = "";
+    			// 遍历所有选择的行数据，取每条数据对应的ID
+    			$.each(rows, function(i, row) {
+    				if(i<rows.length-1){
+    					account_ids=account_ids+row['id']+",";
+    				}else{
+    					account_ids=account_ids+row['id'];
+    				}
+    			});
+    			var url = prefix + '/sysOpen/' + account_ids+"?operParam=1";
+    			$.modal.open("批量停用账号", url, '800', '450');
+    		});
+		}
+		
+		
+		//删除中付账号
+		function remove(id) {
+		    var url = prefix + '/remove/' + id;
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		    $.modal.open("删除中付账号", url, '800', '450');
+		}
+		
+		
+		//批量删除中付账号
+		function removeAll(){
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+    		if (rows.length == 0) {
+    			$.modal.alertWarning("请至少选择一条记录");
+    			return;
+    		}
+    		$.modal.confirm("确认要删除选中的" + rows.length + "条数据吗?", function() {
+    			var account_ids = "";
+    			// 遍历所有选择的行数据，取每条数据对应的ID
+    			$.each(rows, function(i, row) {
+    				if(i<rows.length-1){
+    					account_ids=account_ids+row['id']+",";
+    				}else{
+    					account_ids=account_ids+row['id'];
+    				}
+    			});
+    			var url = prefix + '/remove/' + account_ids;
+    			$.modal.open("批量删除中付账号", url, '800', '450');
+    		});
+		}
+		
+	</script>
+</body>
+</html>

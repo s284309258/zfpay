@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.longecological.mapper.system.SysExchangeUrlMapper">
+
+	
+	<!-- 查询行情URL信息列表 -->
+	<select id="getExchangeUrlList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			id,
+			exchange_url,
+			exchange_photo,
+			exchange_name
+		FROM
+			t_sys_exchange_url
+		ORDER BY
+			order_num
+	</select>
+	
+</mapper>

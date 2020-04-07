@@ -1,0 +1,174 @@
+2019-09-24 11:24:02 -Starting LongEcologicalApplication on PC-201902191239 with PID 8580 (started by Administrator in E:\GitProject\中付钱柜\zfPay)
+2019-09-24 11:24:02 -Running with Spring Boot v2.1.1.RELEASE, Spring v5.1.3.RELEASE
+2019-09-24 11:24:02 -No active profile set, falling back to default profiles: default
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'onlineActivityMapper' and 'com.example.longecological.mapper.activity.OnlineActivityMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'benefitCentreMapper' and 'com.example.longecological.mapper.benefitcentre.BenefitCentreMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'sysParamMapper' and 'com.example.longecological.mapper.common.SysParamMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'sysParamRateMapper' and 'com.example.longecological.mapper.common.SysParamRateMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'verifyRecordMapper' and 'com.example.longecological.mapper.common.VerifyRecordMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'machinesManageMapper' and 'com.example.longecological.mapper.machines.MachinesManageMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'merchantManageMapper' and 'com.example.longecological.mapper.merchant.MerchantManageMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'messageMapper' and 'com.example.longecological.mapper.message.MessageMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'moneyLockerCollegeMapper' and 'com.example.longecological.mapper.moneylocker.MoneyLockerCollegeMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'mposMapper' and 'com.example.longecological.mapper.mpos.MposMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'scheduleJobMapper' and 'com.example.longecological.mapper.quartz.ScheduleJobMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'creditCardRatesApplyMapper' and 'com.example.longecological.mapper.ratesmanage.CreditCardRatesApplyMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'reportFormsMapper' and 'com.example.longecological.mapper.reportforms.ReportFormsMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'sysAppImgMapper' and 'com.example.longecological.mapper.system.SysAppImgMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'sysBankInfoMapper' and 'com.example.longecological.mapper.system.SysBankInfoMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'sysExchangeUrlMapper' and 'com.example.longecological.mapper.system.SysExchangeUrlMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'sysNewsMapper' and 'com.example.longecological.mapper.system.SysNewsMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'sysNoticeMapper' and 'com.example.longecological.mapper.system.SysNoticeMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'sysVersionMapper' and 'com.example.longecological.mapper.system.SysVersionMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'test' and 'com.example.longecological.mapper.test.Test' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'traditionalPosMapper' and 'com.example.longecological.mapper.traditionalpos.TraditionalPosMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'userCardInfoMapper' and 'com.example.longecological.mapper.user.UserCardInfoMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'userCashRecordMapper' and 'com.example.longecological.mapper.user.UserCashRecordMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'userFeedBackMapper' and 'com.example.longecological.mapper.user.UserFeedBackMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'userInfoMapper' and 'com.example.longecological.mapper.user.UserInfoMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Skipping MapperFactoryBean with name 'zhongFuBackMapper' and 'com.example.longecological.mapper.zfback.ZhongFuBackMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:24:04 -Multiple Spring Data modules found, entering strict repository configuration mode!
+2019-09-24 11:24:04 -Bootstrapping Spring Data repositories in DEFAULT mode.
+2019-09-24 11:24:05 -Finished Spring Data repository scanning in 137ms. Found 0 repository interfaces.
+2019-09-24 11:24:05 -Multiple Spring Data modules found, entering strict repository configuration mode!
+2019-09-24 11:24:05 -Bootstrapping Spring Data repositories in DEFAULT mode.
+2019-09-24 11:24:05 -Finished Spring Data repository scanning in 59ms. Found 0 repository interfaces.
+2019-09-24 11:24:06 -Bean 'taskExecutorConfig' of type [com.example.longecological.config.thread.TaskExecutorConfig$$EnhancerBySpringCGLIB$$e0e726ca] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-09-24 11:24:06 -Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$db6b0b6a] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-09-24 11:24:07 -An incompatible version [1.2.10] of the APR based Apache Tomcat Native library is installed, while Tomcat requires version [1.2.14]
+2019-09-24 11:24:07 -Tomcat initialized with port(s): 8080 (http)
+2019-09-24 11:24:07 -An incompatible version [1.2.10] of the APR based Apache Tomcat Native library is installed, while Tomcat requires version [1.2.14]
+2019-09-24 11:24:07 -Initializing ProtocolHandler ["http-nio-8080"]
+2019-09-24 11:24:07 -Starting service [Tomcat]
+2019-09-24 11:24:07 -Starting Servlet Engine: Apache Tomcat/9.0.13
+2019-09-24 11:24:07 -An incompatible version [1.2.10] of the APR based Apache Tomcat Native library is installed, while Tomcat requires version [1.2.14]
+2019-09-24 11:24:07 -Initializing Spring embedded WebApplicationContext
+2019-09-24 11:24:07 -Root WebApplicationContext: initialization completed in 5508 ms
+2019-09-24 11:24:07 -Filter xssFilter was not registered (disabled)
+2019-09-24 11:24:08 -HikariPool-1 - Starting...
+2019-09-24 11:24:09 -HikariPool-1 - Start completed.
+2019-09-24 11:24:09 -HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2019-09-24 11:24:09 -HHH000412: Hibernate Core {5.3.7.Final}
+2019-09-24 11:24:09 -HHH000206: hibernate.properties not found
+2019-09-24 11:24:09 -HCANN000001: Hibernate Commons Annotations {5.0.4.Final}
+2019-09-24 11:24:10 -HHH000400: Using dialect: org.hibernate.dialect.MySQL5Dialect
+2019-09-24 11:24:10 -Initialized JPA EntityManagerFactory for persistence unit 'default'
+2019-09-24 11:24:11 -Using default implementation for ThreadExecutor
+2019-09-24 11:24:11 -Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2019-09-24 11:24:11 -Quartz Scheduler v.2.3.0 created.
+2019-09-24 11:24:11 -RAMJobStore initialized.
+2019-09-24 11:24:11 -Scheduler meta-data: Quartz Scheduler (v2.3.0) 'schedulerFactoryBean' with instanceId 'NON_CLUSTERED'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 10 threads.
+  Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
+
+2019-09-24 11:24:11 -Quartz scheduler 'schedulerFactoryBean' initialized from an externally provided properties instance.
+2019-09-24 11:24:11 -Quartz scheduler version: 2.3.0
+2019-09-24 11:24:11 -JobFactory set to: org.springframework.scheduling.quartz.AdaptableJobFactory@31ab4859
+2019-09-24 11:24:12 -==>  Preparing: select * from t_sys_schedule_job where carryStatus=0 and jobStatus=1 
+2019-09-24 11:24:12 -==> Parameters: 
+2019-09-24 11:24:12 -<==      Total: 0
+2019-09-24 11:24:12 -STAET TaskExecutorConfig
+2019-09-24 11:24:12 -Initializing ExecutorService
+2019-09-24 11:24:12 -Initializing ExecutorService 'getAsyncExecutor'
+2019-09-24 11:24:13 -spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2019-09-24 11:24:13 -Cannot find template location: classpath:/templates/ (please add some templates or check your Thymeleaf configuration)
+2019-09-24 11:24:14 -Initializing ExecutorService 'taskScheduler'
+2019-09-24 11:24:14 -Starting Quartz Scheduler now
+2019-09-24 11:24:14 -Scheduler schedulerFactoryBean_$_NON_CLUSTERED started.
+2019-09-24 11:24:14 -Starting ProtocolHandler ["http-nio-8080"]
+2019-09-24 11:24:14 -Using a shared selector for servlet write/read
+2019-09-24 11:24:14 -Tomcat started on port(s): 8080 (http) with context path ''
+2019-09-24 11:24:14 -Started LongEcologicalApplication in 13.185 seconds (JVM running for 14.019)
+2019-09-24 11:25:13 -Starting LongEcologicalApplication on PC-201902191239 with PID 9016 (started by Administrator in E:\GitProject\中付钱柜\zfPay)
+2019-09-24 11:25:13 -Running with Spring Boot v2.1.1.RELEASE, Spring v5.1.3.RELEASE
+2019-09-24 11:25:13 -No active profile set, falling back to default profiles: default
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'onlineActivityMapper' and 'com.example.longecological.mapper.activity.OnlineActivityMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'benefitCentreMapper' and 'com.example.longecological.mapper.benefitcentre.BenefitCentreMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'sysParamMapper' and 'com.example.longecological.mapper.common.SysParamMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'sysParamRateMapper' and 'com.example.longecological.mapper.common.SysParamRateMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'verifyRecordMapper' and 'com.example.longecological.mapper.common.VerifyRecordMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'machinesManageMapper' and 'com.example.longecological.mapper.machines.MachinesManageMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'merchantManageMapper' and 'com.example.longecological.mapper.merchant.MerchantManageMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'messageMapper' and 'com.example.longecological.mapper.message.MessageMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'moneyLockerCollegeMapper' and 'com.example.longecological.mapper.moneylocker.MoneyLockerCollegeMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'mposMapper' and 'com.example.longecological.mapper.mpos.MposMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'scheduleJobMapper' and 'com.example.longecological.mapper.quartz.ScheduleJobMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'creditCardRatesApplyMapper' and 'com.example.longecological.mapper.ratesmanage.CreditCardRatesApplyMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'reportFormsMapper' and 'com.example.longecological.mapper.reportforms.ReportFormsMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'sysAppImgMapper' and 'com.example.longecological.mapper.system.SysAppImgMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'sysBankInfoMapper' and 'com.example.longecological.mapper.system.SysBankInfoMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'sysExchangeUrlMapper' and 'com.example.longecological.mapper.system.SysExchangeUrlMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'sysNewsMapper' and 'com.example.longecological.mapper.system.SysNewsMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'sysNoticeMapper' and 'com.example.longecological.mapper.system.SysNoticeMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'sysVersionMapper' and 'com.example.longecological.mapper.system.SysVersionMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'test' and 'com.example.longecological.mapper.test.Test' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'traditionalPosMapper' and 'com.example.longecological.mapper.traditionalpos.TraditionalPosMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'userCardInfoMapper' and 'com.example.longecological.mapper.user.UserCardInfoMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'userCashRecordMapper' and 'com.example.longecological.mapper.user.UserCashRecordMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'userFeedBackMapper' and 'com.example.longecological.mapper.user.UserFeedBackMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'userInfoMapper' and 'com.example.longecological.mapper.user.UserInfoMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Skipping MapperFactoryBean with name 'zhongFuBackMapper' and 'com.example.longecological.mapper.zfback.ZhongFuBackMapper' mapperInterface. Bean already defined with the same name!
+2019-09-24 11:25:14 -Multiple Spring Data modules found, entering strict repository configuration mode!
+2019-09-24 11:25:14 -Bootstrapping Spring Data repositories in DEFAULT mode.
+2019-09-24 11:25:14 -Finished Spring Data repository scanning in 89ms. Found 0 repository interfaces.
+2019-09-24 11:25:14 -Multiple Spring Data modules found, entering strict repository configuration mode!
+2019-09-24 11:25:14 -Bootstrapping Spring Data repositories in DEFAULT mode.
+2019-09-24 11:25:15 -Finished Spring Data repository scanning in 60ms. Found 0 repository interfaces.
+2019-09-24 11:25:15 -Bean 'taskExecutorConfig' of type [com.example.longecological.config.thread.TaskExecutorConfig$$EnhancerBySpringCGLIB$$97a79e2e] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-09-24 11:25:15 -Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$922b82ce] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-09-24 11:25:16 -An incompatible version [1.2.10] of the APR based Apache Tomcat Native library is installed, while Tomcat requires version [1.2.14]
+2019-09-24 11:25:16 -Tomcat initialized with port(s): 8080 (http)
+2019-09-24 11:25:16 -An incompatible version [1.2.10] of the APR based Apache Tomcat Native library is installed, while Tomcat requires version [1.2.14]
+2019-09-24 11:25:16 -Initializing ProtocolHandler ["http-nio-8080"]
+2019-09-24 11:25:16 -Starting service [Tomcat]
+2019-09-24 11:25:16 -Starting Servlet Engine: Apache Tomcat/9.0.13
+2019-09-24 11:25:16 -An incompatible version [1.2.10] of the APR based Apache Tomcat Native library is installed, while Tomcat requires version [1.2.14]
+2019-09-24 11:25:16 -Initializing Spring embedded WebApplicationContext
+2019-09-24 11:25:16 -Root WebApplicationContext: initialization completed in 3252 ms
+2019-09-24 11:25:16 -Filter xssFilter was not registered (disabled)
+2019-09-24 11:25:17 -HikariPool-1 - Starting...
+2019-09-24 11:25:17 -HikariPool-1 - Start completed.
+2019-09-24 11:25:17 -HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2019-09-24 11:25:18 -HHH000412: Hibernate Core {5.3.7.Final}
+2019-09-24 11:25:18 -HHH000206: hibernate.properties not found
+2019-09-24 11:25:18 -HCANN000001: Hibernate Commons Annotations {5.0.4.Final}
+2019-09-24 11:25:18 -HHH000400: Using dialect: org.hibernate.dialect.MySQL5Dialect
+2019-09-24 11:25:18 -Initialized JPA EntityManagerFactory for persistence unit 'default'
+2019-09-24 11:25:19 -Using default implementation for ThreadExecutor
+2019-09-24 11:25:19 -Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2019-09-24 11:25:19 -Quartz Scheduler v.2.3.0 created.
+2019-09-24 11:25:19 -RAMJobStore initialized.
+2019-09-24 11:25:19 -Scheduler meta-data: Quartz Scheduler (v2.3.0) 'schedulerFactoryBean' with instanceId 'NON_CLUSTERED'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 10 threads.
+  Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
+
+2019-09-24 11:25:19 -Quartz scheduler 'schedulerFactoryBean' initialized from an externally provided properties instance.
+2019-09-24 11:25:19 -Quartz scheduler version: 2.3.0
+2019-09-24 11:25:19 -JobFactory set to: org.springframework.scheduling.quartz.AdaptableJobFactory@37e55819
+2019-09-24 11:25:20 -==>  Preparing: select * from t_sys_schedule_job where carryStatus=0 and jobStatus=1 
+2019-09-24 11:25:20 -==> Parameters: 
+2019-09-24 11:25:20 -<==      Total: 0
+2019-09-24 11:25:20 -STAET TaskExecutorConfig
+2019-09-24 11:25:20 -Initializing ExecutorService
+2019-09-24 11:25:20 -Initializing ExecutorService 'getAsyncExecutor'
+2019-09-24 11:25:21 -spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2019-09-24 11:25:21 -Cannot find template location: classpath:/templates/ (please add some templates or check your Thymeleaf configuration)
+2019-09-24 11:25:22 -Initializing ExecutorService 'taskScheduler'
+2019-09-24 11:25:22 -Starting Quartz Scheduler now
+2019-09-24 11:25:22 -Scheduler schedulerFactoryBean_$_NON_CLUSTERED started.
+2019-09-24 11:25:22 -Starting ProtocolHandler ["http-nio-8080"]
+2019-09-24 11:25:22 -Using a shared selector for servlet write/read
+2019-09-24 11:25:22 -Tomcat started on port(s): 8080 (http) with context path ''
+2019-09-24 11:25:22 -Started LongEcologicalApplication in 9.348 seconds (JVM running for 10.041)

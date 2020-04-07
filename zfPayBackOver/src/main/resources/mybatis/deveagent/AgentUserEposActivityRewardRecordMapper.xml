@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.activitytrapos.mapper.AgentUserEposActivityRewardRecordMapper">
+
+	
+	<!-- 查询用户线上活动(传统POS)奖励记录列表 -->
+	<select id="getAgentUserTraposActivityRewardRecordList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			t.id,
+			t.order_id,
+			t.activity_id,
+			t.activity_reward_id,
+			t.apply_id,
+			t.sn,
+			t.money,
+			t.user_id,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			t1.manager_id,
+			t1.user_tel,
+			t1.real_name
+		FROM
+			t_user_trapos_activity_reward_record t
+		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
+		<where>
+			t1.manager_id = #{map.manager_id}
+			and t.pos_type='03'
+			<if test="map.sn != null and map.sn != ''">
+				AND t.sn = #{map.sn}
+			</if>
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.order_id != null and map.order_id != ''">
+				AND t.order_id = #{map.order_id}
+			</if>
+			<if test="map.activity_id != null and map.activity_id != ''">
+				AND t.activity_id = #{map.activity_id}
+			</if>
+			<if test="map.activity_reward_id != null and map.activity_reward_id != ''">
+				AND t.activity_reward_id = #{map.activity_reward_id}
+			</if>
+			<if test="map.apply_id != null and map.apply_id != ''">
+				AND t.apply_id = #{map.apply_id}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t1.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t1.real_name = #{map.real_name}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 导出用户线上活动(传统POS)奖励记录列表-->
+	<select id="selectAgentUserTraposActivityRewardRecordList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.activitytrapos.domain.AgentUserTraposActivityRewardRecord" >
+		SELECT
+			t.id,
+			t.order_id,
+			t.activity_id,
+			t.activity_reward_id,
+			t.apply_id,
+			t.sn,
+			t.money,
+			t.user_id,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			t1.manager_id,
+			t1.user_tel,
+			t1.real_name
+		FROM
+			t_user_trapos_activity_reward_record t
+		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
+		<where>
+			t1.manager_id = #{map.manager_id}
+			and t.pos_type='03'
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.order_id != null and map.order_id != ''">
+				AND t.order_id = #{map.order_id}
+			</if>
+			<if test="map.activity_id != null and map.activity_id != ''">
+				AND t.activity_id = #{map.activity_id}
+			</if>
+			<if test="map.activity_reward_id != null and map.activity_reward_id != ''">
+				AND t.activity_reward_id = #{map.activity_reward_id}
+			</if>
+			<if test="map.apply_id != null and map.apply_id != ''">
+				AND t.apply_id = #{map.apply_id}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t1.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t1.real_name = #{map.real_name}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+</mapper>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('传统POS商户进件明细列表')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+<body class="gray-bg">
+	
+	<!-- 系统参数列表 -->
+	<div class="container-div ui-layout-center">
+		<div class="row">
+			
+			<!-- 最上面的搜索框 -->
+			<div class="col-sm-12 search-collapse">
+				<form id="user-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								手机号：<input type="text" name="user_tel" id="user_tel" />
+							</li>
+							<li>
+								终端号：<input type="text" name="terminal" id="terminal" />
+							</li>
+							<li>
+								机具编号(设备号)：<input type="text" name="machine_id" id="machine_id" />
+							</li>
+							<li>
+								卡号：<input type="text" name="sim_card" id="sim_card" />
+							</li>
+							<li>
+								携机入网标识：
+								<select name="is_take_machi" id="is_take_machi" th:with="type=${@dict.getType('user_traditional_pos_install_detail_is_take_machi')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+			
+			<!-- 上面的各项增删改查导入导出操作 -->
+	        <div class="btn-group-sm" id="toolbar" role="group">
+	        	<!-- 操作封装：修改信息，以tab页展现 -->
+	            <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="deveagent:userTraditionalPosInstallDetail:edit">
+		            <i class="fa fa-edit"></i> 修改
+		        </a>
+		        <!-- 操作封装：批量删除信息 -->
+	            <a class="btn btn-danger single disabled" onclick="$.operate.removeAll()" shiro:hasPermission="deveagent:userTraditionalPosInstallDetail:remove">
+	                <i class="fa fa-remove"></i> 删除
+	            </a>
+		        <!-- 表格：导出数据 -->
+	            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="deveagent:userTraditionalPosInstallDetail:export">
+		            <i class="fa fa-download"></i> 导出
+		        </a>
+	        </div>
+
+	        
+	        <!-- bootstrap表格数据部分 -->
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+			
+		</div>
+	</div>
+	
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		//编辑
+		var editFlag = [[${@permission.hasPermi('deveagent:userTraditionalPosInstallDetail:edit')}]];	
+		//删除
+		var removeFlag = [[${@permission.hasPermi('deveagent:userTraditionalPosInstallDetail:remove')}]];
+	
+		var datas_is_take_machi = [[${@dict.getType('user_traditional_pos_install_detail_is_take_machi')}]];
+	
+		//前缀路径
+		var prefix = "/deveagent/userTraditionalPosInstallDetail";
+		
+		//初始化方法
+		$(function() {
+			//初始化时间范围
+			intiTime();
+		   	//查询用户传统POS商户进件明细列表
+		    queryAgentUserTraditionalPosInstallDetailList();
+		});
+		
+		//查询用户传统POS商户进件明细列表
+		function queryAgentUserTraditionalPosInstallDetailList() {
+		    var options = {
+		        url: prefix + "/list",//URL列表路径
+		        createUrl: prefix + "/add",//新增路径
+		        updateUrl: prefix + "/edit/{id}",//编辑路径
+		        removeUrl: prefix + "/remove",//删除路径
+		        exportUrl: prefix + "/export",//导出路径
+		        modalName: "用户传统POS商户进件明细",//模块名称：用户
+		        showExport: true,
+		        sortName: 'id',
+	          	sortOrder: 'desc',
+		        //列信息
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+					field : 'id', 
+					title : '编号',
+					sortable: true
+				},
+				{
+					title: '操作',
+		            align: 'center',
+		            formatter: function(value, row, index) {
+		            	//事件数组
+		                var actions = [];
+		              	//编辑按钮：修改信息
+		                actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="#" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+		              	//删除按钮：删除信息
+		            	actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="#" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a> ');
+		              	return actions.join('');
+		            }
+		        },
+		        {
+					field : 'manager_id', 
+					title : '代理编号'
+				},
+				{
+					field : 'user_id', 
+					title : '用户编号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailUser(\'' + row.user_id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'user_tel', 
+					title : '手机号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailUser(\'' + row.user_id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'real_name', 
+					title : '姓名'
+				},
+				{
+					field : 'install_id', 
+					title : '进件编号'
+				},
+				{
+					field : 'terminal', 
+					title : '终端号'
+				},
+				{
+					field : 'machine_id', 
+					title : '机具编号(设备号)'
+				},
+				{
+					field : 'sim_card', 
+					title : '卡号'
+				},
+				{
+					field : 'is_take_machi', 
+					title : '携机入网标识',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_is_take_machi, value);
+		            }
+				}]
+		    };
+		    //表格初始化
+		    $.table.init(options);
+		}
+
+		
+		/* 查询用户详情 */
+		function detailUser(id){
+			var url = '/deveagent/userInfo/detail/'+id;
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		   	$.modal.openTab("编号"+id+"用户详情", url);
+		}
+		
+	</script>
+</body>
+</html>

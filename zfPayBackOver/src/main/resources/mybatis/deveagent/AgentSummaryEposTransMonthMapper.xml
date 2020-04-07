@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.summary.mapper.AgentSummaryEposTransMonthMapper">
+
+	<!-- 查询传统POS商户数据汇总(每月)列表 -->
+	<select id="getAgentSummaryTraditionalPosTransMonthList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			t.id,
+			t.sn,
+			t.user_id,
+			t.performance,
+			t.num,
+			t.merchant_performance,
+			t.merchant_num,
+			t.agency_performance,
+			t.agency_num,
+			t.benefit,
+			t.share_benefit,
+			t.single_benefit,
+			t.return_benefit,
+			t.activity_benefit,
+			t.merchant_benefit,
+			t.merchant_share_benefit,
+			t.merchant_single_benefit,
+			t.merchant_return_benefit,
+			t.merchant_activity_benefit,
+			t.agency_benefit,
+			t.agency_share_benefit,
+			t.agency_single_benefit,
+			t.agency_return_benefit,
+			t.cre_month,
+			t1.manager_id,
+			t1.user_tel,
+			t1.real_name
+		FROM
+			t_summary_traditional_pos_trans_month t
+		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
+		<where>
+			t1.manager_id = #{map.manager_id}
+			AND t.pos_type='epos'
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.sn != null and map.sn != ''">
+				AND t.sn = #{map.sn}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t1.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t1.real_name = #{map.real_name}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_month &gt;= #{map.beginTime}
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_month &lt;= #{map.endTime}
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 导出传统POS商户数据汇总(每月)列表 -->
+	<select id="selectAgentSummaryTraditionalPosTransMonthList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.summary.domain.AgentSummaryTraditionalPosTransMonth" >
+		SELECT
+			t.id,
+			t.sn,
+			t.user_id,
+			t.performance,
+			t.num,
+			t.merchant_performance,
+			t.merchant_num,
+			t.agency_performance,
+			t.agency_num,
+			t.benefit,
+			t.share_benefit,
+			t.single_benefit,
+			t.return_benefit,
+			t.activity_benefit,
+			t.merchant_benefit,
+			t.merchant_share_benefit,
+			t.merchant_single_benefit,
+			t.merchant_return_benefit,
+			t.merchant_activity_benefit,
+			t.agency_benefit,
+			t.agency_share_benefit,
+			t.agency_single_benefit,
+			t.agency_return_benefit,
+			t.cre_month,
+			t1.manager_id,
+			t1.user_tel,
+			t1.real_name
+		FROM
+			t_summary_traditional_pos_trans_month t
+		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
+		<where>
+			t1.manager_id = #{map.manager_id}
+			AND t.pos_type='epos'
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.sn != null and map.sn != ''">
+				AND t.sn = #{map.sn}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t1.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t1.real_name = #{map.real_name}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_month &gt;= #{map.beginTime}
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_month &lt;= #{map.endTime}
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+</mapper>

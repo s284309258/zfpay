@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.longecological.mapper.message.MessageMapper">
+	
+	<!-- 用户通知记录列表 -->
+	<select id="getMessageRecordList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(id as char) as message_id,
+			money,
+			DATE_FORMAT(STR_TO_DATE(CONCAT(cre_date, cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		FROM
+			t_user_message_info
+		WHERE
+			user_id = #{map.sys_user_id}
+			<if test="map.last_id != null and map.last_id != ''" >
+        		AND id &lt; #{map.last_id}
+      		</if>
+      	ORDER BY id desc
+		limit 0,10
+	</select>
+	
+	<!-- 用户通知记录详情 -->
+	<select id="getMessageRecordDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			order_id,
+			money,
+			sn,
+			op_type,
+			DATE_FORMAT(STR_TO_DATE(CONCAT(cre_date, cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		FROM
+			t_user_message_info
+		WHERE id = #{map.message_id}
+	</select>
+	
+</mapper>

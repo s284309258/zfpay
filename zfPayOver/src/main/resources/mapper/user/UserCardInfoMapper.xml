@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.longecological.mapper.user.UserCardInfoMapper">
+
+	
+	<!-- 查询用户结算卡列表 -->
+	<select id="getUserCardList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			id AS card_id,
+			user_id,
+			account,
+			account_name,
+			bank_code,
+			bank_name,
+			card_photo,
+			status,
+			is_default,
+			remark
+		FROM
+			t_user_card_info
+		<where>
+			user_id=#{map.sys_user_id}
+			<if test="map.status != null and map.status != '' " >
+	       		 AND status=#{map.status}
+	     	</if>
+		</where>
+		order by is_default desc,id desc
+	</select>
+	
+	
+	<!-- 查询用户添加的结算卡总数量 -->
+	<select id="getUserCardNum" parameterType="java.lang.String" resultType="java.lang.Integer" >
+		select count(*) FROM t_user_card_info where user_id=#{user_id}
+	</select>
+	
+	
+	<!-- 查询用户添加的默认卡数量 -->
+	<select id="getDefaultCardNum" parameterType="java.lang.String" resultType="java.lang.Integer" >
+		select count(*) FROM t_user_card_info where user_id=#{user_id} AND is_default='1'
+	</select>
+	
+	
+	<!-- 添加用户银行卡（默认和非默认通用）-->
+	<insert id="addUserCard" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="map.card_id" >
+		insert into t_user_card_info (
+			user_id, account, account_name, id_card, bank_code, bank_name, 
+			card_photo, status, is_default, cre_date, cre_time)
+		values (
+			#{map.sys_user_id}, #{map.account}, #{map.account_name}, #{map.id_card}, #{map.bank_code}, #{map.bank_name}, 
+			#{map.card_photo}, #{map.status}, #{map.is_default}, #{map.cre_date}, #{map.cre_time})
+	</insert>
+	
+	
+	<!-- 将用户的银行卡设置成非默认卡 -->
+	<update id="updateCardToNoDefault" parameterType="java.util.Map" >
+		update t_user_card_info set is_default='0' where user_id=#{map.sys_user_id}
+	</update>
+	
+	
+	<!-- 删除用户银行卡 -->
+	<delete id="delUserCardById" parameterType="java.util.Map" >
+		delete from t_user_card_info where id=#{map.card_id} and user_id=#{map.sys_user_id}
+	</delete>
+	
+	
+	<!-- 更新用户银行卡信息（默认和非默认方法都通用） -->
+	<update id="updateUserCard" parameterType="java.util.HashMap" >
+		update t_user_card_info
+    	<set >
+	      	<if test="map.account != null and map.account != '' " >
+	      		account = #{map.account},
+	      	</if>
+	      	<if test="map.account_name != null and map.account_name != '' " >
+	      		account_name = #{map.account_name},
+	      	</if>
+	      	<if test="map.bank_code != null and map.bank_code != '' " >
+	      		bank_code = #{map.bank_code},
+	      	</if>
+	      	<if test="map.bank_name != null and map.bank_name != '' " >
+	      		bank_name = #{map.bank_name},
+	      	</if>
+	      	<if test="map.card_photo != null and map.card_photo != '' " >
+	      		card_photo = #{map.card_photo},
+	      	</if>
+	      	<if test="map.status != null and map.status != '' " >
+	      		status = #{map.status},
+	      	</if>
+	      	<if test="map.is_default != null and map.is_default != '' " >
+	      		is_default = #{map.is_default},
+	      	</if>
+	      	<if test="map.cre_date != null and map.cre_date != '' " >
+	      		up_date = #{map.cre_date},
+	      	</if>
+	      	<if test="map.cre_time != null and map.cre_time != '' " >
+	      		up_time = #{map.cre_time}
+	      	</if>
+    	</set>
+		where id=#{map.card_id} and user_id=#{map.sys_user_id}
+	</update>
+	
+	
+	<!-- 查询用户添加的默认卡数量 -->
+	<select id="getUserCardInfo" parameterType="java.util.Map" resultType="java.util.Map" >
+		select * FROM t_user_card_info where id=#{map.card_id} AND user_id=#{map.sys_user_id} AND status='09'
+	</select>
+	
+</mapper>

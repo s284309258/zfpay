@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('代理系统MPOS列表')" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="gray-bg">
+
+<!-- 系统参数列表 -->
+<div class="container-div ui-layout-center">
+    <div class="row">
+
+        <!-- 最上面的搜索框 -->
+        <div class="col-sm-12 search-collapse">
+            <form id="user-form">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            设备号（机器编号）：<input type="text" name="sn" id="sn" />
+                        </li>
+                        <li>
+                            代理姓名：<input type="text" name="real_name" id="real_name" />
+                        </li>
+                        <li>
+                            代理电话：<input type="text" name="user_tel" id="user_tel" />
+                        </li>
+                        <li>
+                            POS类型：
+                            <select name="pos_type" th:with="type=${@dict.getType('benefit_record_money_pos_type')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            是否有政策标识：
+                            <select name="policy" th:with="type=${@dict.getType('sys_version_info_status')}">
+                                <option value="3">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li class="select-time">
+                            <label>创建时间： </label>
+                            <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="beginTime"/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="wrapper wrapper-content animated fadeInRight ibox-content" style="margin-top: 130px">
+            <h3>设置已分配POS政策</h3>
+            <form class="form-horizontal m" id="form-posPolicyInfo-add">
+                <!--新增政策 begin add byqh 201912-->
+                <div class="form-group">
+                    <label class="col-sm-1 control-label ">绑定政策：</label>
+                    <div class="col-sm-9">
+                        <select class="form-control select2-multiple" multiple id="policy">
+                            <option th:each="po : ${policyList}" th:text="${po.policy_name}" th:value="${po.id}"></option>
+                        </select>
+                    </div>
+                </div>
+                <!--新增政策 begin end byqh 201912-->
+                <div class="form-group">
+                    <label class="col-sm-1 control-label ">要设置政策的POS机设备号（机器编号）：</label>
+                    <div class="col-sm-9">
+                        <textarea rows="" cols="" name="pos_sns" id="pos_sns" class="form-control" placeholder="请选择下方POS机或者手动填写，批量数据请用英文分号(;)隔离" required readonly></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group row" align="center" >
+                    <div class="col-sm-4">
+                        <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保 存</button>&nbsp;
+                    </div>
+                    <div class="col-sm-4">
+                        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭 </button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
+        <!-- 上面的各项增删改查导入导出操作 -->
+        <div class="btn-group-sm" id="toolbar" role="group" style="margin-top: 10px">
+            <a class="btn btn-success" onclick="selectPos()">
+                <i class="fa fa-check"></i> 选中POS机
+            </a>
+        </div>
+
+        <!-- bootstrap表格数据部分 -->
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" data-mobile-responsive="true"></table>
+        </div>
+
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<script th:inline="javascript">
+
+    //前缀路径
+    var prefix = "/deveagent/posPolicySet";
+
+    //初始化方法
+    $(function() {
+        //初始化时间范围
+        intiTime();
+        //查询系统MPOS机列表
+        queryPosPolicyInfoList();
+    });
+
+    //选中数据
+    function selectPos(){
+        var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+        if (rows.length == 0) {
+            $.modal.alertWarning("请至少选择一个POS机");
+            return;
+        }
+        $.modal.confirm("确认要选中这" + rows.length + "个POS机吗?", function() {
+            var pos_sns = "";
+            // 遍历所有选择的行数据，取每条数据对应的ID
+            $.each(rows, function(i, row) {
+                if(i<rows.length-1){
+                    pos_sns=pos_sns+row['id']+'#'+row['sn']+";";
+                }else{
+                    pos_sns=pos_sns+row['id']+'#'+row['sn'];
+                }
+            });
+            $("#pos_sns").val(pos_sns);
+        });
+    }
+
+
+    function submitHandler() {
+        if($("#policy").val()=='' || $("#policy").val()==null){
+            layer.msg("政策不能为空",{icon:5,time : 1000});
+            return;
+        }
+        if($("#pos_sns").val()=='' || $("#pos_sns").val()==null){
+            layer.msg("POS设备号不能为空",{icon:5,time : 1000});
+            return;
+        }
+        var data = $('#form-posPolicyInfo-add').serializeArray();
+        var policies =$.form.selectSelects("policy");
+        data.push({"name":"policy","value":policies});
+        // $.operate.save("/deveagent/posPolicySet/setPolicy", data);
+
+        var config = {
+            url: "/deveagent/posPolicySet/setPolicy",
+            type: "post",
+            dataType: "json",
+            data: data,
+            beforeSend: function () {
+                //$.modal.loading("正在处理中，请稍后...");
+                //$.modal.disable();
+            },
+            success: function(result) {
+                if(result.code==0){
+                    layer.msg("操作成功",{icon:1,time : 1000,end:function(){
+                            var local = location.href.substring(0,location.href.indexOf("deveagent/posPolicySet"));
+                            location.href=local+'deveagent/posPolicySet';
+                        }});
+                }else{
+                    layer.msg("操作失败",{icon:5,time : 1000});
+                }
+            }
+        };
+        $.ajax(config);
+    }
+
+    //查询系统MPOS机列表
+    function queryPosPolicyInfoList() {
+        var options = {
+            url: prefix + "/list",//URL列表路径
+            createUrl: prefix + "/add",//新增路径
+            exportUrl: prefix + "/export",//导出路径
+            modalName: "设置POS政策标识",//模块名称：用户
+            showExport: true,
+            sortName: 'id',
+            sortOrder: 'desc',
+            //列信息
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'id',
+                    sortable: true,
+                    title : '直属代理ID'
+                },
+                {
+                    field : 'real_name',
+                    sortable: true,
+                    title : '直属代理姓名'
+                },
+                {
+                    field : 'user_tel',
+                    sortable: true,
+                    title : '直属代理电话'
+                },
+                {
+                    field : 'sn',
+                    sortable: true,
+                    title : 'sn编号'
+                },
+                {
+                    field : 'card_settle_price',
+                    sortable: true,
+                    title : '刷卡结算底价（%）'
+                },
+                {
+                    field : 'cloud_settle_price',
+                    sortable: true,
+                    title : '云闪付结算底价（%）'
+                },
+                {
+                    field : 'single_profit_rate',
+                    sortable: true,
+                    title : '单笔分润比例（%）'
+                },
+                {
+                    field : 'cash_back_rate',
+                    sortable: true,
+                    title : '返现比例（%）'
+                },
+                {
+                    field : 'single_profit_rate',
+                    sortable: true,
+                    title : '单笔分润比例（%）'
+                },
+                {
+                    field : 'cre_date',
+                    sortable: true,
+                    title : '创建时间'
+                }]
+        };
+        //表格初始化
+        $.table.init(options);
+    }
+
+</script>
+</body>
+
+</html>

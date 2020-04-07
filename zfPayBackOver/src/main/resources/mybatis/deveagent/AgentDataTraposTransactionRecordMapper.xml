@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.datatrapos.mapper.AgentDataTraposTransactionRecordMapper">
+
+	<!-- 查询MPOS商户数据汇总列表 -->
+	<select id="getAgentDataTraposTransactionRecordList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			t.id,
+			t.affiliation_agent_account,
+			t.sn,
+			t.mer_id,
+			t.trml_id,
+			t.trans_amount,
+			t.trans_time,
+			t.tran_ref_code,
+			t.trans_type,
+			t.trans_product,
+			t.card_type,
+			t.mer_sett_rate,
+			t.mer_withdraw_fee,
+			t.mer_cap_fee,
+			t.agent_cost_rate,
+			t.agent_cap_cost_fee,
+			t.sett_status,
+			t.status,
+			t.card_no,
+			t.process_flag,
+			t.mer_name,
+			t.is_authentication,
+			t.account_id,
+			t.manager_id,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t1.app_id
+		FROM
+			t_data_trapos_transaction_record t
+		LEFT JOIN sys_user_account t1 ON t.account_id = t1.id
+		<where>
+			t.manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.affiliation_agent_account != null and map.affiliation_agent_account != ''">
+				AND t.affiliation_agent_account = #{map.affiliation_agent_account}
+			</if>
+			<if test="map.sn != null and map.sn != ''">
+				AND t.sn = #{map.sn}
+			</if>
+			<if test="map.mer_id != null and map.mer_id != ''">
+				AND t.mer_id = #{map.mer_id}
+			</if>
+			<if test="map.trml_id != null and map.trml_id != ''">
+				AND t.trml_id = #{map.trml_id}
+			</if>
+			<if test="map.tran_ref_code != null and map.tran_ref_code != ''">
+				AND t.tran_ref_code = #{map.tran_ref_code}
+			</if>
+			<if test="map.trans_type != null and map.trans_type != ''">
+				AND t.trans_type = #{map.trans_type}
+			</if>
+			<if test="map.trans_product != null and map.trans_product != ''">
+				AND t.trans_product = #{map.trans_product}
+			</if>
+			<if test="map.card_type != null and map.card_type != ''">
+				AND t.card_type = #{map.card_type}
+			</if>
+			<if test="map.sett_status != null and map.sett_status != ''">
+				AND t.sett_status = #{map.sett_status}
+			</if>
+			<if test="map.status != null and map.status != ''">
+				AND t.status = #{map.status}
+			</if>
+			<if test="map.card_no != null and map.card_no != ''">
+				AND t.card_no = #{map.card_no}
+			</if>
+			<if test="map.process_flag != null and map.process_flag != ''">
+				AND t.process_flag = #{map.process_flag}
+			</if>
+			<if test="map.is_authentication != null and map.is_authentication != ''">
+				AND t.is_authentication = #{map.is_authentication}
+			</if>
+			<if test="map.app_id != null and map.app_id != ''">
+				AND t1.app_id = #{map.app_id}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 导出MPOS商户数据汇总列表 -->
+	<select id="selectAgentDataTraposTransactionRecordList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.datatrapos.domain.AgentDataTraposTransactionRecord" >
+		SELECT
+			t.id,
+			t.affiliation_agent_account,
+			t.sn,
+			t.mer_id,
+			t.trml_id,
+			t.trans_amount,
+			t.trans_time,
+			t.tran_ref_code,
+			t.trans_type,
+			t.trans_product,
+			t.card_type,
+			t.mer_sett_rate,
+			t.mer_withdraw_fee,
+			t.mer_cap_fee,
+			t.agent_cost_rate,
+			t.agent_cap_cost_fee,
+			t.sett_status,
+			t.status,
+			t.card_no,
+			t.process_flag,
+			t.mer_name,
+			t.is_authentication,
+			t.account_id,
+			t.manager_id,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t1.app_id
+		FROM
+			t_data_trapos_transaction_record t
+		LEFT JOIN sys_user_account t1 ON t.account_id = t1.id
+		<where>
+			t.manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.affiliation_agent_account != null and map.affiliation_agent_account != ''">
+				AND t.affiliation_agent_account = #{map.affiliation_agent_account}
+			</if>
+			<if test="map.sn != null and map.sn != ''">
+				AND t.sn = #{map.sn}
+			</if>
+			<if test="map.mer_id != null and map.mer_id != ''">
+				AND t.mer_id = #{map.mer_id}
+			</if>
+			<if test="map.trml_id != null and map.trml_id != ''">
+				AND t.trml_id = #{map.trml_id}
+			</if>
+			<if test="map.tran_ref_code != null and map.tran_ref_code != ''">
+				AND t.tran_ref_code = #{map.tran_ref_code}
+			</if>
+			<if test="map.trans_type != null and map.trans_type != ''">
+				AND t.trans_type = #{map.trans_type}
+			</if>
+			<if test="map.trans_product != null and map.trans_product != ''">
+				AND t.trans_product = #{map.trans_product}
+			</if>
+			<if test="map.card_type != null and map.card_type != ''">
+				AND t.card_type = #{map.card_type}
+			</if>
+			<if test="map.sett_status != null and map.sett_status != ''">
+				AND t.sett_status = #{map.sett_status}
+			</if>
+			<if test="map.status != null and map.status != ''">
+				AND t.status = #{map.status}
+			</if>
+			<if test="map.card_no != null and map.card_no != ''">
+				AND t.card_no = #{map.card_no}
+			</if>
+			<if test="map.process_flag != null and map.process_flag != ''">
+				AND t.process_flag = #{map.process_flag}
+			</if>
+			<if test="map.is_authentication != null and map.is_authentication != ''">
+				AND t.is_authentication = #{map.is_authentication}
+			</if>
+			<if test="map.app_id != null and map.app_id != ''">
+				AND t1.app_id = #{map.app_id}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+</mapper>

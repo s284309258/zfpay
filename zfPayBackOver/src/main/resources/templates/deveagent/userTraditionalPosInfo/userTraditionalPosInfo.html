@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('代理用户传统POS列表')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+<body class="gray-bg">
+	
+	<!-- 系统参数列表 -->
+	<div class="container-div ui-layout-center">
+		<div class="row">
+			
+			<!-- 最上面的搜索框 -->
+			<div class="col-sm-12 search-collapse">
+				<form id="user-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								手机号：<input type="text" name="user_tel" id="user_tel" />
+							</li>
+							<li>
+								姓名：<input type="text" name="real_name" id="real_name" />
+							</li>
+							<li>
+								设备号（机器编号）：<input type="text" name="sn" id="sn" />
+							</li>
+							<li>
+								归属状态：<input type="text" name="state_status" id="state_status" />
+							</li>
+							<li>
+								归属状态：
+								<select name="state_status" id="state_status" th:with="type=${@dict.getType('user_pos_info_state_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								是否参与线上活动：
+								<select name="activity_status" id="activity_status" th:with="type=${@dict.getType('user_pos_info_activity_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								删除状态：
+								<select name="del" id="del" th:with="type=${@dict.getType('sys_all_table_del')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								是否有交易：
+								<select name="trade_status" id="trade_status" th:with="type=${@dict.getType('user_pos_info_trade_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								商户号：<input type="text" name="mer_id" id="mer_id" />
+							</li>
+							<li>
+								商户名称：<input type="text" name="mer_name" id="mer_name" />
+							</li>
+							<li>
+								商户姓名：<input type="text" name="name" id="name" />
+							</li>
+							<li>
+								商户手机号：<input type="text" name="tel" id="tel" />
+							</li>
+							<li>
+								返现获取类型：
+								<select name="cash_back_type" id="cash_back_type" th:with="type=${@dict.getType('sys_pos_info_cash_back_type')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								返现状态：
+								<select name="cash_back_status" id="cash_back_status" th:with="type=${@dict.getType('sys_pos_info_cash_back_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								激活状态：
+								<select name="act_status" id="act_status" th:with="type=${@dict.getType('sys_pos_info_act_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li class="select-time">
+								<label>创建时间： </label>
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="beginTime"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+			
+			<!-- 上面的各项增删改查导入导出操作 -->
+	        <div class="btn-group-sm" id="toolbar" role="group">
+		        <!-- 操作封装：添加信息 全屏 -->
+		        <a class="btn btn-success" onclick="addUserPos()" shiro:hasPermission="deveagent:userTraditionalPosInfo:add">
+		            <i class="fa fa-plus"></i> 给用户分配传统POS
+		        </a>
+				<!-- 一级代理名下的MPOS(含有交易的)分配给他名下二级代理 -->
+				<a class="btn btn-success" onclick="allotAgentPos()" shiro:hasPermission="deveagent:userTraditionalPosInfo:add">
+					<i class="fa fa-plus"></i> 分配一级代理名下传统POS(含已激活)
+				</a>
+		         <!-- 操作封装：修改信息，全屏 -->
+		        <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="deveagent:userTraditionalPosInfo:edit">
+		            <i class="fa fa-edit"></i> 修改
+		        </a>
+		        <!-- 表格：导出数据 -->
+	            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="deveagent:userTraditionalPosInfo:export">
+		            <i class="fa fa-download"></i> 导出
+		        </a>
+	        </div>
+
+	        
+	        <!-- bootstrap表格数据部分 -->
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+			
+		</div>
+	</div>
+	
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		//详情
+		var detailFlag = [[${@permission.hasPermi('deveagent:userTraditionalPosInfo:detail')}]];
+		//编辑
+		var editFlag = [[${@permission.hasPermi('deveagent:userTraditionalPosInfo:edit')}]];
+	
+		var datas_state_status = [[${@dict.getType('user_pos_info_state_status')}]];
+		var datas_activity_status = [[${@dict.getType('user_pos_info_activity_status')}]];
+		var datas_del = [[${@dict.getType('sys_activity_info_del')}]];
+		var datas_trade_status = [[${@dict.getType('user_pos_info_trade_status')}]];
+		var datas_cash_back_type = [[${@dict.getType('sys_pos_info_cash_back_type')}]];
+		var datas_cash_back_status = [[${@dict.getType('sys_pos_info_cash_back_status')}]];
+		var datas_scan_status = [[${@dict.getType('sys_pos_info_scan_status')}]];
+		var datas_act_status = [[${@dict.getType('sys_pos_info_act_status')}]];
+	
+		//前缀路径
+		var prefix = "/deveagent/userTraditionalPosInfo";
+		
+		//初始化方法
+		$(function() {
+			//初始化时间范围
+			intiTime();
+		   	//查询用户传统POS机列表
+		    queryAgentUserTraditionalPosInfoList();
+		});
+		
+		//查询用户传统POS机列表update byqh 201912
+		function queryAgentUserTraditionalPosInfoList() {
+		    var options = {
+		        url: prefix + "/list",//URL列表路径
+		        updateUrl: prefix + "/edit/{id}",//编辑路径
+		        detailUrl: prefix + "/detail/{id}",//详情路径
+		        exportUrl: prefix + "/export",//导出路径
+		        modalName: "用户传统POS信息",//模块名称：用户
+		        showFooter: true,
+		        showExport: true,
+		        sortName: 'id',
+	          	sortOrder: 'desc',
+		        //列信息
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+					field : 'id', 
+					title : '编号'
+				},
+				{
+					title: '操作',
+		            align: 'center',
+		            formatter: function(value, row, index) {
+		            	//事件数组
+		                var actions = [];
+		            	//编辑按钮：修改信息
+		            	actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑  </a> ');
+		              	return actions.join('');
+		            }
+		        },
+		        {
+					field : 'manager_id', 
+					title : '代理编号'
+				},
+				{
+					field : 'user_id', 
+					title : '用户编号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailUser(\'' + row.user_id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'user_tel', 
+					title : '手机号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailUser(\'' + row.user_id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'real_name', 
+					title : '姓名'
+				},
+				{
+					field : 'sn', 
+					title : '设备号（机器编号）',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailTrapos(\'' + row.sn + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'card_settle_price', 
+					title : '刷卡结算底价（%）'
+				},
+				{
+					field : 'cloud_settle_price', 
+					title : '云闪付结算底价（%）'
+				},
+				{
+					field : 'weixin_settle_price', 
+					title : '微信结算底价（%）'
+				},
+				{
+					field : 'zhifubao_settle_price', 
+					title : '支付宝结算底价（%）'
+				},
+				{
+					field : 'card_settle_price_vip',
+					title : 'VIP秒到(商圈)刷卡结算底价（%）'
+				},
+				// {
+				// 	field : 'cloud_settle_price_vip',
+				// 	title : 'VIP秒到(商圈)云闪付结算底价（%）'
+				// },
+				// {
+				// 	field : 'weixin_settle_price_vip',
+				// 	title : 'VIP秒到(商圈)微信结算底价（%）'
+				// },
+				// {
+				// 	field : 'zhifubao_settle_price_vip',
+				// 	title : 'VIP秒到(商圈)支付宝结算底价（%）'
+				// },
+				{
+					field : 'single_profit_rate', 
+					title : '单笔分润比例（%）'
+				},
+				{
+					field : 'cash_back_rate', 
+					title : '返现比例（%）'
+				},
+				{
+					field : 'mer_cap_fee', 
+					title : '封顶费'
+				},
+				{
+					field : 'state_status', 
+					title : '归属状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_state_status, value);
+		            }
+				},
+				{
+					field : 'activity_status', 
+					title : '是否参与活动',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_activity_status, value);
+		            }
+				},
+				{
+					field : 'del', 
+					title : '删除状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_del, value);
+		            }
+				},
+				{
+					field : 'trade_status', 
+					title : '是否有交易',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_trade_status, value);
+		            }
+				},
+				{
+					field : 'mer_id', 
+					title : '商户号'
+				},
+				{
+					field : 'mer_name', 
+					title : '商户名称'
+				},
+				{
+					field : 'name', 
+					title : '商户姓名'
+				},
+				{
+					field : 'tel', 
+					title : '商户手机号'
+				},
+				{
+					field : 'cash_back_type', 
+					title : '返现获取类型',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_cash_back_type, value);
+		            }
+				},
+				{
+					field : 'cash_back_condition', 
+					title : '返现条件'
+				},
+				{
+					field : 'cash_back_money', 
+					title : '返现金额'
+				},
+				{
+					field : 'real_cash_back_money', 
+					title : '实际返现金额'
+				},
+				{
+					field : 'cash_back_status', 
+					title : '返现状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_cash_back_status, value);
+		            }
+				},
+				{
+					field : 'credit_card_rate', 
+					title : '刷卡费率（%）'
+				},
+				{
+					field : 'cloud_flash_rate', 
+					title : '云闪付费率（%）'
+				},
+				{
+					field : 'weixin_rate', 
+					title : '微信费率（%）'
+				},
+				{
+					field : 'zhifubao_rate', 
+					title : '支付宝费率（%）'
+				},
+				{
+					field : 'scan_status', 
+					title : '是否申请扫码支付',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_scan_status, value);
+		            }
+				},
+				{
+					field : 'act_status', 
+					title : '激活状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_act_status, value);
+		            }
+				},
+				{
+					field : 'act_user_id', 
+					title : '激活时所属用户'
+				},
+				{
+					field : 'act_date', 
+					title : '激活时间'
+				},
+				{
+					field : 'trade_date', 
+					title : '交易时间'
+				},
+				{
+					field : 'remark', 
+					title : '备注'
+				},
+				{
+					field : 'cre_date', 
+					title : '创建时间',
+					sortable: true
+				},
+				{
+					field : 'create_by', 
+					title : '创建者'
+				},
+				{
+					field : 'up_date', 
+					title : '更新时间',
+					sortable: true
+				},
+				{
+					field : 'update_by', 
+					title : '更新者'
+				}]
+		    };
+		    //表格初始化
+		    $.table.init(options);
+		}
+		
+		
+		/* 查询传统POS详情 */
+		function detailTrapos(id){
+			var url = '/deveagent/sysTraditionalPosInfo/detail/'+id;
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		   	$.modal.openTab("编号"+id+"传统POS详情", url);
+		}
+		
+		
+		/* 查询用户详情 */
+		function detailUser(id){
+			var url = '/deveagent/userInfo/detail/'+id;
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		   	$.modal.openTab("编号"+id+"用户详情", url);
+		}
+		
+		/* 查询用户详情 */
+		function detailUser(id){
+			var url = '/deveagent/userInfo/detail/'+id;
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		   	$.modal.openTab("编号"+id+"用户详情", url);
+		}
+		
+		
+		//添加用户POS机
+		function addUserPos(id) {
+		    var url = prefix + '/selectUser';
+		    $.modal.openTab("添加用户传统POS机信息（选择用户）", url);
+		}
+
+		//一级代理名下的MPOS(含有交易的)分配给他名下二级代理byqh
+		function allotAgentPos() {
+			var url = prefix + '/selectAgentUser';
+			$.modal.openTab("分配一级代理传统POS机（选择一级代理）", url);
+		}
+		
+	</script>
+</body>
+</html>

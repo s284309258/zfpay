@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('修改字典类型')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+	
+	<form class="form-horizontal m" id="form-sysParamRate-edit" >
+	
+		<input id="param_rate_id" name="param_rate_id"  type="hidden" th:value="${id}"  />
+		
+		<div class="form-group" >
+			<label class="col-sm-3 control-label ">费率（单位%）：</label>
+			<div class="col-sm-8">
+				<input name="rate" id="rate" class="form-control" type="text" required placeholder="请输入费率（单位：%）" >
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-3 control-label">操作备注：</label>
+			<div class="col-sm-8">
+				<textarea id="remark" name="remark" class="form-control" placeholder="请输入操作备注" ></textarea>
+			</div>
+		</div>
+	</form>
+</div>
+
+<th:block th:include="include :: footer" />
+<script type="text/javascript">
+
+var id = [[${id}]]; 
+//查询参数信息
+$(function(){
+	$.ajax({
+		url: "/devemana/sysParamRate/getManaSysParamRateById",
+		type: 'post',
+		dataType:"json",
+		data:{
+			'id' : id,
+		},
+		success:function(data){
+			$("#rate").val(data.rate);
+    	}
+	}); 
+}) 
+
+//前缀路径
+var prefix = "/devemana/sysParamRate";
+
+$("#form-sysParamRate-edit").validate({
+	onkeyup: false,
+	rules:{
+		rate: {
+	        required: true
+      	},
+      	remark:{
+			required:true
+      	}
+	},
+	messages: {
+		rate: {
+            required: "请输入系统费率参数"
+        },
+		remark: {
+            required: "请输入操作备注"
+        }
+    },
+    focusCleanup: true
+});
+
+function submitHandler() {
+	if ($.validate.form()) {
+  		$.operate.save(prefix + "/edit", $('#form-sysParamRate-edit').serialize());
+  	}
+}
+</script>
+</body>
+</html>

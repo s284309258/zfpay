@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.longecological.mapper.activity.OnlineActivityMapper">
+
+
+	<!-- 查询线上活动列表(传统POS) -->
+	<select id="getTraditionalPosOnlineActivityList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			cast(id as char) as activity_id,
+			activity_name,
+			start_date,
+			end_date,
+			cover_url
+		FROM
+			t_sys_trapos_activity_info 
+		where status = '09' 
+		  and manager_id = #{map.manager_id}
+		  <choose>
+			  <when test="map.pos_type!=null and map.pos_type!=''">
+				  and pos_type='epos'
+			  </when>
+			  <otherwise>
+				  and pos_type is null
+			  </otherwise>
+		  </choose>
+		  and #{map.date} between start_date and end_date
+	</select>
+
+	<!--查询线上可以参与的政策 add byqh 201912-->
+	<select id="getPosOnlinePolicyList" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from t_sys_pos_policy_define  where manager_id=(select manager_id from t_user_info where id=#{map.sys_user_id}) and policy_type=3 and isuse=1 and pos_type=#{map.pos_type}
+	</select>
+
+	<!--查询线上可以参与的政策BYID add byqh 201912-->
+	<select id="getPosOnlinePolicyByID" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from t_sys_pos_policy_define  where id=#{map.id}
+	</select>
+
+	<!--参与政策 add byqh 201912-->
+	<update id="joinPosOnlinePolicy" parameterType="java.util.Map">
+		insert into t_sys_pos_policy_info(policy_name,sn,module_type,module3_reward,module3_quantity,module3_active_end_day,policy_id,create_date)
+		values(#{map.policy_name},#{map.sn},#{map.policy_type},#{map.policy_amount},#{map.policy_quantity},#{map.policy_end_day},#{map.id},now())
+	</update>
+	
+	<!-- 查询线上活动列表(MPOS) -->
+	<select id="getMposOnlineActivityList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			cast(id as char) as activity_id,
+			activity_name,
+			start_date,
+			end_date,
+			cover_url
+		FROM
+			t_sys_mpos_activity_info 
+		where status = '09' 
+		  and manager_id = #{map.manager_id}
+		  and #{map.date} between start_date and end_date
+	</select>
+	
+	<!-- 查询用户活动奖励记录(传统POS) -->
+	<select id="getTraditionalPosRewardRecordList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(t.id as char) as record_id,
+			t.order_id,
+			t.sn,
+			t.money,
+			t1.activity_name,
+			t1.start_date,
+			t1.end_date,
+			DATE_FORMAT(STR_TO_DATE(CONCAT(t.cre_date, t.cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		  FROM t_user_trapos_activity_reward_record t
+		  LEFT JOIN t_sys_trapos_activity_info t1 on t.activity_id = t1.id
+		 WHERE t.user_id = #{map.sys_user_id}
+		 <choose>
+			 <when test="map.pos_type!=null and map.post_type!=''">
+				 and t1.pos_type='epos'
+			 </when>
+			 <otherwise>
+				 and t1.pos_type is null
+			 </otherwise>
+		 </choose>
+		 <if test="map.last_id != null and map.last_id != ''" >
+			AND t.id &lt; #{map.last_id}
+		 </if>
+		order by t.id desc
+		limit 0,10	
+	</select>
+	
+	<!-- 查询用户活动奖励记录(MPOS) -->
+	<select id="getMposRewardRecordList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(t.id as char) as record_id,
+			t.order_id,
+			t.sn,
+			t.money,
+			t1.activity_name,
+			t1.start_date,
+			t1.end_date,
+			DATE_FORMAT(STR_TO_DATE(CONCAT(t.cre_date, t.cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		  FROM t_user_mpos_activity_reward_record t
+		  LEFT JOIN t_sys_mpos_activity_info t1 on t.activity_id = t1.id
+		 WHERE t.user_id = #{map.sys_user_id}
+		   <if test="map.last_id != null and map.last_id != ''" >
+        	AND t.id &lt; #{map.last_id}
+      	</if>
+		order by t.id desc
+		limit 0,10	
+	</select>
+	
+	<!-- 查询活动申请列表(传统POS) -->
+	<select id="getTraditionalPosActivityApplyList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(t.id as char) as apply_id,
+			t.order_id,
+			t.status,
+			t1.activity_name,
+			t1.start_date,
+			t1.end_date,
+			t2.pos_num,
+			t2.reward_money,
+			t2.expenditure,
+			DATE_FORMAT(STR_TO_DATE(CONCAT(t.cre_date, t.cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		  FROM t_user_trapos_activity_apply_info t
+		  LEFT JOIN t_sys_trapos_activity_info t1 on t.activity_id = t1.id
+		  LEFT JOIN t_sys_trapos_activity_reward_info t2 on t.activity_reward_id = t2.id
+		 WHERE t.user_id = #{map.sys_user_id}
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and t1.pos_type='epos'
+			</when>
+			<otherwise>
+				and t1.pos_type is null
+			</otherwise>
+		</choose>
+		<if test="map.last_id != null and map.last_id != ''" >
+        	AND t.id &lt; #{map.last_id}
+      	</if>
+		order by t.id desc
+		limit 0,10	
+	</select>
+	
+	<!-- 查询活动申请列表(MPOS) -->
+	<select id="getMposActivityApplyList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(t.id as char) as apply_id,
+			t.order_id,
+			t.status,
+			t1.activity_name,
+			t1.start_date,
+			t1.end_date,
+			t2.pos_num,
+			t2.reward_money,
+			t2.expenditure,
+			DATE_FORMAT(STR_TO_DATE(CONCAT(t.cre_date, t.cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		  FROM t_user_mpos_activity_apply_info t
+		  LEFT JOIN t_sys_mpos_activity_info t1 on t.activity_id = t1.id
+		  LEFT JOIN t_sys_mpos_activity_reward_info t2 on t.activity_reward_id = t2.id
+		 WHERE t.user_id = #{map.sys_user_id}
+		   <if test="map.last_id != null and map.last_id != ''" >
+        	AND t.id &lt; #{map.last_id}
+      	</if>
+		order by t.id desc
+		limit 0,10	
+	</select>
+	
+	<!-- 查询活动申请详情(传统POS) -->
+	<select id="getTraditionalPosActivityApplyDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(t.id as char) as apply_id,
+			t.order_id,
+			t.status,
+			t.sn_list,
+			t1.activity_name,
+			t1.start_date,
+			t1.end_date,
+			t2.pos_num,
+			t2.reward_money,
+			t2.expenditure,
+			DATE_FORMAT(STR_TO_DATE(CONCAT(t.cre_date, t.cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		  FROM t_user_trapos_activity_apply_info t
+		  LEFT JOIN t_sys_trapos_activity_info t1 on t.activity_id = t1.id
+		  LEFT JOIN t_sys_trapos_activity_reward_info t2 on t.activity_reward_id = t2.id
+		 WHERE t.id = #{map.apply_id}
+	</select>
+	
+	<!-- 查询活动申请详情(MPOS) -->
+	<select id="getMposActivityApplyDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(t.id as char) as apply_id,
+			t.order_id,
+			t.status,
+			t.sn_list,
+			t1.activity_name,
+			t1.start_date,
+			t1.end_date,
+			t2.pos_num,
+			t2.reward_money,
+			t2.expenditure,
+			DATE_FORMAT(STR_TO_DATE(CONCAT(t.cre_date, t.cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		  FROM t_user_mpos_activity_apply_info t
+		  LEFT JOIN t_sys_mpos_activity_info t1 on t.activity_id = t1.id
+		  LEFT JOIN t_sys_mpos_activity_reward_info t2 on t.activity_reward_id = t2.id
+		 WHERE t.id = #{map.apply_id}
+	</select>
+	
+	<!-- 查询线上活动详情(传统POS) -->
+	<select id="getTraditionalPosOnlineActivityDetail" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			cast(id as char) as activity_id,
+			activity_name,
+			start_date,
+			end_date,
+			detail_url
+		FROM
+			t_sys_trapos_activity_info 
+		where id = #{map.activity_id}
+	</select>
+	
+	<!-- 查询线上活动详情(MPOS) -->
+	<select id="getMposOnlineActivityDetail" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			cast(id as char) as activity_id,
+			activity_name,
+			start_date,
+			end_date,
+			detail_url
+		FROM
+			t_sys_mpos_activity_info 
+		where id = #{map.activity_id}
+	</select>
+	
+	<!-- 查询活动奖励列表(传统POS) -->
+	<select id="getTraditionalPosActivityRewardList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(id as char) as activity_reward_id,
+			pos_num,
+			reward_money,
+			expenditure
+		 FROM t_sys_trapos_activity_reward_info 
+		WHERE activity_id = #{map.activity_id} and del = 0
+	</select>
+	
+	<!-- 查询活动奖励列表(MPOS) -->
+	<select id="getMposActivityRewardList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			cast(id as char) as activity_reward_id,
+			pos_num,
+			reward_money,
+			expenditure
+		 FROM t_sys_mpos_activity_reward_info 
+		WHERE activity_id = #{map.activity_id} and del = 0
+	</select>
+	
+	<!-- 查询未激活的MPOS列表 -->
+	<select id="getUserMposList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			t.sn
+		  FROM t_user_mpos_info t
+		  LEFT JOIN t_sys_mpos_info t1 on t.sn = t1.sn
+		 WHERE t1.act_status = 0 and t.state_status = 1 and t.activity_status = '0' and t.user_id = #{map.sys_user_id}
+	</select>
+	
+	<!-- 查询未激活的传统POS列表 -->
+	<select id="getUserTraditionalPosList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			t.sn
+		  FROM t_user_traditional_pos_info t
+		  LEFT JOIN t_sys_traditional_pos_info t1 on t.sn = t1.sn
+		 WHERE t1.act_status = 0 and t.state_status = 1 and t.activity_status = '0'
+		 <choose>
+			 <when test="map.pos_type!=null and map.pos_type!=''">
+				 and t1.pos_type='epos'
+			 </when>
+			 <otherwise>
+				 and t1.pos_type is null
+			 </otherwise>
+		 </choose>
+		 and t.user_id = #{map.sys_user_id}
+	</select>
+	
+	<!-- 判断是否已申请活动 (传统POS)-->
+	<select id="getTraditionalPosProcessingActivityApply" parameterType="java.util.Map" resultType="int">
+		SELECT 
+			count(*) 
+		  FROM t_user_trapos_activity_apply_info 
+		 WHERE user_id = #{map.sys_user_id}
+		    and activity_id = #{map.activity_id}
+		    and status in ('00', '09')
+	</select>
+	
+	<!-- 判断是否已申请活动 （MPOS）-->
+	<select id="getMposProcessingActivityApply" parameterType="java.util.Map" resultType="int">
+		SELECT 
+			count(*) 
+		  FROM t_user_mpos_activity_apply_info 
+		 WHERE user_id = #{map.sys_user_id}
+		    and activity_id = #{map.activity_id}
+		    and status in ('00', '09')
+	</select>
+	
+	<!-- 查询活动奖励详情(传统POS) -->
+	<select id="getTraditionalPosActivityRewardDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			activity_id,
+			pos_num,
+			reward_money,
+			expenditure
+		  FROM t_sys_trapos_activity_reward_info
+		 WHERE id = #{map.activity_reward_id}
+	</select>
+	
+	<!-- 查询活动奖励详情(MPOS) -->
+	<select id="getMposActivityRewardDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			activity_id,
+			pos_num,
+			reward_money,
+			expenditure
+		  FROM t_sys_mpos_activity_reward_info
+		 WHERE id = #{map.activity_reward_id}
+	</select>
+	
+	<!-- 保存申请记录(传统POS) -->
+	<insert id="addTraditionalPosActivityApplyInfo" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="map.apply_id">
+		insert into t_user_trapos_activity_apply_info(order_id, user_id, activity_id, activity_reward_id, sn_list, cre_date, cre_time)
+			   values(#{map.order_id}, #{map.user_id}, #{map.activity_id}, #{map.activity_reward_id}, #{map.sn_list}, #{map.cre_date}, #{map.cre_time})
+	</insert>
+	
+	<!-- 保存申请记录(MPOS) -->
+	<insert id="addMposActivityApplyInfo" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="map.apply_id">
+		insert into t_user_mpos_activity_apply_info(order_id, user_id, activity_id, activity_reward_id, sn_list, cre_date, cre_time)
+			   values(#{map.order_id}, #{map.user_id}, #{map.activity_id}, #{map.activity_reward_id}, #{map.sn_list}, #{map.cre_date}, #{map.cre_time})
+	</insert>
+	
+	<!-- 修改传统POS机的活动状态 -->
+	<insert id="updateUserTraditionalPosActivityStatus" parameterType="java.util.Map">
+		update t_user_traditional_pos_info t set 
+				t.activity_status = '1' 
+		 where t.state_status = '1' and  t.activity_status = '0' 
+			 and t.user_id = #{map.sys_user_id} and find_in_set(t.sn, #{map.sn_list})
+		   and EXISTS (select 1 from t_sys_traditional_pos_info t1 where t1.sn = t.sn and t1.act_status = '0')
+	</insert>
+	
+	<!-- 修改MPOS机的活动状态  -->
+	<insert id="updateUserMposActivityStatus" parameterType="java.util.Map">
+		update t_user_mpos_info t set 
+				t.activity_status = '1' 
+		 where t.state_status = '1' and  t.activity_status = '0' 
+			 and t.user_id = #{map.sys_user_id} and find_in_set(t.sn, #{map.sn_list})
+		   and EXISTS (select 1 from t_sys_mpos_info t1 where t1.sn = t.sn and t1.act_status = '0')
+	</insert>
+	
+	<!-- 查询申请记录(传统POS) -->
+	<select id="getTraditionalPosActivityApply" parameterType="java.util.Map" resultType="java.util.Map">
+		select
+			order_id,
+			user_id,
+			activity_id,
+			activity_reward_id,
+			sn_list,
+			status
+		from 
+			t_user_trapos_activity_apply_info
+		 where 
+		 		id = #{map.apply_id} 
+		 	and user_id = #{map.sys_user_id}
+	</select>
+	
+	<!-- 更新申请记录状态（传统POS） -->
+	<update id="updateTraditionalPosActivityApplyStatus" parameterType="java.util.Map">
+		update t_user_trapos_activity_apply_info set
+				status = #{map.new_status}, 
+				up_date = #{map.up_date},
+				up_time = #{map.up_time}
+		 where id = #{map.apply_id} and status in ('00', '09')
+	</update>
+	
+	<!-- 取消POS机参与状态（传统POS） -->
+	<update id="updateUserTraditionalPosCancelActivityStatus" parameterType="java.util.Map">
+		update t_user_traditional_pos_info t set 
+				t.activity_status = '0' 
+		 where t.state_status = '1' and  t.activity_status = '1' 
+			 and user_id = #{map.sys_user_id} and find_in_set(t.sn, #{map.sn_list})
+	</update>
+	
+	<!-- 查询申请记录(MPOS) -->
+	<select id="getMposActivityApply" parameterType="java.util.Map" resultType="java.util.Map">
+		select
+			order_id,
+			user_id,
+			activity_id,
+			activity_reward_id,
+			sn_list,
+			status
+		from 
+			t_user_mpos_activity_apply_info
+		 where 
+		 		id = #{map.apply_id} 
+		 	and user_id = #{map.sys_user_id}
+	</select>
+	
+	<!-- 更新申请记录状态（MPOS） -->
+	<update id="updateMposActivityApplyStatus" parameterType="java.util.Map">
+		update t_user_mpos_activity_apply_info set
+				status = #{map.new_status}, 
+				up_date = #{map.up_date},
+				up_time = #{map.up_time}
+		 where id = #{map.apply_id} and status in ('00', '09')
+	</update>
+	
+	<!-- 取消POS机参与状态（MPOS） -->
+	<update id="updateUserMposCancelActivityStatus" parameterType="java.util.Map">
+		update t_user_mpos_info t set 
+				t.activity_status = '0' 
+		 where t.state_status = '1' and  t.activity_status = '1' 
+			 and user_id = #{map.sys_user_id} and find_in_set(t.sn, #{map.sn_list})
+	</update>
+	
+</mapper>

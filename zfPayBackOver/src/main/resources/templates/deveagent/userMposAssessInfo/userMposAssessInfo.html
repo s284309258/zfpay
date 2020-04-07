@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('MPOS系统考核列表')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+<body class="gray-bg">
+	
+	<!-- 系统参数列表 -->
+	<div class="container-div ui-layout-center">
+		<div class="row">
+			
+			<!-- 最上面的搜索框 -->
+			<div class="col-sm-12 search-collapse">
+				<form id="user-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								手机号：<input type="text" name="user_tel" id="user_tel" />
+							</li>
+							<li>
+								姓名：<input type="text" name="real_name" id="real_name" />
+							</li>
+							<li>
+								任务类型：
+								<select name="assess_type" id="assess_type" th:with="type=${@dict.getType('sys_pos_assess_info_assess_type')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								任务状态：
+								<select name="status" id="status" th:with="type=${@dict.getType('sys_pos_assess_info_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li class="select-time">
+								<label>活动时间： </label>
+								<input type="text" class="time-input" id="activityBeginTime" placeholder="开始时间" name="activityBeginTime"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="activityEndTime" placeholder="结束时间" name="activityEndTime"/>
+							</li>
+							<li class="select-time">
+								<label>创建时间： </label>
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="beginTime"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+			
+			<!-- 上面的各项增删改查导入导出操作 -->
+	        <div class="btn-group-sm" id="toolbar" role="group">
+	        	<!-- 操作封装：添加信息 全屏 -->
+		        <a class="btn btn-success" onclick="addAssess()" shiro:hasPermission="deveagent:userMposAssessInfo:add">
+		            <i class="fa fa-plus"></i> 新增
+		        </a>
+		        <!-- 操作封装：批量删除信息 -->
+		        <a class="btn btn-danger" onclick="batchRemove()" shiro:hasPermission="deveagent:userMposAssessInfo:remove">
+		            <i class="fa fa-remove"></i> 删除
+		        </a>
+		        <!-- 表格：导出数据 -->
+	            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="deveagent:userMposAssessInfo:export">
+		            <i class="fa fa-download"></i> 导出
+		        </a>
+		        
+		        <!-- 操作封装：修改信息，全屏 -->
+		        <a class="btn btn-primary single disabled" onclick="zfCeshi5()" shiro:hasPermission="deveagent:userTraposAssessInfo:list">
+		            <i class="fa fa-edit"></i> 达标任务处理MPOS-测试
+		        </a> -->
+	        </div>
+
+	        
+	        <!-- bootstrap表格数据部分 -->
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+			
+		</div>
+	</div>
+	
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		//删除
+		var removeFlag = [[${@permission.hasPermi('deveagent:userMposAssessInfo:remove')}]];
+		//详情
+		var detailFlag = [[${@permission.hasPermi('deveagent:userMposAssessInfo:detail')}]];
+	
+		var datas_assess_type = [[${@dict.getType('sys_activity_info_activity_type')}]];
+		var datas_status = [[${@dict.getType('sys_activity_info_status')}]];
+	
+		//前缀路径
+		var prefix = "/deveagent/userMposAssessInfo";
+		
+		//初始化方法
+		$(function() {
+			//初始化时间范围
+			intiTime();
+		   	//查询用户MPOS系统考核列表
+		    queryAgentUserMposAssessInfoList();
+		});
+		
+		//查询用户MPOS系统考核列表
+		function queryAgentUserMposAssessInfoList() {
+		    var options = {
+		        url: prefix + "/list",//URL列表路径
+		        createUrl: prefix + "/add",//新增路径
+                updateUrl: prefix + "/edit/{id}",//编辑路径
+                detailUrl: prefix + "/detail/{id}",//详情路径
+                removeUrl: prefix + "/remove",//删除路径
+                exportUrl: prefix + "/export",//导出路径
+		        modalName: "用户MPOS系统考核",//模块名称：用户
+		        showExport: true,
+		        sortName: 'id',
+	          	sortOrder: 'desc',
+		        //列信息
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+					field : 'id', 
+					title : '编号',
+					sortable: true
+				},
+				{
+					title: '&#12288;&#12288;&#12288;操作&#12288;&#12288;&#12288;',
+		            align: 'center',
+		            formatter: function(value, row, index) {
+		            	//事件数组
+		                var actions = [];
+		              	//详情按钮
+		            	actions.push('<a class="btn btn-warning btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="detail(\'' + row.id + '\')"><i class="fa fa-search"></i>详细</a> ');
+		            	//删除按钮：删除信息
+		            	actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="#" onclick="remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a> ');
+		              	return actions.join('');
+		            }
+		        },
+		        {
+					field : 'manager_id', 
+					title : '代理编号'
+				},
+				{
+					field : 'user_id', 
+					title : '用户编号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailUser(\'' + row.user_id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'user_tel', 
+					title : '手机号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailUser(\'' + row.user_id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'real_name', 
+					title : '姓名'
+				},
+				{
+					field : 'assess_name', 
+					title : '活动名称'
+				},
+				{
+					field : 'assess_type', 
+					title : '任务类型',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_assess_type, value);
+		            }
+				},
+				{
+					field : 'status', 
+					title : '任务状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_status, value);
+		            }
+				},
+				{
+					field : 'start_date', 
+					title : '开始日期'
+				},
+				{
+					field : 'end_date', 
+					title : '结束日期'
+				},
+				{
+					field : 'deduct_money', 
+					title : '扣除金额'
+				},
+				{
+					field : 'expenditure', 
+					title : '交易额（万）'
+				},
+				{
+					field : 'sn_list', 
+					title : '申请的SN列表'
+				},
+				{
+					field : 'remark', 
+					title : '操作备注',
+					align: 'center',
+				  	formatter: function(value, row, index) {
+				      	return $.table.tooltip(value);
+				  	}
+				},
+				{
+					field : 'cre_date', 
+					title : '创建时间',
+					sortable: true
+				},
+				{
+					field : 'up_date', 
+					title : '更新时间',
+					sortable: true
+				},
+				{
+					field : 'update_by', 
+					title : '更新人'
+				}]
+		    };
+		    //表格初始化
+		    $.table.init(options);
+		}
+		
+		
+		/* 查询MPOS系统考核详情 */
+		function detail(id){
+			var url = prefix+'/detail/'+id;
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		   	$.modal.openTab("编号"+id+"MPOS系统考核详情", url);
+		}
+
+		
+		//删除活动（MPOS）考核
+		function remove(activity_id){
+			var url = prefix + '/del/' + activity_id;
+		    $.modal.open("删除活动(MPOS)考核", url);
+		}
+		
+		
+		//批量删除活动（MPOS）考核
+		function batchRemove(){
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+    		if (rows.length == 0) {
+    			$.modal.alertWarning("请至少选择一条记录");
+    			return;
+    		}
+    		$.modal.confirm("确认要删除选中的" + rows.length + "数据吗?", function() {
+    			var assess_ids = "";
+    			// 遍历所有选择的行数据，取每条数据对应的ID
+    			$.each(rows, function(i, row) {
+    				if(i<rows.length-1){
+    					assess_ids=assess_ids+row['id']+",";
+    				}else{
+    					assess_ids=assess_ids+row['id'];
+    				}
+    			});
+    			var url = prefix + '/del/' + assess_ids;
+    			$.modal.open("批量删除活动(MPOS)考核", url, '800', '450');
+    		});
+		}
+		
+		
+		//添加系统评估
+		function addAssess(id) {
+		    var url = prefix + '/selectUser';
+		    $.modal.openTab("添加系统评估", url);
+		}
+		
+		
+		//达标任务处理MPOS-测试
+		function zfCeshi5(){
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+			if (rows.length != 1) {
+    			$.modal.alertWarning("请选择一条记录查看");
+    			return;
+    		}
+    		$.modal.confirm("确认要测试达标任务处理MPOS吗?", function() {
+    			$.operate.post("/develop/backTest/zfCeshi5?assess_id="+rows[0].id);
+    		});
+		}
+		
+	</script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.develop.task.mapper.BenefitRollbackMapper">
+
+	<!-- 查询传统POS机待处理数据 -->
+	<select id="getDealTraposDataList" resultType="java.util.Map">
+		select 
+			* 
+		  from 
+		 	   t_data_trapos_transaction_record
+		 where status = '99'
+	</select>
+	
+	<select id="getTraposBenefitList" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+			* 
+		from 
+			t_user_trapos_share_benefit_record 
+		where tran_ref_code = #{map.tran_ref_code}
+	</select>
+	
+	<update id="updateUserBenefit" parameterType="java.util.Map">
+		update t_user_info
+		set money = money -#{map.money},
+			 <if test="map.today_type=='01'" >
+			 	today_benefit = today_benefit - #{map.money}, 
+			 </if> 
+			total_benefit = total_benefit - #{map.money}, 
+			state_type = #{map.state_type},
+			op_order_id = #{map.op_order_id},
+			pos_type = #{map.pos_type},
+			sn = #{map.sn},
+			op_type = #{map.op_type},
+			up_date = #{map.up_date},
+			up_time = #{map.up_time} 
+		where id = #{map.user_id}
+		  and money -#{map.money}>=0
+	</update>
+	
+	<select id="getBenefitRecordMap" parameterType="java.util.Map" resultType="java.util.Map">
+		select
+			min(id) as min,
+			max(id) as max
+		from 
+			t_benefit_record_money
+		where 
+			op_order_id = #{map.op_order_id}
+		and op_type = #{map.op_type}
+		and user_id = #{map.user_id}
+		group by op_order_id, op_type, user_id
+	</select>
+	
+	<update id="updateBenefitRecord" parameterType="java.util.Map">
+		update t_benefit_record_money
+		set before_money = before_money - #{map.money},
+			after_money = after_money - #{map.money}
+		where id >= #{map.min}
+		and id &lt;= #{map.max}
+		and user_id = #{map.user_id}
+	</update>
+	
+	<delete id="delBenefitRecord" parameterType="java.util.Map">
+		delete from t_benefit_record_money where id = #{map.min} or id = #{map.max}
+	</delete>
+	
+	<select id="getAgencyList" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from t_user_traditional_pos_info where sn = #{map.sn} and del = '0'
+	</select>
+	
+	<update id="updateMerchantTraposPerformance" parameterType="java.util.Map">
+		update t_summary_traditional_pos_trans_all
+		   set performance = performance - #{map.performance},
+		       num = num - 1,
+		       merchant_performance = merchant_performance - #{map.performance},
+		       merchant_num = merchant_num - 1,
+		       up_date = #{map.up_date},
+		       up_time = #{map.up_time}
+		 where user_id = #{map.user_id}
+		   and sn = #{map.sn}
+		   <choose>
+			   <when test="map.pos_type!=null and map.pos_type!=''">
+				   and pos_type='epos'
+			   </when>
+			   <otherwise>
+				   and pos_type is null
+			   </otherwise>
+		   </choose>
+	</update>
+	
+	<update id="updateUserMerchantPerformance" parameterType="java.util.Map">
+		update t_summary_user_traditional_pos_benefit_all
+		   set performance = performance - #{map.performance},
+		       num = num - 1,
+		       merchant_performance = merchant_performance - #{map.performance},
+		       merchant_num = merchant_num - 1,
+		       up_date = #{map.up_date},
+		       up_time = #{map.up_time}
+		 where user_id = #{map.user_id}
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and pos_type='epos'
+			</when>
+			<otherwise>
+				and pos_type is null
+			</otherwise>
+		</choose>
+	</update>
+	
+	<update id="updateAgencyTraposPerformance" parameterType="java.util.Map">
+		update t_summary_traditional_pos_trans_all
+		   set performance = performance - #{map.performance},
+		       num = num - 1,
+		       agency_performance = agency_performance - #{map.performance},
+		       agency_num = agency_num - 1,
+		       up_date = #{map.up_date},
+		       up_time = #{map.up_time}
+		 where user_id = #{map.user_id}
+		   and sn = #{map.sn}
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and pos_type='epos'
+			</when>
+			<otherwise>
+				and pos_type is null
+			</otherwise>
+		</choose>
+	</update>
+	
+	<update id="updateUserAgencyPerformance" parameterType="java.util.Map">
+		update t_summary_user_traditional_pos_benefit_all
+		   set performance = performance - #{map.performance},
+		       num = num - 1,
+		       agency_performance = agency_performance - #{map.performance},
+		       agency_num = agency_num - 1,
+		       up_date = #{map.up_date},
+		       up_time = #{map.up_time}
+		 where user_id = #{map.user_id}
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and pos_type='epos'
+			</when>
+			<otherwise>
+				and pos_type is null
+			</otherwise>
+		</choose>
+	</update>
+	
+	<delete id="delTraposBenefit" parameterType="java.util.Map">
+		delete from t_user_trapos_share_benefit_record where id = #{map.id}
+	</delete>
+	
+	<update id="updateTraposDataStatus" parameterType="java.util.Map">
+		update t_data_trapos_transaction_record
+		set status = #{map.new_status}
+		where id = #{map.id}
+		and status = #{map.old_status}
+	</update>
+	
+</mapper>

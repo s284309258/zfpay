@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('∂≥Ω·¡–')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+		<div class="row">
+			<div class="btn-group-sm" id="toolbar" role="group">
+				<a class="btn btn-success">
+	                <i class="fa fa-plus"></i> –¬‘ˆ
+	            </a>
+				<a class="btn btn-primary single disabled">
+		            <i class="fa fa-edit"></i> –ﬁ∏ƒ
+		        </a>
+				<a class="btn btn-danger multiple disabled">
+		            <i class="fa fa-remove"></i> …æ≥˝
+		        </a>
+	        </div>
+			<div class="col-sm-12 select-table table-striped">
+				<table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+		</div>
+	</div>
+    <div th:include="include :: footer"></div>
+    <script th:inline="javascript">
+        var prefix = ctx + "demo/table";
+        var datas = [[${@dict.getType('sys_normal_disable')}]];
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+		        showSearch: false,
+		        showRefresh: false,
+		        showToggle: false,
+		        showColumns: false,
+		        fixedColumns: true,
+    		    fixedNumber: 3,
+                columns: [{
+		            checkbox: true
+		        },
+				{
+					field : 'userId', 
+					title : '”√ªßID'
+				},
+				{
+					field : 'userCode', 
+					title : '”√ªß±‡∫≈'
+				},
+				{
+					field : 'userName', 
+					title : '”√ªß–’√˚'
+				},
+				{
+					field : 'userPhone', 
+					title : '”√ªß ÷ª˙'
+				},
+				{
+					field : 'userEmail', 
+					title : '”√ªß” œ‰'
+				},
+				{
+				    field : 'userBalance',
+				    title : '”√ªß”‡∂Ó'
+				},
+				{
+                    field: 'status',
+                    title: '”√ªß◊¥Ã¨',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                    	return $.table.selectDictLabel(datas, value);
+                    }
+                },
+				{
+				    field : 'userBalance',
+				    title : '≤‚ ‘1'
+				},
+				{
+				    field : 'userBalance',
+				    title : '≤‚ ‘2'
+				},
+				{
+				    field : 'userBalance',
+				    title : '≤‚ ‘3'
+				},
+				{
+				    field : 'userBalance',
+				    title : '≤‚ ‘4'
+				},
+				{
+				    field : 'userBalance',
+				    title : '≤‚ ‘5'
+				},
+				{
+				    field : 'userBalance',
+				    title : '≤‚ ‘6'
+				},
+				{
+				    field : 'userBalance',
+				    title : '≤‚ ‘7'
+				},
+				{
+				    field : 'userBalance',
+				    title : '≤‚ ‘8'
+				},
+				{
+				    field : 'userBalance',
+				    title : '≤‚ ‘9'
+				},
+				{
+				    field : 'userBalance',
+				    title : '≤‚ ‘10'
+				},
+				{
+				    field : 'userBalance',
+				    title : '≤‚ ‘11'
+				},
+				{
+				    field : 'userBalance',
+				    title : '≤‚ ‘12'
+				},
+				{
+				    field : 'userBalance',
+				    title : '≤‚ ‘13'
+				},
+				{
+				    field : 'userBalance',
+				    title : '≤‚ ‘14'
+				},
+				{
+				    field : 'userBalance',
+				    title : '≤‚ ‘15'
+				},
+				{
+				    field : 'userBalance',
+				    title : '≤‚ ‘16'
+				}]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

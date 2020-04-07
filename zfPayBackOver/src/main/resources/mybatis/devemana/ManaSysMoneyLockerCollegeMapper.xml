@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.devemana.notice.mapper.ManaSysMoneyLockerCollegeMapper">
+    
+    <!-- 查询钱柜学院列表 -->
+    <select id="getManaSysMoneyLockerCollegeList" parameterType="java.util.Map" resultType="java.util.Map" >
+        SELECT
+			id,
+			money_locker_title,
+			money_locker_cover,
+			money_locker_nav,
+			money_locker_content,
+			create_by,
+			update_by,
+			remark,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(up_date, up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date
+		FROM
+			t_sys_money_locker_college_info
+        <where>
+			<if test="map.money_locker_title != null and map.money_locker_title != ''">
+				AND money_locker_title like concat('%', #{map.money_locker_title}, '%')
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+    </select>
+    
+    
+    <!-- 根据id查询钱柜学院详情 -->
+    <select id="getManaSysMoneyLockerCollegeById" parameterType="java.lang.String" resultType="com.ruoyi.project.devemana.notice.domain.ManaSysMoneyLockerCollege" >
+       SELECT
+			id,
+			money_locker_title,
+			money_locker_cover,
+			money_locker_nav,
+			money_locker_content,
+			create_by,
+			update_by,
+			remark,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(up_date, up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date
+		FROM
+			t_sys_money_locker_college_info
+        where id = #{college_id}
+    </select>
+    
+    
+   	<!--  新增钱柜学院 -->
+    <insert id="addManaSysMoneyLockerCollege" parameterType="java.util.Map">
+        insert into t_sys_money_locker_college_info (
+			<if test="map.money_locker_title != null and map.money_locker_title != '' ">money_locker_title, </if>
+			<if test="map.money_locker_cover != null and map.money_locker_cover != '' ">money_locker_cover, </if>
+			<if test="map.money_locker_nav != null and map.money_locker_nav != '' ">money_locker_nav, </if>
+			<if test="map.money_locker_content != null and map.money_locker_content != '' ">money_locker_content, </if>
+			<if test="map.remark != null and map.remark != ''">remark,</if>
+ 			<if test="map.create_by != null and map.create_by != ''">create_by,</if>
+ 			<if test="map.cre_date != null and map.cre_date != ''">cre_date,</if>
+ 			<if test="map.cre_time != null and map.cre_time != ''">cre_time</if>
+ 		)values(
+			<if test="map.money_locker_title != null and map.money_locker_title != ''">#{map.money_locker_title}, </if>
+			<if test="map.money_locker_cover != null and map.money_locker_cover != ''">#{map.money_locker_cover}, </if>
+			<if test="map.money_locker_nav != null and map.money_locker_nav != ''">#{map.money_locker_nav}, </if>
+			<if test="map.money_locker_content != null and map.money_locker_content != ''">#{map.money_locker_content}, </if>
+			<if test="map.remark != null and map.remark != ''">#{map.remark},</if>
+ 			<if test="map.create_by != null and map.create_by != ''">#{map.create_by},</if>
+ 			<if test="map.cre_date != null and map.cre_date != ''">#{map.cre_date},</if>
+ 			<if test="map.cre_time != null and map.cre_time != ''">#{map.cre_time}</if>
+		)
+    </insert>
+	 
+	
+	<!-- 删除钱柜学院 -->
+    <delete id="deleteManaSysMoneyLockerCollege" parameterType="String">
+        delete from t_sys_money_locker_college_info where id=#{college_id}
+    </delete>
+    
+</mapper>

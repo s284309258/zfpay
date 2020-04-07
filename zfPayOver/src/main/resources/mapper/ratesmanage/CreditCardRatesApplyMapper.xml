@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.longecological.mapper.ratesmanage.CreditCardRatesApplyMapper">
+
+
+	<!-- 申请传统POS机列表 -->
+	<select id="getApplyRateTraditionalPosList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			t1.sn,
+			t1.credit_card_rate
+		FROM
+			t_user_traditional_pos_info t
+		INNER JOIN t_sys_traditional_pos_info t1 on t.sn = t1.sn
+		where 
+			t.user_id = #{map.sys_user_id} 
+		and t.state_status = '1'
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				and t.pos_type='epos'
+			</when>
+			<otherwise>
+				and t.pos_type is null
+			</otherwise>
+		</choose>
+		<if test="map.start_number != null and map.start_number != ''" >
+			AND t.sn >= #{map.start_number}
+		</if>
+		<if test="map.end_number != null and map.end_number != ''" >
+			AND t.sn &lt;= #{map.end_number}
+		</if>
+      	AND NOT EXISTS (
+					SELECT
+						1
+					FROM
+						t_user_apply_cardrate_trapos_record_info t2
+					WHERE
+						t2.user_id = #{map.sys_user_id}
+					AND t2.sn = t.sn
+					AND t2.status = '00'
+				)
+		order by t.id desc
+	</select>
+	
+	<!-- 申请MPOS机列表 -->
+	<select id="getApplyRateMposList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			t1.sn,
+			t1.credit_card_rate
+		FROM
+			t_user_mpos_info t
+		INNER JOIN t_sys_mpos_info t1 on t.sn = t1.sn
+		where t.user_id = #{map.sys_user_id} and t.state_status = '1'
+		<if test="map.start_number != null and map.start_number != ''" >
+        	AND t.sn >= #{map.start_number}
+      	</if>
+      	<if test="map.end_number != null and map.end_number != ''" >
+        	AND t.sn &lt;= #{map.end_number}
+      	</if>
+      	AND NOT EXISTS (
+					SELECT
+						1
+					FROM
+						t_user_apply_cardrate_mpos_record_info t2
+					WHERE
+						t2.user_id = #{map.sys_user_id}
+					AND t2.sn = t.sn
+					AND t2.status = '00'
+				)
+		order by t.id desc
+	</select>
+	
+	<!-- 新增费率申请记录（传统POS） -->
+	<insert id="addApplyRateTraditionalPos" parameterType="java.util.Map">
+		insert into t_user_apply_cardrate_trapos_record_info(user_id, sn, credit_card_rate_old, credit_card_rate_new, card_settle_price, cre_date, cre_time,pos_type)
+			   select 
+			   		#{map.sys_user_id},
+			   		t.sn,
+			   		t1.credit_card_rate,
+			   		#{map.credit_card_rate},
+			   		t.card_settle_price,
+			   		#{map.cre_date},
+			   		#{map.cre_time},
+			   		t.pos_type
+			   FROM
+					t_user_traditional_pos_info t
+			   LEFT JOIN t_sys_traditional_pos_info t1 on t.sn = t1.sn
+			   where 
+			   		t.user_id = #{map.sys_user_id} 
+			   	and t.state_status = '1'
+			   	and find_in_set(t.sn, #{map.sn_list})
+			   	AND NOT EXISTS (
+					SELECT
+						1
+					FROM
+						t_user_apply_cardrate_trapos_record_info t2
+					WHERE
+						t2.user_id = #{map.sys_user_id}
+					AND t2.sn = t.sn
+					AND t2.status = '00'
+				)
+	</insert>
+	
+	<!-- 新增费率申请记录（传统POS） -->
+	<insert id="addApplyRateMpos" parameterType="java.util.Map">
+		insert into t_user_apply_cardrate_mpos_record_info(user_id, sn, credit_card_rate_old, credit_card_rate_new, card_settle_price, cre_date, cre_time)
+			   select 
+			   		#{map.sys_user_id},
+			   		t.sn,
+			   		t1.credit_card_rate,
+			   		#{map.credit_card_rate},
+			   		t.card_settle_price,
+			   		#{map.cre_date},
+			   		#{map.cre_time}
+			   FROM
+					t_user_mpos_info t
+			   LEFT JOIN t_sys_mpos_info t1 on t.sn = t1.sn
+			   where 
+			   		t.user_id = #{map.sys_user_id} 
+			   	and t.state_status = '1'
+			   	and find_in_set(t.sn, #{map.sn_list})
+			   	AND NOT EXISTS (
+					SELECT
+						1
+					FROM
+						t_user_apply_cardrate_mpos_record_info t2
+					WHERE
+						t2.user_id = #{map.sys_user_id}
+					AND t2.sn = t.sn
+					AND t2.status = '00'
+				)
+	</insert>
+	
+	<!-- 查询费率申请记录（传统POS） -->
+	<select id="getApplyRateTraditionalPosRecordList" parameterType="java.util.Map" resultType="java.util.Map">
+		select
+			cast(id as char) as apply_id,
+			sn,
+			credit_card_rate_old,
+			credit_card_rate_new,
+			status,
+			remark,
+			DATE_FORMAT(STR_TO_DATE(CONCAT(cre_date, cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		from
+			t_user_apply_cardrate_trapos_record_info
+		where
+			user_id = #{map.sys_user_id}
+			<choose>
+				<when test="map.pos_type!=null and map.pos_type!=''">
+					and pos_type='epos'
+				</when>
+				<otherwise>
+					and pos_type is null
+				</otherwise>
+			</choose>
+			<if test="map.key_word != null and map.key_word != ''" >
+        		AND sn like concat('%', #{map.key_word}, '%')
+      		</if>
+			<if test="map.last_id != null and map.last_id != ''" >
+        		AND id &lt; #{map.last_id}
+      		</if>
+		order by id desc 
+		limit 0,10
+	</select>
+	
+	<!-- 查询费率申请记录（MPOS） -->
+	<select id="getApplyRateMposRecordList" parameterType="java.util.Map" resultType="java.util.Map">
+		select
+			cast(id as char) as apply_id,
+			sn,
+			credit_card_rate_old,
+			credit_card_rate_new,
+			status,
+			remark,
+			DATE_FORMAT(STR_TO_DATE(CONCAT(cre_date, cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		from
+			t_user_apply_cardrate_mpos_record_info
+		where
+			user_id = #{map.sys_user_id}
+			<if test="map.key_word != null and map.key_word != ''" >
+        		AND sn like concat('%', #{map.key_word}, '%')
+      		</if>
+			<if test="map.last_id != null and map.last_id != ''" >
+        		AND id &lt; #{map.last_id}
+      		</if>
+		order by id desc 
+		limit 0,10
+	</select>
+	
+</mapper>

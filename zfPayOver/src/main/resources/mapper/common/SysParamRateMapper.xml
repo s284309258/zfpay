@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.longecological.mapper.common.SysParamRateMapper">
+
+	<!-- 根据类型查询费率列表 -->
+	<select id="getRateListByType" parameterType="java.lang.String" resultType="java.lang.String" >
+		select FORMAT(rate,3) as rate from t_sys_param_rate where type=#{type} order by cast(rate as decimal(20,2))
+	</select>
+	
+	<!-- 费率表所有值 -->
+	<select id="getSysParamRateAll" resultType="java.util.Map">
+		select  FORMAT(rate,3) as rate, type from t_sys_param_rate order by type, cast(rate as decimal(20,2))
+	</select>
+	
+</mapper>
