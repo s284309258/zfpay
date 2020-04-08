@@ -35,7 +35,6 @@
                         <li>
                             是否有政策标识：
                             <select name="policy" th:with="type=${@dict.getType('sys_version_info_status')}">
-                                <option value="3">所有</option>
                                 <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                             </select>
                         </li>

@@ -6,13 +6,10 @@
 	<select id="selectUserPOSBelongList" parameterType="java.util.Map" resultType="java.util.Map">
 		select * from (
 		select tt.id,tt.real_name,tt.user_tel,t.sn,card_settle_price,cloud_settle_price,single_profit_rate,cash_back_rate,tt.manager_id,t.cre_date,'02' as pos_type from t_user_mpos_info t inner join t_user_info tt on t.user_id=tt.id where del=0 and state_status=1
-		and not exists(select 1 from t_sys_pos_policy_info ttt where t.sn=ttt.sn)
 		union all
 		select tt.id,tt.real_name,tt.user_tel,t.sn,card_settle_price,cloud_settle_price,single_profit_rate,cash_back_rate,tt.manager_id,t.cre_date,'01' as pos_type from t_user_traditional_pos_info t inner join t_user_info tt on t.user_id=tt.id where del=0 and state_status=1 and t.pos_type is null
-		and not exists(select 1 from t_sys_pos_policy_info ttt where t.sn=ttt.sn)
 		union all
 		select tt.id,tt.real_name,tt.user_tel,t.sn,card_settle_price,cloud_settle_price,single_profit_rate,cash_back_rate,tt.manager_id,t.cre_date,'03' as pos_type from t_user_traditional_pos_info t inner join t_user_info tt on t.user_id=tt.id where del=0 and state_status=1 and t.pos_type='epos'
-		and not exists(select 1 from t_sys_pos_policy_info ttt where t.sn=ttt.sn)
 		) t where t.manager_id=#{manager_id}
 		<if test="sn!=null and sn!=''">
 			and t.sn like concat('%',#{sn},'%')
