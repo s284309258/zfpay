@@ -167,7 +167,7 @@ public class RegexUtil {
 		if("".equals(str)||null==str) {
 			return false;
 		}else {
-			Pattern pattern = Pattern.compile("^(\\d{16}|\\d{19}|\\d{18})$");  
+			Pattern pattern = Pattern.compile("^(\\d{16}|\\d{19}|\\d{18}|\\d{15})$");
 			return pattern.matcher(str).matches();
 		}
 	}

@@ -115,6 +115,9 @@ public class BenefitCentreServiceImpl implements BenefitCentreService {
 			}
 			/****************************处理查询****************************************/
 			Map<String, Object> respondMap = new HashMap<>();
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyyMM");
+			String cre_month =  formatter.format(formatter.parse(StringUtil.getMapValue(map,"date")));
+			map.put("date",cre_month);
 			Map<String, Object> record = benefitCentreMapper.getMonthEposBenefitDeatil(map);
 			Map<String, Object> traditionalPosBenefitDeatil = new HashMap<>();
 			if(record == null){

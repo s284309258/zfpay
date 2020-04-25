@@ -68,7 +68,9 @@ public class SysParamConstant {
 	/**
 	 * 七牛域名
 	 */
-	public static final String qiniu_domain = "http://cdn.yhswl.com";
+//	public static final String qiniu_domain = "http://cdn.yhswl.com";
+
+	public static final String qiniu_domain = "http://cdn.szbypos.com";
 	
 	
 	/**

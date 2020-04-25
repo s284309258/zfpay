@@ -26,14 +26,15 @@ public class QiNiuServiceImpl implements QiNiuService {
 	@Autowired
 	private RedisUtils redisUtils;
 
-	
+
+
 	/**
 	 * 获取七牛云token值
 	 */
 	@Override
 	public R getQiNiuToken(Map<String, Object> map) {
 		 try{
-			//解密成功与否验证
+			//解密成功与否验证aa
 			if(!TokenUtil.checkRSAdecrypt((Map<String, Object>)map.get("result"))) {
 				return (R) map.get("result");
 			}

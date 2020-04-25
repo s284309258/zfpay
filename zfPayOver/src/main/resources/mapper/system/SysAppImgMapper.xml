@@ -10,13 +10,13 @@
 			id,
 			img_type,
 			(case when #{map.img_type}='04' then
-			concat('http://cdn.yhswl.com/',img_url)
+			concat('http://cdn.szbypos.com/',img_url)
 			else img_url end) as  img_url
 		FROM
 			t_sys_app_img
 		where img_type=#{map.img_type} 
 		ORDER BY
-			order_num
+			order_num desc
 	</select>
 	
 </mapper>
