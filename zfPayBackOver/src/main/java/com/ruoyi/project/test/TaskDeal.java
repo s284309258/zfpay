@@ -128,34 +128,107 @@ public class TaskDeal {
 //		}
 
 
-		 //通过7002接口取交易数据
-		 ZhongFuInterfaceService zhongFuInterfaceService = new ZhongFuInterfaceServiceImpl();
-		 R transposData = zhongFuInterfaceService.requestType7006("beiye", "000006026221521100", "20180101000000", "20200325000000", "02", String.valueOf(1), "a6d9fc6d-16e0-485d-89d9-a388678ee6cf");
-		 System.out.println(transposData);
+		 /************7007接口（返现信息接口）***************/
+//		 String appId = "csdlo";
+//		 String requestType = "7007";
+//		 JSONObject requestData = new JSONObject();
+//		 requestData.put("agentAccount", "csdlo");
+//		 requestData.put("subAgentAccount", "daili01");
+//		 requestData.put("subAgentSettAccount", "6226220636975558");
+//		 requestData.put("subAgentPhone", "13126365987");
+//		 requestData.put("subAgentSettAccountImg", "iVBORw0KGgoAAAANSUhEUgAAADYAAAAqCAYAAAD4Uag9AAAB7ElEQVRoge2Yv0 sCYRjHv+pFkQpJJ0IUuAkhhCgOB27R5tJm4Nyku3+Bu0Hg1BDU1tIWLhE4GQ2J4SAc1CIYgnmUg9T7 etcPU0+tu87X3s9w3Pvjju+X53nf97mzvRIwh9itFmAWc2tMSBxWrNZgCsJdq2G1BlOY21TkxliDG2 MNbow1uDHW4MZY4x8a2w6imPQPdGeSkaH9s4ZNUZT+L+jOEw7yVSDkhxQVEYbaPqVjoQAuYm649N7Y bEA6ls1TPCG2reylzq8BHw72N7BaK2Gv4MdJ2oXbXBnZEbMTuyGknM2ZMGYvpoPIjByuI5WnpmgKik BltCmK3+kwXuEPEaRcm0SCrBt0cX11g9QN1PW1uaTOoKlZW0AcJMUKlmqdCqGYFrVbB8IxYjCmGpRy Wmp5yVChDAlae30wKnJFjSqlrTz/lXZdSMRKWoSAc53180Hf5kDXnag32zJIxCLa7ctkT3hEFL+ZkQ 2VZAx9EZsIRiJmYOXhw9qycW/7LYanYqNVN0LXr5ksFWnFEezgSMHMVBbjEHpXup2POqMW3UhFaVkl k7JKVkurYYRWEFjsovpohszp+ZKK77wf1D5IXgfaD/fYORueXrQgjns+23Ru74CfAcbUiuzyD7/HGI cbYw1ujDW4MdbgxljjDUi1nrWJLS71AAAAAElFTkSuQmCC");
+//		 requestData.put("subAgentIdAndSettAccountImg", "iVBORw0KGgoAAAANSUhEUgAAADYAAAAqCAYAAAD4Uag9AAAB7ElEQVRoge2Yv0sCYRjHv+pFkQpJJ 0IUuAkhhCgOB27R5tJm4Nyku3+Bu0Hg1BDU1tIWLhE4GQ2J4SAc1CIYgnmUg9T7etcPU0+tu87X3s9 w3Pvjju+X53nf97mzvRIwh9itFmAWc2tMSBxWrNZgCsJdq2G1BlOY21TkxliDG2MNbow1uDHW4MZY4 x8a2w6imPQPdGeSkaH9s4ZNUZT+L+jOEw7yVSDkhxQVEYbaPqVjoQAuYm649N7YbEA6ls1TPCG2rey" +
+//				 "lzq8BHw72N7BaK2Gv4MdJ2oXbXBnZEbMTuyGknM2ZMGYvpoPIjByuI5WnpmgKikBltCmK3+kwXuEPE aRcm0SCrBt0cX11g9QN1PW1uaTOoKlZW0AcJMUKlmqdCqGYFrVbB8IxYjCmGpRyWmp5yVChDAlae30 wKnJFjSqlrTz/lXZdSMRKWoSAc53180Hf5kDXnag32zJIxCLa7ctkT3hEFL+ZkQ2VZAx9EZsIRiJmY OXhw9qycW/7LYanYqNVN0LXr5ksFWnFEezgSMHMVBbjEHpXup2POqMW3UhFaVklk7JKVkurYYRWEFj sovpohszp+ZKK77wf1D5IXgfaD/fYORueXrQgjns+23Ru74CfAcbUiuzyD7/HGIcbYw1ujDW4Mdbgx ljjDUi1nrWJLS71AAAAAElFTkSuQmCC");
+//		 String dataSign = MD5Utils.MD5Encode("d1560229-06c2-45fc-aa4c-34e5c3690cd8"+requestData.toJSONString());
+//		 JSONObject param = new JSONObject();
+//		 param.put("appId", appId);
+//		 param.put("requestType", requestType);
+//		 param.put("requestData", requestData);
+//		 param.put("dataSign", dataSign);
+//		 String url = "http://test59.qtopay.cn/gateway/exterfaceInvoke.json";
+//		 try {
+//			String result = HttpUtils.sendHttpPostRequestJson(url, param, false);
+//			System.out.println("返回结果：" + result);
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
-		 System.out.println("iOS*".matches("iOS11.33"));
-
-		 int module2_uint_time = 60;
-		 Date act_date_date =  DateUtils.parseDate("20191001");
-		 Date dataTime_date = DateUtils.parseDate("20191231");
-
-		 int diffDay = DateUtils.getDatePoor(act_date_date,dataTime_date,0);
-		 System.out.println(diffDay);
-		 System.out.println(diffDay%module2_uint_time);
-		 System.out.println(diffDay/module2_uint_time);
-		 System.out.println(33/30);
 
 
-		 try
-		 {
-			 String endTime = TimeUtil.getDayFormat4();
-			 String startTime = TimeUtil.getBeforeTwoDayBankCutDate(endTime);
-			 System.out.println(endTime);
-			 System.out.println(startTime);
-			 System.out.println(DateUtils.addDays(DateUtils.parseDate(startTime),-2));
-		 }catch (Exception e){
+		 /************7008接口（返现信息接口）***************/
+//		 String appId = "csdlo";
+//		 String requestType = "7008";
+//		 JSONObject requestData = new JSONObject();
+//		 requestData.put("agentAccount", "csdlo");
+//		 requestData.put("subAgentAccount", "daili01");
+//		 requestData.put("serialNo", "73");
+//		 String dataSign = MD5Utils.MD5Encode("d1560229-06c2-45fc-aa4c-34e5c3690cd8"+requestData.toJSONString());
+//		 JSONObject param = new JSONObject();
+//		 param.put("appId", appId);
+//		 param.put("requestType", requestType);
+//		 param.put("requestData", requestData);
+//		 param.put("dataSign", dataSign);
+//		 String url = "http://test59.qtopay.cn/gateway/exterfaceInvoke.json";
+//		 try {
+//			 String result = HttpUtils.sendHttpPostRequestJson(url, param, false);
+//			 System.out.println("返回结果：" + result);
+//		 } catch (Exception e) {
+//			 // TODO Auto-generated catch block
+//			 e.printStackTrace();
+//		 }
 
+
+		 /************7009接口（返现信息接口）***************/
+		 String appId = "csdlo";
+		 String requestType = "7009";
+		 JSONObject requestData = new JSONObject();
+		 requestData.put("agentAccount", "csdlo");
+		 requestData.put("subAgentAccount", "daili01");
+		 String dataSign = MD5Utils.MD5Encode("d1560229-06c2-45fc-aa4c-34e5c3690cd8"+requestData.toJSONString());
+		 JSONObject param = new JSONObject();
+		 param.put("appId", appId);
+		 param.put("requestType", requestType);
+		 param.put("requestData", requestData);
+		 param.put("dataSign", dataSign);
+		 String url = "http://test59.qtopay.cn/gateway/exterfaceInvoke.json";
+		 try {
+			 String result = HttpUtils.sendHttpPostRequestJson(url, param, false);
+			 System.out.println("返回结果：" + result);
+		 } catch (Exception e) {
+			 // TODO Auto-generated catch block
+			 e.printStackTrace();
 		 }
+
+
+		 //通过7002接口取交易数据
+//		 ZhongFuInterfaceService zhongFuInterfaceService = new ZhongFuInterfaceServiceImpl();
+//		 R transposData = zhongFuInterfaceService.requestType7006("beiye", "000006026221521100", "20180101000000", "20200325000000", "02", String.valueOf(1), "a6d9fc6d-16e0-485d-89d9-a388678ee6cf");
+//		 System.out.println(transposData);
+
+//		 System.out.println("iOS*".matches("iOS11.33"));
+//
+//		 int module2_uint_time = 60;
+//		 Date act_date_date =  DateUtils.parseDate("20191001");
+//		 Date dataTime_date = DateUtils.parseDate("20191231");
+//
+//		 int diffDay = DateUtils.getDatePoor(act_date_date,dataTime_date,0);
+//		 System.out.println(diffDay);
+//		 System.out.println(diffDay%module2_uint_time);
+//		 System.out.println(diffDay/module2_uint_time);
+//		 System.out.println(33/30);
+//
+//
+//		 try
+//		 {
+//			 String endTime = TimeUtil.getDayFormat4();
+//			 String startTime = TimeUtil.getBeforeTwoDayBankCutDate(endTime);
+//			 System.out.println(endTime);
+//			 System.out.println(startTime);
+//			 System.out.println(DateUtils.addDays(DateUtils.parseDate(startTime),-2));
+//		 }catch (Exception e){
+//
+//		 }
 
 
 

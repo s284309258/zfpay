@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ruoyi.project.deveagent.syspos.mapper.AgentSysMposInfoMapper;
 import com.ruoyi.project.deveagent.syspos.mapper.AgentSysTraditionalPosInfoMapper;
 import com.ruoyi.project.deveagent.user.mapper.AgentUserInfoMapper;
 import com.ruoyi.project.test.IOSPushy;
@@ -51,6 +52,9 @@ public class TransactionDataProcessingServiceImpl implements TransactionDataProc
 
 	@Autowired
 	private AgentSysTraditionalPosInfoMapper agentSysTraditionalPosInfoMapper;
+
+	@Autowired
+	private AgentSysMposInfoMapper agentSysMposInfoMapper;
 
 	@Autowired
 	private AgentUserInfoMapper agentUserInfoMapper;
@@ -329,6 +333,8 @@ public class TransactionDataProcessingServiceImpl implements TransactionDataProc
 		edit_user.put("op_order_id", order_id);
 		edit_user.put("state_type", state_type);
 		edit_user.put("sn", StringUtil.getMapValue(trade, "sn"));
+		Map<String,Object> map = agentSysTraditionalPosInfoMapper.getAgentSysTraditionalPosInfoBySn(StringUtil.getMapValue(trade, "sn"));
+		String mer_name = StringUtil.getMapValue(map,"mer_name");
 		String pos_type = agentSysTraditionalPosInfoMapper.getAgentSysEposInfoBySn(StringUtil.getMapValue(trade, "sn"));
 		if("epos".equals(pos_type)){
 			edit_user.put("pos_type", BenefitParamConstants.pos_type_03);
@@ -374,6 +380,9 @@ public class TransactionDataProcessingServiceImpl implements TransactionDataProc
 		record.put("cre_time", TimeUtil.getTimeString());
 		if("epos".equals(pos_type)){
 			record.put("pos_type",BenefitParamConstants.pos_type_03);
+		}
+		if(null!=mer_name && !"".equals(mer_name)){
+			record.put("mer_name",mer_name);
 		}
 		num = transactionDataProcessingMapper.insertUserTraposShareBenefitRecord(record);
 		if(num != 1){
@@ -730,6 +739,8 @@ public class TransactionDataProcessingServiceImpl implements TransactionDataProc
 		edit_user.put("sn", StringUtil.getMapValue(trade, "sn"));
 		edit_user.put("up_date", TimeUtil.getDayString());
 		edit_user.put("up_time", TimeUtil.getTimeString());
+		Map<String,Object> map = agentSysMposInfoMapper.getAgentSysMposInfoBySn(StringUtil.getMapValue(trade, "sn"));
+		String mer_name = StringUtil.getMapValue(map,"mer_name");
 		num = manaUserInfoMapper.updateUserMoneyBenefit(edit_user);
 		if(num != 1){
 			throw new Exception("用户收益更新异常");
@@ -756,6 +767,9 @@ public class TransactionDataProcessingServiceImpl implements TransactionDataProc
 		record.put("cloud_flash_rate", StringUtil.getMapValue(mpos, "cloud_flash_rate"));
 		record.put("cre_date", TimeUtil.getDayString());
 		record.put("cre_time", TimeUtil.getTimeString());
+		if(null!=mer_name && !"".equals(mer_name)){
+			record.put("mer_name", mer_name);
+		}
 		num = transactionDataProcessingMapper.insertUserMposShareBenefitRecord(record);
 		if(num != 1){
 			throw new Exception("收益日志记录异常");
@@ -774,6 +788,28 @@ public class TransactionDataProcessingServiceImpl implements TransactionDataProc
 		num = transactionDataProcessingMapper.insertUserMessageInfo(message);
 		if(num != 1){
 			throw new Exception("通知记录异常");
+		}
+
+		//分润推送通知add byqh202003
+		Map<String,Object> userMap = agentUserInfoMapper.getAgentUserMapById(StringUtil.getMapValue(benefit, "user_id"));
+		if(StringUtil.getMapValue(userMap, "device_type").contains("iOS") &&
+				!"".equals(StringUtil.getMapValue(userMap, "device_token"))){
+			StringBuffer notice = new StringBuffer();
+			notice.append("【中付钱柜】您收到一笔[");
+			String tt = StringUtil.getMapValue(trade, "trans_type");
+			if("1".equals(tt)){
+				notice.append("刷卡");
+			}else if("2".equals(tt)){
+				notice.append("快捷支付");
+			}else if("3".equals(tt)){
+				notice.append("微信");
+			}else if("4".equals(tt)){
+				notice.append("支付宝");
+			}else{
+				notice.append("云闪付");
+			}
+			notice.append("]收益").append(benefit_money).append("元");
+			IOSPushy.PushyMessage("",notice.toString(),StringUtil.getMapValue(userMap, "device_token"));
 		}
 	}
 	

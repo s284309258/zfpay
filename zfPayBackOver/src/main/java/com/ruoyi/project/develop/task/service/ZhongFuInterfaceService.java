@@ -1,6 +1,9 @@
 package com.ruoyi.project.develop.task.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.project.develop.common.domain.R;
+
+import java.util.Map;
 
 /**
  * 中付接口对接
@@ -78,4 +81,9 @@ public interface ZhongFuInterfaceService {
 	 * @return
 	 */
 	public R requestType7006(String agentAccount, String SN, String startTime, String endTime, String machineType, String pageNum, String appKey);
+
+
+	public R requestType7007(String agentAccount, JSONObject requestData, String appKey);
+
+	public R requestType7008(String agentAccount, JSONObject requestData, String appKey);
 }

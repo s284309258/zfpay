@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -118,11 +119,80 @@ public class AgentUserReportRecordServiceImpl implements AgentUserReportRecordSe
 			detailsMap.put("subAgentIdNum", userInfoMap.get("id_card").toString());//子级代理身份证号
 			detailsMap.put("subAgentIdImg", subAgentIdImg);//子级代理身份证图片
 			detailsMap.put("subAgentSettAccount", userCardMap.get("account").toString());//子级代理结算账号
-			detailsMap.put("isReport", ZhongFuInterfaceCodeConstant.user_report_record_detail_is_report_1);//报备信息标识：只报备代理信息
-			R reportResult = zhongFuInterfaceService.requestType7001(userAccountMap.get("app_id").toString(),JSONArray.fromObject(detailsMap),userAccountMap.get("app_key").toString());
-			if(!R.Type.SUCCESS.value.equals(reportResult.get("code").toString())) {
-				return reportResult;
+			//add byqh202004 7001修改 begin
+			detailsMap.put("subAgentSettAccountName", userCardMap.get("account_name").toString());//子级代理结算账号
+			detailsMap.put("subAgentLevel", userInfoMap.get("algebra").toString());//子级代理结算账号
+			detailsMap.put("rootAgentAccount", userAccountMap.get("app_id").toString());//子级代理结算账号
+			detailsMap.put("rootAgentName", userAccountMap.get("app_name").toString());//子级代理结算账号
+			Map<String, Object> userMap = agentUserInfoMapper.getAgentUserMapById(StringUtil.getMapValue(userInfoMap, "referer_id"));
+			detailsMap.put("parentAgentAccount", StringUtil.getMapValue(userMap,"user_tel"));//子级代理结算账号
+			detailsMap.put("parentAgentAccountName", StringUtil.getMapValue(userMap,"real_name"));//子级代理结算账号
+			//add byqh202004 7001修改 end
+
+			//add byqh 202004 新增7007接口 begin
+			String serialNo = null;
+			if("1".equals(userInfoMap.get("report_status"))){
+//				JSONObject jsonObject2 = new JSONObject();
+//				jsonObject2.put("subAgentAccount",userInfoMap.get("user_tel").toString());
+//				jsonObject2.put("serialNo",userInfoMap.get("serial_no"));
+//				R reportResult2 = zhongFuInterfaceService.requestType7008("csdlo",jsonObject2,"d1560229-06c2-45fc-aa4c-34e5c3690cd8");
+//				if(!R.Type.SUCCESS.value.equals(reportResult2.get("code").toString())) {
+//					return reportResult2;
+//				}
+//				System.out.println("requestType7008:"+reportResult2);
+//				String auditState = ((JSONObject)reportResult2.get("data")).get("auditState").toString();
+//				if("2".equals(auditState)){
+//					R reportResult = zhongFuInterfaceService.requestType7001("csdlo",JSONArray.fromObject(detailsMap),"d1560229-06c2-45fc-aa4c-34e5c3690cd8");
+//					if(!R.Type.SUCCESS.value.equals(reportResult.get("code").toString())) {
+//						return reportResult;
+//					}
+//					System.out.println("requestType7001:"+reportResult);
+//					serialNo = ((JSONObject)((JSONArray)((JSONObject)reportResult.get("data")).get("resultList")).get(0)).get("serialNo").toString();
+//				}else{
+					JSONObject repeatMap = new JSONObject();
+					repeatMap.put("subAgentAccount",userInfoMap.get("user_tel").toString());
+					repeatMap.put("subAgentSettAccount",userCardMap.get("account").toString());
+					repeatMap.put("subAgentPhone",userInfoMap.get("user_tel").toString());
+
+					String card_photo1 = SysParamConstant.qiniu_domain+"/"+userCardMap.get("card_photo").toString().split(",")[0];//线上图片路径URL
+					String cardImg2 = Base64Utils.ImageToBase64ByOnline(card_photo1+"?imageView2/1/w/1080/h/1920");
+					cardImg2 = cardImg2.replaceAll("\r","").replaceAll("\n","");
+					repeatMap.put("subAgentSettAccountImg",cardImg2);
+
+					String card_photo3 = SysParamConstant.qiniu_domain+"/"+userInfoMap.get("card_photo").toString().split(",")[2];//线上图片路径URL
+					//七牛线上图片BASE64位流
+					String subAgentIdImg3 = Base64Utils.ImageToBase64ByOnline(card_photo3+"?imageView2/1/w/1080/h/1920");
+					subAgentIdImg3 = subAgentIdImg3.replaceAll("\r","").replaceAll("\n","");
+					repeatMap.put("subAgentIdAndSettAccountImg",subAgentIdImg3);
+					//userAccountMap.get("app_id").toString(), repeatMap,userAccountMap.get("app_key").toString() code -> E-PROXYAPI-994
+					R reportResult = zhongFuInterfaceService.requestType7007(userAccountMap.get("app_id").toString(), repeatMap,userAccountMap.get("app_key").toString());
+
+					if(!R.Type.SUCCESS.value.equals(reportResult.get("code").toString())) {
+						return reportResult;
+					}
+					System.out.println("requestType7007:"+reportResult);
+					serialNo = ((JSONObject)reportResult.get("data")).get("serialNo").toString();
+					if("E-PROXYAPI-994".equals(reportResult.get("code"))){
+						R reportResult1 = zhongFuInterfaceService.requestType7001(userAccountMap.get("app_id").toString(),JSONArray.fromObject(detailsMap),userAccountMap.get("app_key").toString());
+						if(!R.Type.SUCCESS.value.equals(reportResult1.get("code").toString())) {
+							return reportResult1;
+						}
+						serialNo = ((JSONObject)((JSONArray)((JSONObject)reportResult.get("data")).get("resultList")).get(0)).get("serialNo").toString();
+					}
+//				}
+			}else{
+				//detailsMap.put("isReport", ZhongFuInterfaceCodeConstant.user_report_record_detail_is_report_1);//报备信息标识：只报备代理信息
+				// userAccountMap.get("app_id").toString()  userAccountMap.get("app_key").toString() csdlo  d1560229-06c2-45fc-aa4c-34e5c3690cd8
+				R reportResult = zhongFuInterfaceService.requestType7001(userAccountMap.get("app_id").toString(),JSONArray.fromObject(detailsMap),userAccountMap.get("app_key").toString());
+				if(!R.Type.SUCCESS.value.equals(reportResult.get("code").toString())) {
+					return reportResult;
+				}
+				System.out.println("requestType7001:"+reportResult);
+//				serialNo = ((JSONObject)reportResult.get("data")).get("serialNo").toString();
+				serialNo = ((JSONObject)((JSONArray)((JSONObject)reportResult.get("data")).get("resultList")).get(0)).get("serialNo").toString();
 			}
+			//add byqh 202004 新增7007接口 end
+
 			//（6）保存代理报备信息
 			Map<String, Object> userReportRecordMap = new HashMap<>();
 			userReportRecordMap.put("manager_id", ShiroUtils.getUserId());//代理编号
@@ -152,6 +222,7 @@ public class AgentUserReportRecordServiceImpl implements AgentUserReportRecordSe
 				return R.error(Type.WARN, "代理报备信息详情记录失败");
 			}
 			//（8）更新用户报备状态
+			userReportRecordMap.put("serial_no",serialNo);
 			i = agentUserInfoMapper.updateAgentUserReportStatus(userReportRecordMap);
 			return R.ok("报备成功");
 		} catch (Exception e) {

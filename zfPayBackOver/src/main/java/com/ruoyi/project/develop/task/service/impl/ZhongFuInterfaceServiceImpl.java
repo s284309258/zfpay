@@ -14,6 +14,8 @@ import com.ruoyi.project.develop.task.service.ZhongFuInterfaceService;
 
 import net.sf.json.JSONArray;
 
+import java.util.Map;
+
 
 @Service
 public class ZhongFuInterfaceServiceImpl implements ZhongFuInterfaceService {
@@ -258,6 +260,57 @@ public class ZhongFuInterfaceServiceImpl implements ZhongFuInterfaceService {
 		} catch (Exception e) {
 			LOGGER.error("zhongFuInterfaceServiceImpl -- requestType7006 接口信息获取异常：" + ExceptionUtil.getExceptionMessage(e));
 			return R.error("获取信息异常");
+		}
+	}
+
+	@Override
+	public R requestType7007(String agentAccount, JSONObject requestData, String appKey) {
+		try {
+			requestData.put("agentAccount", agentAccount);
+			String dataSign = MD5Utils.MD5Encode(appKey+requestData.toJSONString());
+			JSONObject param = new JSONObject();
+			param.put("appId", agentAccount);
+			param.put("requestType", "7007");
+			param.put("requestData", requestData);
+			param.put("dataSign", dataSign);
+			String result = HttpUtils.sendHttpPostRequestJson(ZhongFuInterfaceCodeConstant.request_url, param, false);
+			LOGGER.info("参数信息：" + param.toJSONString());
+			LOGGER.info("接口返回信息：" + result);
+			JSONObject resultJson = JSONObject.parseObject(result);
+			if("2000".equals(resultJson.getString("code"))){
+				return R.ok(resultJson.getString("msg"), resultJson.get("data"));
+			}else{
+				return R.error(resultJson.getString("code"), resultJson.getString("msg"));
+			}
+		} catch (Exception e) {
+			LOGGER.error("zhongFuInterfaceServiceImpl -- requestType7007 接口信息获取异常：" + ExceptionUtil.getExceptionMessage(e));
+			return R.error("代理报备异常");
+		}
+	}
+
+
+	@Override
+	public R requestType7008(String agentAccount, JSONObject requestData, String appKey) {
+		try {
+			requestData.put("agentAccount", agentAccount);
+			String dataSign = MD5Utils.MD5Encode(appKey+requestData.toJSONString());
+			JSONObject param = new JSONObject();
+			param.put("appId", agentAccount);
+			param.put("requestType", "7008");
+			param.put("requestData", requestData);
+			param.put("dataSign", dataSign);
+			String result = HttpUtils.sendHttpPostRequestJson(ZhongFuInterfaceCodeConstant.request_url, param, false);
+			LOGGER.info("参数信息：" + param.toJSONString());
+			LOGGER.info("接口返回信息：" + result);
+			JSONObject resultJson = JSONObject.parseObject(result);
+			if("2000".equals(resultJson.getString("code"))){
+				return R.ok(resultJson.getString("msg"), resultJson.get("data"));
+			}else{
+				return R.error(resultJson.getString("code"), resultJson.getString("msg"));
+			}
+		} catch (Exception e) {
+			LOGGER.error("zhongFuInterfaceServiceImpl -- requestType7007 接口信息获取异常：" + ExceptionUtil.getExceptionMessage(e));
+			return R.error("代理报备异常");
 		}
 	}
 

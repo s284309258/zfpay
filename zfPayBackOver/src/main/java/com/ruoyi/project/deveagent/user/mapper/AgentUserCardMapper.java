@@ -65,4 +65,12 @@ public interface AgentUserCardMapper {
 	 */
 	Map<String, Object> getAgentUserCard(@Param("map") Map<String, Object> params);
 
+
+	/**
+	 * 查询结算卡信息
+	 * @param user_id
+	 * @return
+	 */
+	Map<String, Object> getAgentUserCardByUserId(@Param("map") String user_id);
+
 }

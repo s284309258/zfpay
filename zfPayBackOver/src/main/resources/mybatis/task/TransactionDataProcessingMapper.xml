@@ -84,7 +84,8 @@
 			cre_date,
 			cre_time,
 			trans_product,
-			pos_type
+			pos_type,
+			mer_name
 		)
 		values
 		(
@@ -114,7 +115,8 @@
 			#{map.cre_date},
 			#{map.cre_time},
 			#{map.trans_product},
-			#{map.pos_type}
+			#{map.pos_type},
+			#{map.mer_name}
 		)
 	</insert>
 	
@@ -399,7 +401,8 @@
 			credit_card_rate,
 			cloud_flash_rate,
 			cre_date,
-			cre_time
+			cre_time,
+			mer_name
 		)
 		values
 		(
@@ -421,11 +424,12 @@
 			#{map.credit_card_rate},
 			#{map.cloud_flash_rate},
 			#{map.cre_date},
-			#{map.cre_time}
+			#{map.cre_time},
+			#{map.mer_name}
 		)
 	</insert>
 	
-	<!-- 交易状态更新 (MPOS)-->
+	<!-- 交易状态更新 (MPOS) -->
 	<update id="updateMposTradeStatus" parameterType="java.util.Map">
 		update t_user_mpos_info
 		   set trade_status = '1',

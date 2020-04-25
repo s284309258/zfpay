@@ -35,7 +35,7 @@ public class ZhongFuInterfaceCodeConstant {
 	/**
 	 * 中付数据请求链接
 	 */
-	//public static String request_url = "http://test59.qtopay.cn/gateway/exterfaceInvoke.json";
+//	public static String request_url = "http://test59.qtopay.cn/gateway/exterfaceInvoke.json";
 
 	public static String request_url = "https://openapi.qtopay.cn:8818/gateway/exterfaceInvoke.json";
 	

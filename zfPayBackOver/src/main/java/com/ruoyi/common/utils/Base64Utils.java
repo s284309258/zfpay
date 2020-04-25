@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import com.ruoyi.common.constant.SysParamConstant;
 import com.ruoyi.common.utils.string.StringUtil;
 
 import sun.misc.BASE64Decoder;
@@ -21,7 +22,7 @@ public class Base64Utils {
 		//本地图片地址
 		String url = "D:\\wangyc.jpg";
 		//在线图片地址
-		String string = "http://cdn.yhswl.com/FreafUoc3LyJmoPC4sXBVE_qUAl9";
+		String string = SysParamConstant.qiniu_domain+"/FreafUoc3LyJmoPC4sXBVE_qUAl9";
 		
 		String str = Base64Utils.ImageToBase64ByLocal(url);
 		
