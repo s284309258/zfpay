@@ -173,11 +173,16 @@ public class AgentUserReportRecordServiceImpl implements AgentUserReportRecordSe
 					System.out.println("requestType7007:"+reportResult);
 					serialNo = ((JSONObject)reportResult.get("data")).get("serialNo").toString();
 					if("E-PROXYAPI-994".equals(reportResult.get("code"))){
+
 						R reportResult1 = zhongFuInterfaceService.requestType7001(userAccountMap.get("app_id").toString(),JSONArray.fromObject(detailsMap),userAccountMap.get("app_key").toString());
 						if(!R.Type.SUCCESS.value.equals(reportResult1.get("code").toString())) {
 							return reportResult1;
 						}
-						serialNo = ((JSONObject)((JSONArray)((JSONObject)reportResult.get("data")).get("resultList")).get(0)).get("serialNo").toString();
+						JSONObject o1 =(JSONObject) reportResult1.get("data");
+						if(o1.get("resultList") instanceof com.alibaba.fastjson.JSONArray){
+							com.alibaba.fastjson.JSONArray o2 =(com.alibaba.fastjson.JSONArray) o1.get("resultList");
+							serialNo = String.valueOf(o2.getJSONObject(0).get("serialNo"));
+						}
 					}
 //				}
 			}else{
@@ -187,9 +192,11 @@ public class AgentUserReportRecordServiceImpl implements AgentUserReportRecordSe
 				if(!R.Type.SUCCESS.value.equals(reportResult.get("code").toString())) {
 					return reportResult;
 				}
-				System.out.println("requestType7001:"+reportResult);
-//				serialNo = ((JSONObject)reportResult.get("data")).get("serialNo").toString();
-				serialNo = ((JSONObject)((JSONArray)((JSONObject)reportResult.get("data")).get("resultList")).get(0)).get("serialNo").toString();
+				JSONObject o1 =(JSONObject) reportResult.get("data");
+				if(o1.get("resultList") instanceof com.alibaba.fastjson.JSONArray){
+					com.alibaba.fastjson.JSONArray o2 =(com.alibaba.fastjson.JSONArray) o1.get("resultList");
+					serialNo = String.valueOf(o2.getJSONObject(0).get("serialNo"));
+				}
 			}
 			//add byqh 202004 新增7007接口 end
 

@@ -3,6 +3,7 @@ package com.ruoyi.project.test;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.alibaba.fastjson.JSONArray;
 import com.ruoyi.common.utils.string.StringUtil;
 import com.ruoyi.common.utils.time.DateUtils;
 import com.ruoyi.common.utils.time.TimeUtil;
@@ -48,7 +49,29 @@ public class TaskDeal {
 //	}
 	 
 	 public static void main(String[] args){
-		 
+
+		 //{"data":{"resultList":[{"msg":"提交成功","serialNo":217088,"subAgentAccount":"18673902699"}]}
+		 JSONObject data = new JSONObject();
+		 JSONObject resultList = new JSONObject();
+		 JSONArray array = new JSONArray();
+		 JSONObject msg = new JSONObject();
+		 msg.put("msg","提交成功");
+		 msg.put("serialNo",217088);
+		 msg.put("subAgentAccount","18673902699");
+		 array.set(0,msg);
+		 resultList.put("resultList",array);
+		 data.put("data",resultList);
+		 System.out.println("requestType7001======"+data);
+		 JSONObject o1 =(JSONObject) data.get("data");
+		 System.out.println(data.get("data"));
+		 if(o1.get("resultList") instanceof JSONArray){
+			 JSONArray o2 =(JSONArray) o1.get("resultList");
+			 System.out.println(o2);
+			 System.out.println(String.valueOf(o2.getJSONObject(0).get("serialNo")));
+			 String serialNo = ((JSONObject)((JSONArray)((JSONObject)data.get("data")).get("resultList")).get(0)).get("serialNo").toString();
+			 System.out.println(serialNo);
+		 }
+
 		 /************7002接口（交易数据接口）***************/
 //		 String appId = "csdlo";
 //		 String requestType = "7002";
@@ -180,25 +203,25 @@ public class TaskDeal {
 
 
 		 /************7009接口（返现信息接口）***************/
-		 String appId = "csdlo";
-		 String requestType = "7009";
-		 JSONObject requestData = new JSONObject();
-		 requestData.put("agentAccount", "csdlo");
-		 requestData.put("subAgentAccount", "daili01");
-		 String dataSign = MD5Utils.MD5Encode("d1560229-06c2-45fc-aa4c-34e5c3690cd8"+requestData.toJSONString());
-		 JSONObject param = new JSONObject();
-		 param.put("appId", appId);
-		 param.put("requestType", requestType);
-		 param.put("requestData", requestData);
-		 param.put("dataSign", dataSign);
-		 String url = "http://test59.qtopay.cn/gateway/exterfaceInvoke.json";
-		 try {
-			 String result = HttpUtils.sendHttpPostRequestJson(url, param, false);
-			 System.out.println("返回结果：" + result);
-		 } catch (Exception e) {
-			 // TODO Auto-generated catch block
-			 e.printStackTrace();
-		 }
+//		 String appId = "csdlo";
+//		 String requestType = "7009";
+//		 JSONObject requestData = new JSONObject();
+//		 requestData.put("agentAccount", "csdlo");
+//		 requestData.put("subAgentAccount", "daili01");
+//		 String dataSign = MD5Utils.MD5Encode("d1560229-06c2-45fc-aa4c-34e5c3690cd8"+requestData.toJSONString());
+//		 JSONObject param = new JSONObject();
+//		 param.put("appId", appId);
+//		 param.put("requestType", requestType);
+//		 param.put("requestData", requestData);
+//		 param.put("dataSign", dataSign);
+//		 String url = "http://test59.qtopay.cn/gateway/exterfaceInvoke.json";
+//		 try {
+//			 String result = HttpUtils.sendHttpPostRequestJson(url, param, false);
+//			 System.out.println("返回结果：" + result);
+//		 } catch (Exception e) {
+//			 // TODO Auto-generated catch block
+//			 e.printStackTrace();
+//		 }
 
 
 		 //通过7002接口取交易数据
