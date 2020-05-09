@@ -307,6 +307,7 @@
 			t2.sub_agent_account,
 			t1.manager_id as org_no,
 			t1.manager_id as org_name,
+			t1.user_tel,
 			t.account_name,
 			t.account,
 			"11" AS account_type,

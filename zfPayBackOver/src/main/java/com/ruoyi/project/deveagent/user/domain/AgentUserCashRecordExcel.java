@@ -20,7 +20,11 @@ public class AgentUserCashRecordExcel extends BaseEntity
 	/** 用户名（中付开出的代理账户）  */
 	@Excel(name = "用户名（中付开出的代理账户）")
 	private String sub_agent_account;
-	
+
+	/** 手机号  */
+	@Excel(name = "子级代理账号")
+	private String user_tel;
+
 	/** 机构号 */
 	@Excel(name = "机构号", readConverterExp = "25=847000000000015,26=847000000000018,27=847000000000017")
 	private String org_no;
@@ -75,6 +79,10 @@ public class AgentUserCashRecordExcel extends BaseEntity
 	public void setSub_agent_account(String sub_agent_account) {
 		this.sub_agent_account = sub_agent_account;
 	}
+
+	public String getUser_tel() { return user_tel; }
+
+	public void setUser_tel(String user_tel) { this.user_tel = user_tel; }
 
 	public String getOrg_no() {
 		return org_no;
@@ -182,11 +190,11 @@ public class AgentUserCashRecordExcel extends BaseEntity
 
 	@Override
 	public String toString() {
-		return "AgentUserCashRecordExcel [id=" + id + ", sub_agent_account=" + sub_agent_account + ", org_no=" + org_no
-				+ ", org_name=" + org_name + ", account_name=" + account_name + ", account=" + account
-				+ ", account_type=" + account_type + ", bank_code=" + bank_code + ", bank_name=" + bank_name
-				+ ", cash_actual_money=" + cash_actual_money + ", id_card=" + id_card + ", remark=" + remark
-				+ ", batch_no=" + batch_no + ", order_id=" + order_id + "]";
+		return "AgentUserCashRecordExcel [id=" + id + ", sub_agent_account=" + sub_agent_account + ",user_tel="+ user_tel
+				+ ", org_no=" + org_no + ", org_name=" + org_name + ", account_name=" + account_name +
+				", account=" + account + ", account_type=" + account_type + ", bank_code=" + bank_code +
+				", bank_name=" + bank_name + ", cash_actual_money=" + cash_actual_money + ", id_card=" + id_card +
+				", remark=" + remark + ", batch_no=" + batch_no + ", order_id=" + order_id + "]";
 	}
-	
+
 }
