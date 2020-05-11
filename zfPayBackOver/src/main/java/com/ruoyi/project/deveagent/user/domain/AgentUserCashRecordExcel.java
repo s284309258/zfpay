@@ -21,10 +21,6 @@ public class AgentUserCashRecordExcel extends BaseEntity
 	@Excel(name = "用户名（中付开出的代理账户）")
 	private String sub_agent_account;
 
-	/** 手机号  */
-	@Excel(name = "子级代理账号")
-	private String user_tel;
-
 	/** 机构号 */
 	@Excel(name = "机构号", readConverterExp = "25=847000000000015,26=847000000000018,27=847000000000017")
 	private String org_no;
@@ -71,6 +67,10 @@ public class AgentUserCashRecordExcel extends BaseEntity
 	/** 订单号 */
 	@Excel(name = "订单号")
 	private String order_id;
+
+	/** 手机号  */
+	@Excel(name = "子级代理账号")
+	private String user_tel;
 
 	public String getSub_agent_account() {
 		return sub_agent_account;
