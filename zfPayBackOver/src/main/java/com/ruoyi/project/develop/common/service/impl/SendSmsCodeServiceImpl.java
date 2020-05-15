@@ -49,7 +49,7 @@ public class SendSmsCodeServiceImpl implements SendSmsCodeService {
 		if(StringUtils.isEmpty(StringUtil.getMapValue(map, "bus_type"))) {
 			return R.error(Type.WARN, "业务类型不能为空");
 		}
-		//发送短信验证码(聚合专用,需要去除手机号中的,;等)
+		//发送短信验证码(企信通专用)
 		return verifyRecordService.transmit(ShiroUtils.getSysUser().getUserId().toString(),map.get("bus_type").toString(),
 				VerifyConstant.MobileAccType, ShiroUtils.getSysUser().getPhonenumber(), VerifyConstant.SystemBack,MsgTemplateConstants.COMMON_TIP);
 //		//发送短信验证码(聚合专用,需要去除手机号中的,;等)
