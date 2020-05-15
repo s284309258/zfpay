@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ruoyi.common.utils.message.QiXinSmsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -122,9 +123,9 @@ public class VerifyRecordService {
 	 * @return
 	 */
 	public R compare(String id,String busType,String accType,String account,String code,String system){
-		/*if("999999".equals(code)) {
-			return R.ok("短信验证码对比成功");
-		}*/
+//		if("989898".equals(code)) {
+//			return R.ok("短信验证码对比成功");
+//		}
 		
 		int i=0;
 		Map<String, Object> condition=new HashMap<String,Object>();
@@ -254,8 +255,8 @@ public class VerifyRecordService {
 	private static R sendCode(String accType,String account,String code,String msgTemplate) {
 		if (VerifyConstant.MobileAccType.equals(accType)) {
 			//短信验证
-			return JuheDemoUtil.sendMesgZf(account, code);
-			//return SmsSDKDemo.sendMesg(account, code);
+			//return JuheDemoUtil.sendMesgZf(account, code);
+			return QiXinSmsUtil.sendMesg(account, code);
 		} else {
 			//邮箱验证码
 			return SendEmailUtil.sendEmail(account, code);
