@@ -44,6 +44,7 @@ public class SmsCodeServiceImpl implements SmsCodeService {
 	
 	@Autowired
 	UserInfoCacheService userInfoCacheService;
+
 	@Autowired
 	UserInfoMapper userInfoMapper;
 	
@@ -194,7 +195,9 @@ public class SmsCodeServiceImpl implements SmsCodeService {
 		dataMap.put("cre_date", userMap.get("cre_date"));
 		dataMap.put("cre_time", userMap.get("cre_time"));
 		//（2）校验短信验证码
-		return verifyRecordService.compare(userMap.get("id").toString(),userMap.get("user_tel").toString(), dataMap.get("bus_type").toString(), VerifyConstant.MobileAccType, userMap.get("user_tel").toString(), dataMap.get("sms_code").toString(), VerifyConstant.SystemFront);
+		return verifyRecordService.compare(userMap.get("id").toString(),userMap.get("user_tel").toString(),
+				dataMap.get("bus_type").toString(), VerifyConstant.MobileAccType, userMap.get("user_tel").toString(),
+				dataMap.get("sms_code").toString(), VerifyConstant.SystemFront);
 	}
 	
 

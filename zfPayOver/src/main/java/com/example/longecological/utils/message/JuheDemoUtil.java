@@ -189,7 +189,6 @@ public class JuheDemoUtil {
  		}
  	}
 	
-	
 	public static void main(String[] args) {
 		System.out.println(sendMesg("18772101525","666666"));
 	}

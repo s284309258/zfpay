@@ -43,7 +43,7 @@ public interface BenefitCentreMapper {
 	List<Map<String, Object>> getShareBenefitTraditionalPosList(@Param("map") Map<String, Object> map);
 
 	/**
-	 * 分润记录列表（传统POS）add byqh202003
+	 * 分润记录列表（EPOS）add byqh202003
 	 * @param map
 	 * @return
 	 */

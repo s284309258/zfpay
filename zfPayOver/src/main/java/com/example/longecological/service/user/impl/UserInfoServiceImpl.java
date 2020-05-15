@@ -54,7 +54,6 @@ public class UserInfoServiceImpl implements UserInfoService {
 	VerifyRecordService verifyRecordService;
 	@Autowired
 	UserInfoCacheService userInfoCacheService;
-	
 	@Autowired
 	UserInfoMapper userInfoMapper;
 

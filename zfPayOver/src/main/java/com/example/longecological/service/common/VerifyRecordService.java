@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.example.longecological.utils.message.QiXinSmsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,6 +103,7 @@ public class VerifyRecordService {
 			VerifyRecordMap.put("invalid_time", getInvalidTime(verifyInvalidDuration));//失效时间
 			VerifyRecordMap.put("msg_template", msgTemplate);//短信模板
 			//发送code
+			System.out.println(VerifyRecordMap.get("code").toString());
 			R sendResult = sendCode(accType, account,VerifyRecordMap.get("code").toString(),msgTemplate);
 			if(!Boolean.valueOf(sendResult.get(R.SUCCESS_TAG).toString())) {
 				return sendResult;
@@ -124,17 +126,17 @@ public class VerifyRecordService {
 	
 	/**
 	 * 对比验证码
-	 * @param ajaxJson 
-	 * @param user：用户
+	 * @param id
+	 * @param user_name：用户
 	 * @param busType：业务类型
 	 * @param accType：获取类型（1：手机:2：邮箱）
 	 * @param account：获取账号
 	 * @return
 	 */
 	public R compare(String id,String user_name,String busType,String accType,String account,String code,String system){
-		/*if("999999".equals(code)) {
-			return R.ok(MsgImgCodeConstant.MESSAGE_CODE_999897,MsgImgCodeConstant.MESSAGE_MSG_999897);
-		}*/
+//		if("555666".equals(code)) {
+//			return R.ok(MsgImgCodeConstant.MESSAGE_CODE_999897,MsgImgCodeConstant.MESSAGE_MSG_999897);
+//		}
 
 		
 		int i=0;
@@ -156,7 +158,7 @@ public class VerifyRecordService {
 			if(!code.equals(lastSendMap.get("code").toString())) {
 				return R.error(MsgImgCodeConstant.MESSAGE_CODE_999889, MsgImgCodeConstant.MESSAGE_MSG_999889);
 			}
-			//如果已经被验证 
+			//如果已经被验证
 			if(VerifyConstant.verifyStatus_1.equals(lastSendMap.get("status").toString())) {
 				return R.error(MsgImgCodeConstant.MESSAGE_CODE_999888, MsgImgCodeConstant.MESSAGE_MSG_999888);
 			}
@@ -265,13 +267,14 @@ public class VerifyRecordService {
 	 * @param accType
 	 * @param account
 	 * @param code
-	 * @param ajaxJson 
+	 * @param msgTemplate
 	 */
 	private R sendCode(String accType,String account,String code,String msgTemplate) {
 		//短信验证
 		if (VerifyConstant.MobileAccType.equals(accType)) {
 			//短信验证
-			return JuheDemoUtil.sendMesg(account, code);
+			return QiXinSmsUtil.sendMesg(account, code);
+			//return JuheDemoUtil.sendMesg(account, code);
 		} else {
 			//邮箱验证码
 //			return SendEmailUtil.sendEmail(account, code);
