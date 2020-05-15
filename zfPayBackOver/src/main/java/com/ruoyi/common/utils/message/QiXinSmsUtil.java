@@ -146,6 +146,6 @@ public class QiXinSmsUtil {
     }
 
     public static void main(String[] args) {
-        System.out.println(sendMesg("15915300343","666666"));
+        System.out.println(sendMesg("15915300343,1563813218","666666"));
     }
 }
