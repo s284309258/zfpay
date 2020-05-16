@@ -381,7 +381,11 @@
 	<select id="getAgentSysTraditionalPosInfoBySn" parameterType="java.lang.String" resultType="java.util.Map" >
 		select * from t_sys_traditional_pos_info where sn=#{sn}
 	</select>
-	
+
+	<!-- 根据设备号（机器编号）查询商户名信息 -->
+	<select id="getAgentSysTraditionalPosMer_nameInfoBySn" parameterType="java.lang.String" resultType="java.util.Map" >
+		select ttpi.mer_name from t_sys_traditional_pos_info ttpi where sn=#{sn}
+	</select>
 	
 	<!-- 根据编号查询传统POS机详情 -->
 	<select id="getAgentSysTraditionalPosInfoById" parameterType="java.lang.String" resultType="java.util.Map" >

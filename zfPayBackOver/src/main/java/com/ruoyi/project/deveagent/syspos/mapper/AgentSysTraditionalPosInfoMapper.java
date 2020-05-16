@@ -64,6 +64,8 @@ public interface AgentSysTraditionalPosInfoMapper {
 	Map<String, Object> getAgentSysTraditionalPosInfoBySn(@Param("sn") String sn);
 
 
+	String getAgentSysTraditionalPosMer_nameInfoBySn(@Param("sn") String sn);
+
 	/**
 	 * 根据设备号（机器编号）查询POS机详情
 	 * @param sn
