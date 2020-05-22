@@ -700,8 +700,8 @@ public class TransactionDataProcessingServiceImpl implements TransactionDataProc
 	
 	/**
 	 * 处理直属和代理单笔分润
-	 * @param transposTrade
-	 * @param transpos
+	 * @param mposTrade
+	 * @param mpos
 	 * @param merchant
 	 * @param agencyList
 	 */
@@ -952,7 +952,7 @@ public class TransactionDataProcessingServiceImpl implements TransactionDataProc
 	
 	/**
 	 * 处理单笔传统POS机器返现
-	 * @param transposTrade
+	 * @param traposMachineBack
 	 */
 	@Transactional
 	public void processingTraposMachineBack(Map<String, Object> traposMachineBack){
@@ -1016,8 +1016,8 @@ public class TransactionDataProcessingServiceImpl implements TransactionDataProc
 	
 	/**
 	 * 处理直属和代理机器返现分润
-	 * @param transposTrade
-	 * @param transpos
+	 * @param traposMachineBack
+	 * @param trapos
 	 * @param merchant
 	 * @param agencyList
 	 */
