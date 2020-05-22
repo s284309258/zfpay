@@ -59,6 +59,10 @@
 				<a class="btn btn-success" onclick="$.operate.add('4')">
 					<i class="fa fa-plus"></i> 伪激活扣款考核
 				</a>
+				<!-- 操作封装：添加信息 全屏 -->
+				<a class="btn btn-success" onclick="$.operate.add('5')">
+					<i class="fa fa-plus"></i> 拿货激活返现考核
+				</a>
 		        <!-- 操作封装：修改信息，全屏 -->
 <!--		        <a class="btn btn-primary single disabled" onclick="$.operate.edit()">-->
 <!--		            <i class="fa fa-edit"></i> 修改-->
@@ -180,6 +184,11 @@
 					field : 'policy_quantity',
 					sortable: true,
 					title : '考核达到的交易量'
+				},
+				{
+					field : 'policy_income',
+					sortable: true,
+					title : '货量数量'
 				},
 				// {
 				// 	field : 'pos_type',

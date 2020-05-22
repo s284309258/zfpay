@@ -99,10 +99,11 @@
 
 	<insert id="insertPolicyDefine">
 		insert into t_sys_pos_policy_define(policy_type,policy_name,begin_date,end_date,policy_quantity,
-		policy_amount,remark,manager_id,policy_begin_day,policy_end_day,pos_type)
+		policy_amount,remark,manager_id,policy_begin_day,policy_end_day,pos_type,policy_income)
  		values(#{map.policy_type},#{map.policy_name},#{map.begin_date},#{map.end_date},#{map.policy_quantity},
  		#{map.policy_amount},#{map.remark},#{map.manager_id},#{map.policy_begin_day},#{map.policy_end_day},
- 		(case when #{map.pos_type}='01' then 'TraditionalPOS' when #{map.pos_type}='02' then 'MPOS' else null end))
+ 		(case when #{map.pos_type}='01' then 'TraditionalPOS' when #{map.pos_type}='02' then 'MPOS' else null end),
+ 		#{map.policy_income})
 	</insert>
 
 	<select id="selectSysPosPolicyInfo" parameterType="java.util.Map" resultType="java.util.Map">
@@ -111,7 +112,7 @@
 
 	<update id="editPolicyInfo" parameterType="java.util.Map">
 		update t_sys_pos_policy_define set policy_name=#{policy_name},begin_date=#{begin_date},end_date=#{end_date},policy_begin_day=#{policy_begin_day},
-		policy_end_day=#{policy_end_day},policy_amount=#{policy_amount},policy_quantity=#{policy_quantity},upd_by=#{upd_by},upd_date=now(),remark=#{remark},isuse=#{isuse}
+		policy_end_day=#{policy_end_day},policy_amount=#{policy_amount},policy_quantity=#{policy_quantity},policy_income=#{policy_income},upd_by=#{upd_by},upd_date=now(),remark=#{remark},isuse=#{isuse}
 		where id=#{id}
 	</update>
 
@@ -131,6 +132,10 @@
 
 	<update id="editPolicySNInfo4" parameterType="java.util.Map">
 		update t_sys_pos_policy_info set module4_deduct=#{policy_amount},module4_quantity=#{policy_quantity},module4_active_end_day=#{policy_end_day},isuse=#{isuse} where policy_id=#{id}
+	</update>
+
+	<update id="editPolicySNInfo5" parameterType="java.util.Map">
+		update t_sys_pos_policy_info set module5_reward=#{policy_amount},module5_income=#{policy_income},isuse=#{isuse} where policy_id=#{id}
 	</update>
 
 	<delete id="delPolicySNInfo" parameterType="java.lang.String">
@@ -159,6 +164,11 @@
 	<insert id="insertPolicySNInfo4" parameterType="java.util.Map">
 		insert into t_sys_pos_policy_info(policy_name,sn,module4_deduct,module4_quantity,module4_active_end_day,module_type,policy_id)
 		values(#{policy_name},#{sn},#{module4_deduct},#{module4_quantity},#{module4_active_end_day},4,#{policy_id})
+	</insert>
+
+	<insert id="insertPolicySNInfo5" parameterType="java.util.Map">
+		insert into t_sys_pos_policy_info(policy_name,sn,module5_reward,module5_income,module_type,policy_id)
+		values(#{policy_name},#{sn},#{module5_reward},#{module5_quantity},5,#{policy_id})
 	</insert>
 	
 </mapper>

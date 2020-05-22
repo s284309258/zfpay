@@ -423,5 +423,26 @@
 		where sn = #{map.sn} 
 		  and del = '0'
 	</select>
+
+	<!--得到政策5第一代用户信息555555555-->
+	<select id="getPolicy5UserInfo" parameterType="java.util.Map" resultType="java.util.Map">
+		select user_id,module5_reward from t_sys_pos_policy_info where module_type=5 and isuse=1 and sn=#{map.SN}
+	</select>
+
+	<!--得到政策5第一代用户信息555555555-->
+	<select id="getUserRefererID" parameterType="java.lang.String" resultType="java.lang.String">
+		select referer_id from t_user_info where id=#{user_id}
+	</select>
+
+	<!--得到政策5第一代用户信息555555555-->
+	<insert id="insertPolicy5Record" parameterType="java.util.Map">
+		insert into t_sys_pos_policy5_record(sn,user_id,policy_id,money,CURRENT_DATE)
+		values(#{map.sn},#{map.user_id},#{map.policy_id},#{map.money})
+	</insert>
+
+	<!--得到政策5第一代用户信息555555555-->
+	<select id="selectPolicy5Reward5" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(*) as cnt from t_sys_pos_policy5_record where user_id=#{user_id} and money=5
+	</select>
 	
 </mapper>

@@ -103,6 +103,15 @@ public class SysPosPolicyServiceImpl {
                             hashMap.put("policy_id",mm.get("id"));
                             hashMap.put("user_id",user_id);
                             sysPosPolicyMapper.insertPolicySNInfo4(hashMap);
+                        }else if("5".equals(String.valueOf(mm.get("policy_type")))){
+                            HashMap<String,Object> hashMap = new HashMap<>();
+                            hashMap.put("policy_name",mm.get("policy_name"));
+                            hashMap.put("sn",sn);
+                            hashMap.put("module5_reward",mm.get("policy_amount"));
+                            hashMap.put("module5_quantity",mm.get("policy_income"));
+                            hashMap.put("policy_id",mm.get("id"));
+                            hashMap.put("user_id",user_id);
+                            sysPosPolicyMapper.insertPolicySNInfo5(hashMap);
                         }
                     }
                 }
@@ -145,6 +154,8 @@ public class SysPosPolicyServiceImpl {
                 sysPosPolicyMapper.editPolicySNInfo3(params);
             }else if("4".equals(policy_type)){
                 sysPosPolicyMapper.editPolicySNInfo4(params);
+            }else if("5".equals(policy_type)){
+                sysPosPolicyMapper.editPolicySNInfo5(params);
             }
 
         }catch (Exception e){
