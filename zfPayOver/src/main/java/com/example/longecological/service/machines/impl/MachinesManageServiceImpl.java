@@ -524,14 +524,14 @@ public class MachinesManageServiceImpl implements MachinesManageService {
 			}
 			//add byqh202003 end
 			/********************开始处理分配操作***************************/
-			//更新旧的分配记录
-			map.put("up_date", TimeUtil.getDayString());
-			map.put("up_time", TimeUtil.getTimeString());
-			int num1 = machinesManageMapper.updateOldAllocationMpos(map);
 			//插入最新的分配记录
 			map.put("cre_date", TimeUtil.getDayString());
 			map.put("cre_time", TimeUtil.getTimeString());
-			int num2 = machinesManageMapper.addAllocationMpos(map);
+			int num1 = machinesManageMapper.addAllocationMpos(map);
+			//更新旧的分配记录
+			map.put("up_date", TimeUtil.getDayString());
+			map.put("up_time", TimeUtil.getTimeString());
+			int num2 = machinesManageMapper.updateOldAllocationMpos(map);
 			if((num1 + num2) != Integer.parseInt(StringUtil.getMapValue(map, "sn_length"))){
 				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 				return R.error(MachinesManageCodeConstant.MachinesManage_INFO_CODE_995994, MachinesManageCodeConstant.MachinesManage_INFO_MSG_995994);
