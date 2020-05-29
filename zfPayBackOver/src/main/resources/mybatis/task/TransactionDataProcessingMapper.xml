@@ -363,7 +363,7 @@
 		  from 
 		  	t_user_mpos_info t
 		  left join t_user_info t1 on t.user_id = t1.id
-		 where t.sn = #{sn} and t.state_status = '1' and t.del = '0'
+		 where t.sn = #{sn} and t.state_status = '1' and t.del = '0' and t1.algebra != '1'
 	</select>
 	
 	<!-- 查询代理分润信息(MPOS) -->
