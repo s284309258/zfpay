@@ -426,7 +426,7 @@
 
 	<!--得到政策5第一代用户信息555555555-->
 	<select id="getPolicy5UserInfo" parameterType="java.util.Map" resultType="java.util.Map">
-		select user_id,module5_reward from t_sys_pos_policy_info where module_type=5 and isuse=1 and sn=#{map.SN}
+		select user_id,module5_reward,id from t_sys_pos_policy_info where module_type=5 and isuse=1 and sn=#{map.SN}
 	</select>
 
 	<!--得到政策5第一代用户信息555555555-->
@@ -436,8 +436,8 @@
 
 	<!--得到政策5第一代用户信息555555555-->
 	<insert id="insertPolicy5Record" parameterType="java.util.Map">
-		insert into t_sys_pos_policy5_record(sn,user_id,policy_id,money,CURRENT_DATE)
-		values(#{map.sn},#{map.user_id},#{map.policy_id},#{map.money})
+		insert into t_sys_pos_policy5_record(sn,user_id,policy_id,money,reward_date)
+		values(#{map.sn},#{map.user_id},#{map.policy_id},#{map.money},CURRENT_DATE)
 	</insert>
 
 	<!--得到政策5第一代用户信息555555555-->
