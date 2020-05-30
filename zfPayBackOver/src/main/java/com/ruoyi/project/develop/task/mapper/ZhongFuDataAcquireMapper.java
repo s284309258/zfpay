@@ -9,6 +9,34 @@ import org.apache.ibatis.annotations.Select;
 
 public interface ZhongFuDataAcquireMapper {
 
+	/***
+	 * 得到直接上级代理5555555555
+	 * @param user_id
+	 * @return
+	 */
+	Integer selectPolicy5Reward5(@Param("user_id") String user_id);
+	/***
+	 * 得到直接上级代理5555555555
+	 * @param map
+	 * @return
+	 */
+	int insertPolicy5Record(@Param("map") Map<String, Object> map);
+
+
+	/***
+	 * 得到政策5第一代的父级链
+	 * @param user_id
+	 * @return
+	 */
+	String getUserRefererID(@Param("user_id") String user_id);
+
+	/***
+	 * 得到政策5第一代用户信息555555555
+	 * @param map
+	 * @return
+	 */
+	List<Map<String, Object>> getPolicy5UserInfo(@Param("map")Map<String, Object> map);
+
 	/**
 	 * 查询待处理的账号列表
 	 * @return

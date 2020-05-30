@@ -29,6 +29,8 @@ public interface SysPosPolicyMapper {
 
     int editPolicySNInfo4(Map<String,Object> params);
 
+    int editPolicySNInfo5(Map<String,Object> params);
+
     int delPolicySNInfo(@Param("ids") String ids);
 
     @Update("delete from t_sys_pos_policy_info where id in(${ids})")
@@ -44,6 +46,8 @@ public interface SysPosPolicyMapper {
     int insertPolicySNInfo3(Map<String,Object> params);
 
     int insertPolicySNInfo4(Map<String,Object> params);
+
+    int insertPolicySNInfo5(Map<String,Object> params);
 
     @Update("delete from t_sys_pos_policy_info where sn=#{sn}")
     @ResultType(Integer.class)
