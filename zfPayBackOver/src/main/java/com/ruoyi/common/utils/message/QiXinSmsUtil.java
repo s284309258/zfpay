@@ -109,7 +109,7 @@ public class QiXinSmsUtil {
     public static R sendMesg(String account, String code) {
         Map<String, Object> map=new HashMap<>();
         map.put("Mobile", account);
-        map.put("Content", "【中付钱柜】您本次的验证码为 "+ code + "，验证码5分钟内有效，请妥善保管。回T退订");
+        map.put("Content", "【中付】您本次的验证码为 "+ code + "，验证码5分钟内有效，请妥善保管。回T退订");
         return sendMesgUtil(map);
     }
 
