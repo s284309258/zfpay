@@ -249,7 +249,7 @@ public interface ActivitySettlementMapper {
 			" t.module2_active_end_day,t.module2_reward,t.module3_active_end_day,t.module3_quantity,t.module3_reward,t.module4_active_end_day,t.module4_quantity," +
 			" t.module4_deduct,t.module_type,t.isuse,t.iscomplete,t.remark,t.create_by,t.create_date,t.policy_id,t.complete_date,tt.user_id,date_format(date_sub(ttt.act_date,interval 1 day),'%Y%m%d') as act_date " +
 			" from t_sys_pos_policy_info t,t_user_mpos_info tt,t_sys_mpos_info ttt where t.sn=tt.sn and ttt.sn=tt.sn and t.module_type=2"+
-			" and t.isuse=1 and t.iscomplete=0 and tt.state_status=1 and ttt.act_status=1"+
+			" and t.isuse=1 and t.iscomplete=0 and tt.state_status=1 and tt.del=0 and ttt.act_status=1"+
 			" and CURRENT_DATE between date_add(ttt.act_date, interval t.module2_active_begin_day day) and date_add(ttt.act_date, interval t.module2_active_end_day day)")
 	List<Map<String,Object>> getModule2Mpos();
 
@@ -261,7 +261,7 @@ public interface ActivitySettlementMapper {
 			" t.module2_active_end_day,t.module2_reward,t.module3_active_end_day,t.module3_quantity,t.module3_reward,t.module4_active_end_day," +
 			" t.module4_quantity,t.module4_deduct,t.module_type,t.isuse,t.iscomplete,t.remark,t.create_by,t.create_date,t.policy_id,t.complete_date,tt.user_id,date_format(date_sub(ttt.act_date,interval 1 day),'%Y%m%d') as act_date " +
 			" from t_sys_pos_policy_info t,t_user_traditional_pos_info tt,t_sys_traditional_pos_info ttt where t.sn=tt.sn and ttt.sn=tt.sn and t.module_type=2"+
-			" and t.isuse=1 and t.iscomplete=0 and tt.state_status=1 and ttt.act_status=1"+
+			" and t.isuse=1 and t.iscomplete=0 and tt.state_status=1 and tt.del =0 and ttt.act_status=1"+
 			" and CURRENT_DATE between date_add(ttt.act_date, interval t.module2_active_begin_day day) and date_add(ttt.act_date, interval t.module2_active_end_day day)")
 	List<Map<String,Object>> getModule2Trapos();
 
