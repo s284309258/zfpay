@@ -8,6 +8,7 @@ import javax.transaction.Transactional;
 
 import com.example.longecological.constant.*;
 import com.example.longecological.service.common.SysParamService;
+import com.example.longecological.utils.http.HttpUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.slf4j.Logger;
@@ -188,6 +189,11 @@ public class UserLoginServiceImpl implements UserLoginService {
 		if(!Boolean.valueOf(checkRegisterResult.get(R.SUCCESS_TAG).toString())) {
 			return checkRegisterResult;
 		}
+		//更新客户后台系统登陆用户信息202006 begin
+		StringBuffer params = new StringBuffer();
+		params.append("username").append("=").append(dataMap.get("sys_user_account"));
+		HttpUtils.sendPost("http://localhost:28080/platform/api/zhongfu/appSave",params.toString());
+		//更新客户后台系统登陆用户信息202006 end
 		//注册操作
 		return this.userRegisterOper(dataMap);
 	}

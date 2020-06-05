@@ -548,7 +548,6 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 			HashMap<Integer, Integer> mmm = new HashMap();
 
 			Map<String, Object> map_param = new HashMap<>();
-			//StringUtil.getMapValue(bean, "SN")
 			map_param.put("sn", StringUtil.getMapValue(bean, "SN"));
 			List<Map<String, Object>> arrayList2 = zhongFuDataAcquireMapper.getMposUserList(map_param);
 			String zhishudaili = "0";
@@ -576,7 +575,7 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 							HashMap<String, Object> params = new HashMap<>();
 							params.put("sn", StringUtil.getMapValue(bean, "SN"));
 							params.put("user_id", zhishudaili);
-							params.put("policy_id", map.get("policy_id"));
+							params.put("policy_id", StringUtil.getMapValue(map, "id"));
 							params.put("money", mmm.get(0));
 							zhongFuDataAcquireMapper.insertPolicy5Record(params);
 						}
@@ -584,7 +583,7 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 						HashMap<String, Object> params = new HashMap<>();
 						params.put("sn", StringUtil.getMapValue(bean, "SN"));
 						params.put("user_id", zhishudaili);
-						params.put("policy_id", map.get("policy_id"));
+						params.put("policy_id", StringUtil.getMapValue(map, "id"));
 						params.put("money", mmm.get(0));
 						zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					}
@@ -604,13 +603,13 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					HashMap<String, Object> params = new HashMap<>();
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", zhishudaili);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(1));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili1);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(0));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
@@ -628,20 +627,20 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					HashMap<String, Object> params = new HashMap<>();
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", zhishudaili);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(2));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili1);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(1));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili2);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(0));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
@@ -658,27 +657,27 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					HashMap<String, Object> params = new HashMap<>();
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", zhishudaili);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(3));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili1);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(2));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili2);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(1));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili3);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(0));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
@@ -694,34 +693,34 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					HashMap<String, Object> params = new HashMap<>();
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", zhishudaili);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(4));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili1);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(3));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili2);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(2));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili3);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(1));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili4);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(0));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
@@ -737,41 +736,41 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					HashMap<String, Object> params = new HashMap<>();
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", zhishudaili);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(5));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili1);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(4));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili2);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(3));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili3);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(2));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili4);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(1));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili5);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(0));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
@@ -785,41 +784,41 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					HashMap<String, Object> params = new HashMap<>();
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", zhishudaili);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(6));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili1);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(5));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili2);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(4));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili3);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(3));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili4);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(2));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili5);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(1));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
@@ -827,7 +826,7 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					String shangjidaili6 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili5);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili6);
-					params.put("policy_id", map.get("policy_id"));
+					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(0));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
@@ -839,41 +838,41 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					HashMap<String,Object> params = new HashMap<>();
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",zhishudaili);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(7));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili1);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(6));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili2);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(5));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili3);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(4));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili4);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(3));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili5);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(2));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
@@ -881,14 +880,14 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					String shangjidaili6 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili5);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili6);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(1));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili7 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili6);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili7);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(0));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
@@ -899,41 +898,41 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					HashMap<String,Object> params = new HashMap<>();
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",zhishudaili);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(8));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili1);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(7));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili2);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(6));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili3);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(5));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili4);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(4));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili5);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(3));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
@@ -941,21 +940,21 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					String shangjidaili6 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili5);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili6);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(2));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili7 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili6);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili7);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(1));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili8 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili7);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili8);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(0));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
@@ -1003,7 +1002,7 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 							HashMap<String,Object> params = new HashMap<>();
 							params.put("sn",StringUtil.getMapValue(bean, "SN"));
 							params.put("user_id",zhishudaili);
-							params.put("policy_id",map.get("policy_id"));
+							params.put("policy_id",StringUtil.getMapValue(map, "id"));
 							params.put("money",mmm.get(0));
 							zhongFuDataAcquireMapper.insertPolicy5Record(params);
 						}
@@ -1011,7 +1010,7 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 						HashMap<String,Object> params = new HashMap<>();
 						params.put("sn",StringUtil.getMapValue(bean, "SN"));
 						params.put("user_id",zhishudaili);
-						params.put("policy_id",map.get("policy_id"));
+						params.put("policy_id",StringUtil.getMapValue(map, "id"));
 						params.put("money",mmm.get(0));
 						zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					}
@@ -1031,13 +1030,13 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					HashMap<String,Object> params = new HashMap<>();
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",zhishudaili);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(1));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili1);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(0));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
@@ -1056,20 +1055,20 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					HashMap<String,Object> params = new HashMap<>();
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",zhishudaili);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(2));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili1);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(1));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili2);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(0));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
@@ -1086,27 +1085,27 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					HashMap<String,Object> params = new HashMap<>();
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",zhishudaili);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(3));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili1);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(2));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili2);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(1));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili3);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(0));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
@@ -1122,34 +1121,34 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					HashMap<String,Object> params = new HashMap<>();
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",zhishudaili);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(4));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili1);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(3));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili2);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(2));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili3);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(1));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili4);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(0));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
@@ -1164,41 +1163,41 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					HashMap<String,Object> params = new HashMap<>();
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",zhishudaili);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(5));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili1);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(4));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili2);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(3));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili3);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(2));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili4);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(1));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili5);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(0));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
@@ -1211,41 +1210,41 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					HashMap<String,Object> params = new HashMap<>();
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",zhishudaili);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(6));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili1);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(5));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili2);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(4));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili3);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(3));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili4);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(2));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili5);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(1));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
@@ -1253,7 +1252,7 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					String shangjidaili6 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili5);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili6);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(0));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
@@ -1265,41 +1264,41 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					HashMap<String,Object> params = new HashMap<>();
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",zhishudaili);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(7));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili1);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(6));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili2);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(5));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili3);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(4));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili4);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(3));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili5);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(2));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
@@ -1307,14 +1306,14 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					String shangjidaili6 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili5);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili6);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(1));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili7 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili6);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili7);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(0));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
@@ -1325,41 +1324,41 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					HashMap<String,Object> params = new HashMap<>();
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",zhishudaili);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(8));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili1);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(7));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili2);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(6));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili3);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(5));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili4);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(4));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili5);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(3));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
@@ -1367,21 +1366,21 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					String shangjidaili6 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili5);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili6);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(2));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili7 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili6);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili7);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(1));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili8 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili7);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili8);
-					params.put("policy_id",map.get("policy_id"));
+					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(0));
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
@@ -1602,6 +1601,7 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 						if(num != 1){
 							throw new Exception("激活状态更新异常");
 						}
+
 						traposPolicy5RecordHandle(bean);
 
 						//查询跟当前POS机相关的用户集合
