@@ -193,7 +193,7 @@ public class UserLoginServiceImpl implements UserLoginService {
 		if(!Boolean.valueOf(checkRegisterResult.get(R.SUCCESS_TAG).toString())) {
 			return checkRegisterResult;
 		}
-		//更新客户后台系统登陆用户信息202006 begin
+		//更新客户后台系统登陆用户信息202006  begin
 		User user = new User();
 		user.setUserName(dataMap.get("sys_user_account").toString());
 		user.setLoginName(dataMap.get("sys_user_account").toString());
