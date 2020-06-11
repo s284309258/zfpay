@@ -111,7 +111,7 @@ public class AgentUserReportRecordServiceImpl implements AgentUserReportRecordSe
 			String card_photo_url = SysParamConstant.qiniu_domain+"/"+userInfoMap.get("card_photo").toString().split(",")[card_photo_num];//线上图片路径URL
 			//七牛线上图片BASE64位流
 			String subAgentIdImg = Base64Utils.ImageToBase64ByOnline(card_photo_url+"?imageView2/1/w/1080/h/1920");
-			subAgentIdImg = subAgentIdImg.replaceAll("\r","").replaceAll("\n","");
+			subAgentIdImg = subAgentIdImg.replace("\r","").replace("\n","");
 			//（5）请求数据对象
 			Map<String, Object> detailsMap = new HashMap<String, Object>();
 			detailsMap.put("subAgentAccount", userInfoMap.get("user_tel").toString());//子级代理账户
@@ -149,41 +149,41 @@ public class AgentUserReportRecordServiceImpl implements AgentUserReportRecordSe
 //					System.out.println("requestType7001:"+reportResult);
 //					serialNo = ((JSONObject)((JSONArray)((JSONObject)reportResult.get("data")).get("resultList")).get(0)).get("serialNo").toString();
 //				}else{
-					JSONObject repeatMap = new JSONObject();
-					repeatMap.put("subAgentAccount",userInfoMap.get("user_tel").toString());
-					repeatMap.put("subAgentSettAccount",userCardMap.get("account").toString());
-					repeatMap.put("subAgentPhone",userInfoMap.get("user_tel").toString());
+				JSONObject repeatMap = new JSONObject();
+				repeatMap.put("subAgentAccount",userInfoMap.get("user_tel").toString());
+				repeatMap.put("subAgentSettAccount",userCardMap.get("account").toString());
+				repeatMap.put("subAgentPhone",userInfoMap.get("user_tel").toString());
 
-					String card_photo1 = SysParamConstant.qiniu_domain+"/"+userCardMap.get("card_photo").toString().split(",")[0];//线上图片路径URL
-					String cardImg2 = Base64Utils.ImageToBase64ByOnline(card_photo1+"?imageView2/1/w/1080/h/1920");
-					cardImg2 = cardImg2.replaceAll("\r","").replaceAll("\n","");
-					repeatMap.put("subAgentSettAccountImg",cardImg2);
+				String card_photo1 = SysParamConstant.qiniu_domain+"/"+userCardMap.get("card_photo").toString().split(",")[0];//线上图片路径URL
+				String cardImg2 = Base64Utils.ImageToBase64ByOnline(card_photo1+"?imageView2/1/w/1080/h/1920");
+				cardImg2 = cardImg2.replace("\r","").replace("\n","");
+				repeatMap.put("subAgentSettAccountImg",cardImg2);
 
-					String card_photo3 = SysParamConstant.qiniu_domain+"/"+userInfoMap.get("card_photo").toString().split(",")[2];//线上图片路径URL
-					//七牛线上图片BASE64位流
-					String subAgentIdImg3 = Base64Utils.ImageToBase64ByOnline(card_photo3+"?imageView2/1/w/1080/h/1920");
-					subAgentIdImg3 = subAgentIdImg3.replaceAll("\r","").replaceAll("\n","");
-					repeatMap.put("subAgentIdAndSettAccountImg",subAgentIdImg3);
-					//userAccountMap.get("app_id").toString(), repeatMap,userAccountMap.get("app_key").toString() code -> E-PROXYAPI-994
-					R reportResult = zhongFuInterfaceService.requestType7007(userAccountMap.get("app_id").toString(), repeatMap,userAccountMap.get("app_key").toString());
+				String card_photo3 = SysParamConstant.qiniu_domain+"/"+userInfoMap.get("card_photo").toString().split(",")[2];//线上图片路径URL
+				//七牛线上图片BASE64位流
+				String subAgentIdImg3 = Base64Utils.ImageToBase64ByOnline(card_photo3+"?imageView2/1/w/1080/h/1920");
+				subAgentIdImg3 = subAgentIdImg3.replace("\r","").replace("\n","");
+				repeatMap.put("subAgentIdAndSettAccountImg",subAgentIdImg3);
+				//userAccountMap.get("app_id").toString(), repeatMap,userAccountMap.get("app_key").toString() code -> E-PROXYAPI-994
+				R reportResult = zhongFuInterfaceService.requestType7007(userAccountMap.get("app_id").toString(), repeatMap,userAccountMap.get("app_key").toString());
 
-					if(!R.Type.SUCCESS.value.equals(reportResult.get("code").toString())) {
-						return reportResult;
+				if(!R.Type.SUCCESS.value.equals(reportResult.get("code").toString())) {
+					return reportResult;
+				}
+				System.out.println("requestType7007:"+reportResult);
+				serialNo = ((JSONObject)reportResult.get("data")).get("serialNo").toString();
+				if("E-PROXYAPI-994".equals(reportResult.get("code"))){
+
+					R reportResult1 = zhongFuInterfaceService.requestType7001(userAccountMap.get("app_id").toString(),JSONArray.fromObject(detailsMap),userAccountMap.get("app_key").toString());
+					if(!R.Type.SUCCESS.value.equals(reportResult1.get("code").toString())) {
+						return reportResult1;
 					}
-					System.out.println("requestType7007:"+reportResult);
-					serialNo = ((JSONObject)reportResult.get("data")).get("serialNo").toString();
-					if("E-PROXYAPI-994".equals(reportResult.get("code"))){
-
-						R reportResult1 = zhongFuInterfaceService.requestType7001(userAccountMap.get("app_id").toString(),JSONArray.fromObject(detailsMap),userAccountMap.get("app_key").toString());
-						if(!R.Type.SUCCESS.value.equals(reportResult1.get("code").toString())) {
-							return reportResult1;
-						}
-						JSONObject o1 =(JSONObject) reportResult1.get("data");
-						if(o1.get("resultList") instanceof com.alibaba.fastjson.JSONArray){
-							com.alibaba.fastjson.JSONArray o2 =(com.alibaba.fastjson.JSONArray) o1.get("resultList");
-							serialNo = String.valueOf(o2.getJSONObject(0).get("serialNo"));
-						}
+					JSONObject o1 =(JSONObject) reportResult1.get("data");
+					if(o1.get("resultList") instanceof com.alibaba.fastjson.JSONArray){
+						com.alibaba.fastjson.JSONArray o2 =(com.alibaba.fastjson.JSONArray) o1.get("resultList");
+						serialNo = String.valueOf(o2.getJSONObject(0).get("serialNo"));
 					}
+				}
 //				}
 			}else{
 				//detailsMap.put("isReport", ZhongFuInterfaceCodeConstant.user_report_record_detail_is_report_1);//报备信息标识：只报备代理信息
@@ -238,5 +238,4 @@ public class AgentUserReportRecordServiceImpl implements AgentUserReportRecordSe
 			return R.error(Type.WARN, "报备异常");
 		}
 	}
-
 }
