@@ -121,7 +121,7 @@
 	<!-- 查询用户实名认证状态信息 -->
 	<select id="getUserAuthStatus" parameterType="java.lang.String" resultType="java.util.Map">
 		select 
-			auth_status,id_card, card_photo, real_name, auth_remark
+			auth_status,id_card, card_photo, real_name, auth_remark,label
 			from t_user_info
 	 	where id = #{user_id}
 	</select>

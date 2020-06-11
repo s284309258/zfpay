@@ -47,7 +47,7 @@ public class SysNoticeServiceImpl implements SysNoticeService {
 	private UserInfoCacheService userInfoCacheService;
 
 	/**
-	 * 得到未读消息add byqh 201912
+	 * 得到未读消息小红点add byqh 201912
 	 * @param map
 	 * @return
 	 */
@@ -145,6 +145,20 @@ public class SysNoticeServiceImpl implements SysNoticeService {
 				appImgFlag = read_flag;
 			}
 			respondMap.put("appImgFlag",appImgFlag);
+
+
+
+			String cashFlag = "0";
+			map.put("news_type","cashFlag");
+			List<Map<String,Object>> listNewsRead6 = sysNoticeMapper.selectNewsReadState(map);
+			if(listNewsRead6.size()<1){
+				sysNoticeMapper.insertNewsReadState(StringUtil.getMapValue(map,"sys_user_id"),"appImgFlag",0,0,manager_id);
+			}else{
+				String read_flag = String.valueOf(listNewsRead6.get(0).get("read_flag"));
+				cashFlag = read_flag;
+			}
+			respondMap.put("cashFlag",cashFlag);
+
 
 			return R.ok(CommonCodeConstant.COMMON_CODE_999983, CommonCodeConstant.COMMON_MSG_999983, respondMap);
 		}catch (Exception e){

@@ -97,7 +97,25 @@ public interface MerchantManageService {
 	 * @return
 	 */
 	R getTraditionalPosTradeDetail(Map<String, Object> map);
-	
+
+
+
+
+	//查询商户排名10 byqh202006
+	R getTradeVolumeRankByMonth(Map<String, Object> map);
+	R getTradeVolumeRankByDay(Map<String, Object> map);
+
+
+
+
+	R getMposTradeVolumeRankByMonth(Map<String, Object> map);
+	R getMposTradeVolumeRankByDay(Map<String, Object> map);
+	R getTraposTradeVolumeRankByMonth(Map<String, Object> map);
+	R getTraposTradeVolumeRankByDay(Map<String, Object> map);
+	//查询商户排名10 byqh202006
+
+
+
 	/**
 	 * 查询商户详情（MPOS）
 	 * @param map

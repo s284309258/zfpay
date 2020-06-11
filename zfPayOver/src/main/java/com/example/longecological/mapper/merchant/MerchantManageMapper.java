@@ -162,6 +162,23 @@ public interface MerchantManageMapper {
 	 * @return
 	 */
 	List<Map<String, Object>> getTraditionalPosTradeDetail(@Param("map") Map<String, Object> map);
+
+
+	//查询交易量前10商户byqh202006
+	List<Map<String, Object>> getTradeVolumeRankByMonth(@Param("map") Map<String, Object> map);
+	List<Map<String, Object>> getTradeVolumeRankByDay(@Param("map") Map<String, Object> map);
+
+
+
+
+	List<Map<String, Object>> getMposTradeVolumeRankByMonth(@Param("map") Map<String, Object> map);
+
+	List<Map<String, Object>> getMposTradeVolumeRankByDay(@Param("map") Map<String, Object> map);
+
+	List<Map<String, Object>> getTraposTradeVolumeRankByMonth(@Param("map") Map<String, Object> map);
+
+	List<Map<String, Object>> getTraposTradeVolumeRankByDay(@Param("map") Map<String, Object> map);
+	//查询交易量前10商户byqh202006
 	
 	/**
 	 * 查询商户详情（MPOS）

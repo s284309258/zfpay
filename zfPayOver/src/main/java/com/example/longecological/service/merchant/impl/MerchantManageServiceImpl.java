@@ -350,6 +350,115 @@ public class MerchantManageServiceImpl implements MerchantManageService {
 		}
 	}
 
+	//查询商户排名10 byqh202006
+	public R getTradeVolumeRankByMonth(Map<String,Object> map){
+		try {
+			//验签成功与否验证
+			if(!TokenUtil.checkRSAdecrypt((Map<String, Object>)map.get("result"))) {
+				return (R) map.get("result");
+			}
+			Map<String, Object> respondMap = new HashMap<>();
+			List<Map<String, Object>> tradeVolumeRank = merchantManageMapper.getMposTradeVolumeRankByMonth(map);
+			//新增代理直营商户交易总必输,交易总金额字段end byqh
+			respondMap.put("tradeVolumeRank", tradeVolumeRank);
+			return R.ok(CommonCodeConstant.COMMON_CODE_999983, CommonCodeConstant.COMMON_MSG_999983, respondMap);
+		} catch (Exception e) {
+			LOGGER.error("MerchantManageServiceImpl -- getTraditionalPosDetail方法处理异常：" + ExceptionUtil.getExceptionAllinformation(e));
+			return R.error(CommonCodeConstant.COMMON_CODE_999996, CommonCodeConstant.COMMON_MSG_999996);
+		}
+	}
+	public R getTradeVolumeRankByDay(Map<String,Object> map){
+		try {
+			//验签成功与否验证
+			if(!TokenUtil.checkRSAdecrypt((Map<String, Object>)map.get("result"))) {
+				return (R) map.get("result");
+			}
+			Map<String, Object> respondMap = new HashMap<>();
+			List<Map<String, Object>> tradeVolumeRank = merchantManageMapper.getMposTradeVolumeRankByMonth(map);
+			//新增代理直营商户交易总必输,交易总金额字段end byqh
+			respondMap.put("tradeVolumeRank", tradeVolumeRank);
+			return R.ok(CommonCodeConstant.COMMON_CODE_999983, CommonCodeConstant.COMMON_MSG_999983, respondMap);
+		} catch (Exception e) {
+			LOGGER.error("MerchantManageServiceImpl -- getTraditionalPosDetail方法处理异常：" + ExceptionUtil.getExceptionAllinformation(e));
+			return R.error(CommonCodeConstant.COMMON_CODE_999996, CommonCodeConstant.COMMON_MSG_999996);
+		}
+	}
+
+
+
+
+
+
+
+	public R getMposTradeVolumeRankByMonth(Map<String,Object> map){
+		try {
+			//验签成功与否验证
+			if(!TokenUtil.checkRSAdecrypt((Map<String, Object>)map.get("result"))) {
+				return (R) map.get("result");
+			}
+			Map<String, Object> respondMap = new HashMap<>();
+			List<Map<String, Object>> tradeVolumeRank = merchantManageMapper.getMposTradeVolumeRankByMonth(map);
+			//新增代理直营商户交易总必输,交易总金额字段end byqh
+			respondMap.put("tradeVolumeRank", tradeVolumeRank);
+			return R.ok(CommonCodeConstant.COMMON_CODE_999983, CommonCodeConstant.COMMON_MSG_999983, respondMap);
+		} catch (Exception e) {
+			LOGGER.error("MerchantManageServiceImpl -- getTraditionalPosDetail方法处理异常：" + ExceptionUtil.getExceptionAllinformation(e));
+			return R.error(CommonCodeConstant.COMMON_CODE_999996, CommonCodeConstant.COMMON_MSG_999996);
+		}
+	}
+
+	public R getMposTradeVolumeRankByDay(Map<String,Object> map){
+		try {
+			//验签成功与否验证
+			if(!TokenUtil.checkRSAdecrypt((Map<String, Object>)map.get("result"))) {
+				return (R) map.get("result");
+			}
+			Map<String, Object> respondMap = new HashMap<>();
+			List<Map<String, Object>> tradeVolumeRank = merchantManageMapper.getMposTradeVolumeRankByDay(map);
+			//新增代理直营商户交易总必输,交易总金额字段end byqh
+			respondMap.put("tradeVolumeRank", tradeVolumeRank);
+			return R.ok(CommonCodeConstant.COMMON_CODE_999983, CommonCodeConstant.COMMON_MSG_999983, respondMap);
+		} catch (Exception e) {
+			LOGGER.error("MerchantManageServiceImpl -- getTraditionalPosDetail方法处理异常：" + ExceptionUtil.getExceptionAllinformation(e));
+			return R.error(CommonCodeConstant.COMMON_CODE_999996, CommonCodeConstant.COMMON_MSG_999996);
+		}
+	}
+
+	public R getTraposTradeVolumeRankByMonth(Map<String,Object> map){
+		try {
+			//验签成功与否验证
+			if(!TokenUtil.checkRSAdecrypt((Map<String, Object>)map.get("result"))) {
+				return (R) map.get("result");
+			}
+			Map<String, Object> respondMap = new HashMap<>();
+			List<Map<String, Object>> tradeVolumeRank = merchantManageMapper.getTraposTradeVolumeRankByMonth(map);
+			//新增代理直营商户交易总必输,交易总金额字段end byqh
+			respondMap.put("tradeVolumeRank", tradeVolumeRank);
+			return R.ok(CommonCodeConstant.COMMON_CODE_999983, CommonCodeConstant.COMMON_MSG_999983, respondMap);
+		} catch (Exception e) {
+			LOGGER.error("MerchantManageServiceImpl -- getTraditionalPosDetail方法处理异常：" + ExceptionUtil.getExceptionAllinformation(e));
+			return R.error(CommonCodeConstant.COMMON_CODE_999996, CommonCodeConstant.COMMON_MSG_999996);
+		}
+	}
+
+	public R getTraposTradeVolumeRankByDay(Map<String,Object> map){
+		try {
+			//验签成功与否验证
+			if(!TokenUtil.checkRSAdecrypt((Map<String, Object>)map.get("result"))) {
+				return (R) map.get("result");
+			}
+			Map<String, Object> respondMap = new HashMap<>();
+			List<Map<String, Object>> tradeVolumeRank = merchantManageMapper.getTraposTradeVolumeRankByDay(map);
+			//新增代理直营商户交易总必输,交易总金额字段end byqh
+			respondMap.put("tradeVolumeRank", tradeVolumeRank);
+			return R.ok(CommonCodeConstant.COMMON_CODE_999983, CommonCodeConstant.COMMON_MSG_999983, respondMap);
+		} catch (Exception e) {
+			LOGGER.error("MerchantManageServiceImpl -- getTraditionalPosDetail方法处理异常：" + ExceptionUtil.getExceptionAllinformation(e));
+			return R.error(CommonCodeConstant.COMMON_CODE_999996, CommonCodeConstant.COMMON_MSG_999996);
+		}
+	}
+	//查询商户排名10 byqh202006
+
 
 	/**
 	 * 查询商户详情（传统POS） add byqh202003

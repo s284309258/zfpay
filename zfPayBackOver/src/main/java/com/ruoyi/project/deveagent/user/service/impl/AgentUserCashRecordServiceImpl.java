@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ruoyi.project.deveagent.user.mapper.AgentUserCardMapper;
+import com.ruoyi.project.devemana.notice.mapper.ManaSysNoticeMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,9 @@ public class AgentUserCashRecordServiceImpl implements AgentUserCashRecordServic
 	private AgentUserInfoMapper agentUserInfoMapper;
 	@Autowired
 	private AgentUserCashRecordMapper agentUserCashRecordMapper;
+
+	@Autowired
+	private ManaSysNoticeMapper sysNoticeMapper;
 
 
 	
@@ -223,6 +228,13 @@ public class AgentUserCashRecordServiceImpl implements AgentUserCashRecordServic
 				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 				return R.error(Type.WARN, "提现编号"+cashMap.get("cash_id").toString()+"：用户账户更新失败");
 			}
+			//add 小红点消息置为未读 begin byqh 201912
+			Map<String,Object> hashMap = new HashMap<>();
+			hashMap.put("read_flag","0");
+			hashMap.put("sys_user_id",cashDetailMap.get("user_id"));
+			hashMap.put("news_type","cashFlag");
+			sysNoticeMapper.updateNewsReadFlag(hashMap);
+			//add 小红点消息置为未读 end byqh 201912
 			return R.ok("操作成功");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -310,6 +322,14 @@ public class AgentUserCashRecordServiceImpl implements AgentUserCashRecordServic
 				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 				return R.error(Type.WARN, "提现编号"+cashMap.get("cash_id").toString()+"：用户账户更新失败");
 			}
+
+			//add 小红点消息置为未读 begin byqh 201912
+			Map<String,Object> hashMap = new HashMap<>();
+			hashMap.put("read_flag","0");
+			hashMap.put("sys_user_id",cashDetailMap.get("user_id"));
+			hashMap.put("news_type","cashFlag");
+			sysNoticeMapper.updateNewsReadFlag(hashMap);
+			//add 小红点消息置为未读 end byqh 201912
 			return R.ok("操作成功");
 		} catch (Exception e) {
 			e.printStackTrace();

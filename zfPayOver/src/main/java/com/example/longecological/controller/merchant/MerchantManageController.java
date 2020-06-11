@@ -166,6 +166,55 @@ public class MerchantManageController {
 	public R getTraditionalPosTradeDetail(@SIGNToken @RequestBody Map<String, Object> map) {
 		return merchantManageService.getTraditionalPosTradeDetail(map);
 	}
+
+
+
+
+	//查询商户排名10 byqh202006
+	@ResponseBody
+	@RequestMapping("/getTradeVolumeRankByMonth")
+	public R getTradeVolumeRankByMonth(@SIGNToken @RequestBody Map<String, Object> map) {
+		return merchantManageService.getTradeVolumeRankByMonth(map);
+	}
+	@ResponseBody
+	@RequestMapping("/getTradeVolumeRankByDay")
+	public R getTradeVolumeRankByDay(@SIGNToken @RequestBody Map<String, Object> map) {
+		return merchantManageService.getTradeVolumeRankByDay(map);
+	}
+
+
+
+
+
+
+
+
+
+	@ResponseBody
+	@RequestMapping("/getMposTradeVolumeRankByMonth")
+	public R getMposTradeVolumeRankByMonth(@SIGNToken @RequestBody Map<String, Object> map) {
+		return merchantManageService.getMposTradeVolumeRankByMonth(map);
+	}
+
+	@ResponseBody
+	@RequestMapping("/getMposTradeVolumeRankByDay")
+	public R getMposTradeVolumeRankByDay(@SIGNToken @RequestBody Map<String, Object> map) {
+		return merchantManageService.getMposTradeVolumeRankByDay(map);
+	}
+
+	@ResponseBody
+	@RequestMapping("/getTraposTradeVolumeRankByMonth")
+	public R getTraposTradeVolumeRankByMonth(@SIGNToken @RequestBody Map<String, Object> map) {
+		return merchantManageService.getTraposTradeVolumeRankByMonth(map);
+	}
+
+	@ResponseBody
+	@RequestMapping("/getTraposTradeVolumeRankByDay")
+	public R getTraposTradeVolumeRankByDay(@SIGNToken @RequestBody Map<String, Object> map) {
+		return merchantManageService.getTraposTradeVolumeRankByDay(map);
+	}
+
+	//查询商户排名10 byqh202006
 	
 	/**
 	 * 查询商户详情（MPOS）======》MD5验签方式

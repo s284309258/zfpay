@@ -237,6 +237,9 @@
 			t.user_id = #{map.sys_user_id}
 		AND t.state_status = '1'
 		AND t.del = '0'
+		<if test="map.trade_status!=null and map.trade_status!=''">
+			AND t.trade_status=#{map.trade_status}
+		</if>
 		<choose>
 			<when test="map.pos_type!=null and map.pos_type!=''">
 				and t1.pos_type='epos'
@@ -408,6 +411,9 @@
 			t.user_id = #{map.sys_user_id}
 		AND t.state_status = '1'
 		AND t.del = '0'
+		<if test="map.trade_status!=null and map.trade_status!=''">
+			AND t.trade_status=#{map.trade_status}
+		</if>
 		<if test="map.last_id != null and map.last_id != ''" >
         	AND t.id &lt; #{map.last_id}
       	</if>
@@ -568,7 +574,7 @@
 					'%Y%m%d%H%i%s'
 				),
 				'%Y-%m-%d %H:%i:%s'
-			) as trans_time,trans_amount,benefit_money from t_user_trapos_share_benefit_record where user_id=#{map.sys_user_id} and sn=#{map.sn}
+			) as trans_time,trans_amount,benefit_money,trans_type from t_user_trapos_share_benefit_record where user_id=#{map.sys_user_id} and sn=#{map.sn}
 		union all
 		select DATE_FORMAT(
 				STR_TO_DATE(
@@ -576,9 +582,68 @@
 					'%Y%m%d%H%i%s'
 				),
 				'%Y-%m-%d %H:%i:%s'
-			) as trans_time,trans_amount,benefit_money from t_user_mpos_share_benefit_record where user_id=#{map.sys_user_id} and sn=#{map.sn}
+			) as trans_time,trans_amount,benefit_money,trans_type from t_user_mpos_share_benefit_record where user_id=#{map.sys_user_id} and sn=#{map.sn}
 		) tb order by trans_time desc
 	</select>
+
+	<!--查询商户月交易量排名byqh202006-->
+	<select id="getTradeVolumeRankByMonth">
+		select * from (
+		select t.sn,tt.mer_name,t.performance from t_summary_mpos_trans_month t,t_sys_mpos_info tt
+		where t.sn=tt.sn and t.user_id=#{map.sys_user_id} and t.cre_month=date_format(CURDATE(), '%Y%m')
+		union
+		select t.sn,tt.mer_name,t.performance from t_summary_traditional_pos_trans_month t,t_sys_traditional_pos_info tt
+		where t.sn=tt.sn and t.user_id=#{map.sys_user_id} and t.cre_month=date_format(CURDATE(), '%Y%m')
+		) tb
+		order by performance desc
+	</select>
+	<select id="getTradeVolumeRankByDay">
+		select * from (
+		select t.sn,tt.mer_name,t.performance from t_summary_mpos_trans_everyday t,t_sys_mpos_info tt
+		where t.sn=tt.sn and t.user_id=#{map.sys_user_id} and t.cre_date=date_format(CURDATE(), '%Y%m%d')
+		union all
+		select t.sn,tt.mer_name,t.performance from t_summary_traditional_pos_trans_everyday t,t_sys_traditional_pos_info tt
+		where t.sn=tt.sn and t.user_id=#{map.sys_user_id} and t.cre_date=date_format(CURDATE(), '%Y%m%d')
+		) tb
+		order by performance desc
+	</select>
+
+
+
+	<select id="getTradeVolumeRankByDay">
+		select * from (
+		select t.sn,tt.mer_name,t.performance from t_summary_mpos_trans_month t,t_sys_mpos_info tt
+		where t.sn=tt.sn and t.user_id=#{map.sys_user_id} and t.cre_month=date_format(CURDATE(), '%Y%m')
+		union
+		select t.sn,tt.mer_name,t.performance from t_summary_traditional_pos_trans_month t,t_sys_traditional_pos_info tt
+		where t.sn=tt.sn and t.user_id=#{map.sys_user_id} and t.cre_month=date_format(CURDATE(), '%Y%m')
+		) tb
+		order by performance desc
+	</select>
+	<select id="getMposTradeVolumeRankByMonth" parameterType="java.util.Map" resultType="java.util.Map">
+		select t.sn,tt.mer_name,t.performance from t_summary_mpos_trans_month t,t_sys_mpos_info tt
+		where t.sn=tt.sn and t.user_id=#{map.sys_user_id} and t.cre_month=date_format(CURDATE(), '%Y%m')
+		order by performance desc
+	</select>
+
+	<select id="getMposTradeVolumeRankByDay" parameterType="java.util.Map" resultType="java.util.Map">
+		select t.sn,tt.mer_name,t.performance from t_summary_mpos_trans_everyday t,t_sys_mpos_info tt
+		where t.sn=tt.sn and t.user_id=#{map.sys_user_id} and t.cre_date=date_format(CURDATE(), '%Y%m%d')
+		order by performance desc
+	</select>
+
+	<select id="getTraposTradeVolumeRankByMonth" parameterType="java.util.Map" resultType="java.util.Map">
+		select t.sn,tt.mer_name,t.performance from t_summary_traditional_pos_trans_month t,t_sys_traditional_pos_info tt
+		where t.sn=tt.sn and t.user_id=#{map.sys_user_id} and t.cre_month=date_format(CURDATE(), '%Y%m')
+		order by performance desc
+	</select>
+
+	<select id="getTraposTradeVolumeRankByDay" parameterType="java.util.Map" resultType="java.util.Map">
+		select t.sn,tt.mer_name,t.performance from t_summary_traditional_pos_trans_everyday t,t_sys_traditional_pos_info tt
+		where t.sn=tt.sn and t.user_id=#{map.sys_user_id} and t.cre_date=date_format(CURDATE(), '%Y%m%d')
+		order by performance desc
+	</select>
+	<!--查询商户月交易量排名byqh202006-->
 	
 	<!-- 查询商户详情（MPOS） add field cash_back_status byqh-->
 	<select id="getMposDetail" parameterType="java.util.Map" resultType="java.util.Map">

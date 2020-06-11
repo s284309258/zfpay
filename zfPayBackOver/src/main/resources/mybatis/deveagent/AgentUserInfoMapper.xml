@@ -415,6 +415,9 @@
 		<if test="map.up_time != null and map.up_time != ''">
 			up_time = #{map.up_time}
 		</if>
+		<if test="map.label != null and map.label != ''">
+			label = #{map.label}
+		</if>
 		where id=#{map.user_id} and manager_id=#{map.manager_id}
 	</update>
 	
