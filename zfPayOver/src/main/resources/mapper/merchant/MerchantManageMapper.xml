@@ -610,16 +610,6 @@
 
 
 
-	<select id="getTradeVolumeRankByDay">
-		select * from (
-		select t.sn,tt.mer_name,t.performance from t_summary_mpos_trans_month t,t_sys_mpos_info tt
-		where t.sn=tt.sn and t.user_id=#{map.sys_user_id} and t.cre_month=date_format(CURDATE(), '%Y%m')
-		union
-		select t.sn,tt.mer_name,t.performance from t_summary_traditional_pos_trans_month t,t_sys_traditional_pos_info tt
-		where t.sn=tt.sn and t.user_id=#{map.sys_user_id} and t.cre_month=date_format(CURDATE(), '%Y%m')
-		) tb
-		order by performance desc
-	</select>
 	<select id="getMposTradeVolumeRankByMonth" parameterType="java.util.Map" resultType="java.util.Map">
 		select t.sn,tt.mer_name,t.performance from t_summary_mpos_trans_month t,t_sys_mpos_info tt
 		where t.sn=tt.sn and t.user_id=#{map.sys_user_id} and t.cre_month=date_format(CURDATE(), '%Y%m')
