@@ -136,7 +136,6 @@ public interface MachinesManageMapper {
 	@Update("update t_sys_pos_policy3_record set choose=#{map.id} where mer_id=#{map.mer_id}")
 	int updatePolicy3RecordChooseField(@Param("map") Map<String,Object> map);
 
-
 	@Update("update t_sys_pos_policy5_record set choose=#{map.id} where mer_id=#{map.mer_id}")
 	int updatePolicy5RecordChooseField(@Param("map") Map<String,Object> map);
 	

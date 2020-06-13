@@ -1107,7 +1107,7 @@
 		select sn,user_id,policy_id,money,reward_date,mer_id,mer_name from t_sys_pos_policy5_record where user_id=#{map.sys_user_id}
 	</select>
 
-	<!-- 查询达标商户所有字段 add byqh 201912 -->
+	<!-- 查询达标商户所有字段 add byqh  201912 -->
 	<select id="selectPolicy3RecordAll" parameterType="java.util.Map" resultType="java.util.Map">
 		select * from t_sys_pos_policy3_record where mer_id=#{map.mer_id} and choose=0
 	</select>
