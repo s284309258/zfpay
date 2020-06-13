@@ -73,6 +73,9 @@ public interface MachinesManageMapper {
 	 */
 	List<Map<String,Object>> selectPolicy3Record(@Param("map") Map<String,Object> map);
 
+
+	List<Map<String,Object>> selectPolicy5Record(@Param("map") Map<String,Object> map);
+
 	/***
 	 * 查询政策3列表 add byqh 201912
 	 * @param map
@@ -86,6 +89,9 @@ public interface MachinesManageMapper {
 	 * @return
 	 */
 	List<Map<String,Object>> selectPolicy3RecordAll(@Param("map") Map<String,Object> map);
+
+
+	List<Map<String,Object>> selectPolicy5RecordAll(@Param("map") Map<String,Object> map);
 
 	/***
 	 * 查询流量卡属组 add byqh 201912
@@ -129,6 +135,10 @@ public interface MachinesManageMapper {
 	 */
 	@Update("update t_sys_pos_policy3_record set choose=#{map.id} where mer_id=#{map.mer_id}")
 	int updatePolicy3RecordChooseField(@Param("map") Map<String,Object> map);
+
+
+	@Update("update t_sys_pos_policy5_record set choose=#{map.id} where mer_id=#{map.mer_id}")
+	int updatePolicy5RecordChooseField(@Param("map") Map<String,Object> map);
 	
 	/**
 	 * 添加新的分配记录（传统POS）

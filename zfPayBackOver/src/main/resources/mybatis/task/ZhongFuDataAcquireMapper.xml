@@ -436,8 +436,8 @@
 
 	<!--得到政策5第一代用户信息555555555-->
 	<insert id="insertPolicy5Record" parameterType="java.util.Map">
-		insert into t_sys_pos_policy5_record(sn,user_id,policy_id,money,reward_date)
-		values(#{map.sn},#{map.user_id},#{map.policy_id},#{map.money},CURRENT_DATE)
+		insert into t_sys_pos_policy5_record(sn,user_id,policy_id,money,reward_date,mer_id,mer_name,pos_type)
+		values(#{map.sn},#{map.user_id},#{map.policy_id},#{map.money},CURRENT_DATE,#{map.mer_id},#{map.mer_name},#{map.pos_type})
 	</insert>
 
 	<!--得到政策5第一代用户信息555555555-->

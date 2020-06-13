@@ -1,6 +1,7 @@
 package com.example.longecological.service.machines.impl;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -217,6 +218,59 @@ public class MachinesManageServiceImpl implements MachinesManageService {
 			}
 
 
+
+			List<Map<String,Object>> list5 = machinesManageMapper.selectPolicy5RecordAll(map);
+			if(list5.size()>0){
+				for(Map<String,Object> machinesMap : list){
+					if(map.get("id").equals(machinesMap.get("policy_id").toString())){
+						String order_id = StringUtil.getDateTimeAndRandomForID();
+						String up_date = TimeUtil.getDayString();
+						String up_time = TimeUtil.getTimeString();
+						machinesMap.put("op_order_id",order_id);
+						machinesMap.put("up_date",up_date);
+						machinesMap.put("up_time",up_time);
+						machinesMap.put("op_type","04");
+						machinesMap.put("today_benefit",machinesMap.get("money"));
+						int num = 0;
+
+						if("01".equals(machinesMap.get("pos_type"))){
+							num = machinesManageMapper.updateUserMoneyBenefit(machinesMap);
+							if(num!=1){
+								TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+								return R.ok(CommonCodeConstant.COMMON_CODE_999997, CommonCodeConstant.COMMON_MSG_999997);
+							}
+
+							machinesMap.put("cre_date",up_date);
+							machinesMap.put("cre_time",up_time);
+							machinesMap.put("begin_date",up_date);
+							num = machinesManageMapper.insertUserTraposActivityRewardRecord(machinesMap);
+							if(num!=1){
+								TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+								return R.ok(CommonCodeConstant.COMMON_CODE_999997, CommonCodeConstant.COMMON_MSG_999997);
+							}
+						}else if("02".equals(machinesMap.get("pos_type"))){
+							num = machinesManageMapper.updateUserMoneyBenefit(machinesMap);
+							if(num!=1){
+								TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+								return R.ok(CommonCodeConstant.COMMON_CODE_999997, CommonCodeConstant.COMMON_MSG_999997);
+							}
+
+							machinesMap.put("cre_date",up_date);
+							machinesMap.put("cre_time",up_time);
+							machinesMap.put("begin_date",up_date);
+							num = machinesManageMapper.insertUserMposActivityRewardRecord(machinesMap);
+							if(num!=1){
+								TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+								return R.ok(CommonCodeConstant.COMMON_CODE_999997, CommonCodeConstant.COMMON_MSG_999997);
+							}
+						}
+						machinesManageMapper.updatePolicy5RecordChooseField(map);
+						break;
+					}
+				}
+			}
+
+
 			return R.ok(CommonCodeConstant.COMMON_CODE_999999, CommonCodeConstant.COMMON_MSG_999999);
 
 		}catch (Exception e){
@@ -273,6 +327,25 @@ public class MachinesManageServiceImpl implements MachinesManageService {
 				subMap.put("policy3List",policy3List);
 			}
 			respondMap.put("machinesPolicy3Record",machinesPolicy3Record);
+
+
+
+			//byqh202006 达标商户5
+			List<Map<String, Object>> machinesPolicy5Record = machinesManageMapper.selectPolicy5Record(map);
+			for(Map map5 : machinesPolicy5Record){
+				map5.put("end_date", TimeUtil.getDayString());
+				map5.put("begin_date", TimeUtil.getDayString());
+				map5.put("trade_amount","300");
+				List<Map<String, Object>> policy5List = new ArrayList<>();
+				Map<String,Object> subMap5 = new HashMap<>();
+				subMap5.put("policy_quantity","300");
+				subMap5.put("id",map5.get("policy_id"));
+				subMap5.put("policy_amount",map5.get("money"));
+				policy5List.add(subMap5);
+				map5.put("policy5List",policy5List);
+			}
+			respondMap.put("machinesPolicy5Record",machinesPolicy5Record);
+			//byqh202006 达标商户5
 			return R.ok(CommonCodeConstant.COMMON_CODE_999983, CommonCodeConstant.COMMON_MSG_999983, respondMap);
 		}catch (Exception e){
 			LOGGER.error("MachinesManageServiceImpl -- selectPolicy3Record方法处理异常：" + ExceptionUtil.getExceptionAllinformation(e));

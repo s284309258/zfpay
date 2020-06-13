@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ruoyi.project.deveagent.syspos.mapper.AgentSysMposInfoMapper;
 import com.ruoyi.project.deveagent.syspos.mapper.AgentSysTraditionalPosInfoMapper;
 import com.ruoyi.project.develop.task.mapper.ActivitySettlementMapper;
 import com.ruoyi.project.devemana.param.service.ManaSysParamService;
@@ -50,6 +51,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 
 	@Autowired
 	private AgentSysTraditionalPosInfoMapper agentSysTraditionalPosInfoMapper;
+
+	@Autowired
+	private AgentSysMposInfoMapper agentSysMposInfoMapper;
 
 	@Autowired
 	private ActivitySettlementMapper activitySettlementMapper;
@@ -550,6 +554,15 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 			Map<String, Object> map_param = new HashMap<>();
 			map_param.put("sn", StringUtil.getMapValue(bean, "SN"));
 			List<Map<String, Object>> arrayList2 = zhongFuDataAcquireMapper.getMposUserList(map_param);
+
+
+			//byqh202006
+			Map<String,Object> agentSysMposMap = agentSysMposInfoMapper.getAgentSysMposInfoBySn(StringUtil.getMapValue(bean, "SN"));
+			String mer_name = String.valueOf(agentSysMposMap.get("mer_name"));
+			String mer_id = String.valueOf(agentSysMposMap.get("mer_id"));
+			//byqh202006
+
+
 			String zhishudaili = "0";
 			for (Map<String, Object> mp : arrayList2) {
 				if ("1".equals(mp.get("state_status").toString())) {
@@ -577,6 +590,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 							params.put("user_id", zhishudaili);
 							params.put("policy_id", StringUtil.getMapValue(map, "id"));
 							params.put("money", mmm.get(0));
+							params.put("mer_name", mer_name);
+							params.put("mer_id", mer_id);
+							params.put("pos_type","02");
 							zhongFuDataAcquireMapper.insertPolicy5Record(params);
 						}
 					}else{
@@ -585,6 +601,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 						params.put("user_id", zhishudaili);
 						params.put("policy_id", StringUtil.getMapValue(map, "id"));
 						params.put("money", mmm.get(0));
+						params.put("mer_name", mer_name);
+						params.put("mer_id", mer_id);
+						params.put("pos_type","02");
 						zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					}
 				}
@@ -605,12 +624,18 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id", zhishudaili);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(1));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili1);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(0));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
 			}
@@ -629,12 +654,17 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id", zhishudaili);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(2));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili1);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(1));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
@@ -642,6 +672,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id", shangjidaili2);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(0));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
 			}
@@ -659,12 +692,18 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id", zhishudaili);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(3));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili1);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(2));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
@@ -672,6 +711,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id", shangjidaili2);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(1));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
@@ -679,6 +721,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id", shangjidaili3);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(0));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
 			}
@@ -695,12 +740,17 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id", zhishudaili);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(4));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili1);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(3));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
@@ -708,6 +758,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id", shangjidaili2);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(2));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
@@ -715,6 +768,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id", shangjidaili3);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(1));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
@@ -722,6 +778,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id", shangjidaili4);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(0));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
 			}
@@ -738,12 +797,18 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id", zhishudaili);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(5));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili1);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(4));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
@@ -751,6 +816,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id", shangjidaili2);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(3));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
@@ -758,6 +826,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id", shangjidaili3);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(2));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
@@ -765,6 +836,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id", shangjidaili4);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(1));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
@@ -772,6 +846,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id", shangjidaili5);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(0));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
 			}
@@ -786,12 +863,18 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id", zhishudaili);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(6));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn", StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id", shangjidaili1);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(5));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
@@ -799,6 +882,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id", shangjidaili2);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(4));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
@@ -806,6 +892,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id", shangjidaili3);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(3));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
@@ -813,6 +902,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id", shangjidaili4);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(2));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
@@ -820,6 +912,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id", shangjidaili5);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(1));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 
@@ -828,6 +923,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id", shangjidaili6);
 					params.put("policy_id", StringUtil.getMapValue(map, "id"));
 					params.put("money", mmm.get(0));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
 			}
@@ -840,12 +938,18 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",zhishudaili);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(7));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili1);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(6));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
@@ -853,6 +957,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili2);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(5));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
@@ -860,6 +967,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili3);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(4));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
@@ -867,6 +977,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili4);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(3));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
@@ -874,6 +987,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili5);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(2));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 
@@ -882,6 +998,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili6);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(1));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili7 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili6);
@@ -889,6 +1008,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili7);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(0));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
 			}
@@ -900,12 +1022,18 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",zhishudaili);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(8));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili1);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(7));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
@@ -913,6 +1041,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili2);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(6));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
@@ -920,6 +1051,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili3);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(5));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
@@ -927,6 +1061,7 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili4);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(4));
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
@@ -934,6 +1069,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili5);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(3));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 
@@ -942,6 +1080,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili6);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(2));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili7 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili6);
@@ -949,6 +1090,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili7);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(1));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili8 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili7);
@@ -956,6 +1100,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili8);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(0));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
 			}
@@ -978,6 +1125,11 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 			Map<String,Object> map_param = new HashMap<>();
 			map_param.put("sn",StringUtil.getMapValue(bean, "SN"));
 			List<Map<String,Object>> arrayList2 = zhongFuDataAcquireMapper.getTraposUserList(map_param);
+
+			Map<String, Object> sysTraditionalPosInfoMap =agentSysTraditionalPosInfoMapper.getAgentSysTraditionalPosInfoBySn(StringUtil.getMapValue(bean, "SN"));
+			String mer_name = String.valueOf(sysTraditionalPosInfoMap.get("mer_name"));
+			String mer_id = String.valueOf(sysTraditionalPosInfoMap.get("mer_id"));
+
 			String zhishudaili = "0";
 			for(Map<String,Object> mp : arrayList2){
 				if("1".equals(mp.get("state_status").toString())){
@@ -1004,6 +1156,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 							params.put("user_id",zhishudaili);
 							params.put("policy_id",StringUtil.getMapValue(map, "id"));
 							params.put("money",mmm.get(0));
+							params.put("mer_name",mer_name);
+							params.put("mer_id",mer_id);
+							params.put("pos_type","01");
 							zhongFuDataAcquireMapper.insertPolicy5Record(params);
 						}
 					}else{
@@ -1012,6 +1167,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 						params.put("user_id",zhishudaili);
 						params.put("policy_id",StringUtil.getMapValue(map, "id"));
 						params.put("money",mmm.get(0));
+						params.put("mer_name",mer_name);
+						params.put("mer_id",mer_id);
+						params.put("pos_type","01");
 						zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					}
 				}
@@ -1032,12 +1190,18 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",zhishudaili);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(1));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili1);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(0));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
 			}
@@ -1057,12 +1221,18 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",zhishudaili);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(2));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili1);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(1));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
@@ -1070,6 +1240,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili2);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(0));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
 			}
@@ -1087,12 +1260,18 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",zhishudaili);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(3));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili1);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(2));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
@@ -1100,6 +1279,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili2);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(1));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
@@ -1107,6 +1289,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili3);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(0));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
 			}
@@ -1123,12 +1308,18 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",zhishudaili);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(4));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili1);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(3));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
@@ -1136,6 +1327,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili2);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(2));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
@@ -1143,6 +1337,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili3);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(1));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
@@ -1150,6 +1347,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili4);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(0));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
 			}
@@ -1165,12 +1365,18 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",zhishudaili);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(5));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili1);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(4));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
@@ -1178,6 +1384,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili2);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(3));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
@@ -1185,6 +1394,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili3);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(2));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
@@ -1192,6 +1404,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili4);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(1));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
@@ -1199,6 +1414,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili5);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(0));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
 			}
@@ -1212,12 +1430,18 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",zhishudaili);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(6));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili1);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(5));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
@@ -1225,6 +1449,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili2);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(4));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
@@ -1232,6 +1459,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili3);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(3));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
@@ -1239,6 +1469,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili4);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(2));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
@@ -1246,6 +1479,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili5);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(1));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 
@@ -1254,6 +1490,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili6);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(0));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
 			}
@@ -1266,12 +1505,18 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",zhishudaili);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(7));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili1);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(6));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
@@ -1279,6 +1524,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili2);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(5));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
@@ -1286,6 +1534,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili3);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(4));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
@@ -1293,6 +1544,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili4);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(3));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
@@ -1300,6 +1554,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili5);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(2));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 
@@ -1308,6 +1565,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili6);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(1));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili7 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili6);
@@ -1315,6 +1575,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili7);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(0));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
 			}
@@ -1326,12 +1589,18 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",zhishudaili);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(8));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
 					params.put("sn",StringUtil.getMapValue(bean, "SN"));
 					params.put("user_id",shangjidaili1);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(7));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
@@ -1339,6 +1608,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili2);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(6));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
@@ -1346,6 +1618,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili3);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(5));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
@@ -1353,6 +1628,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili4);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(4));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
@@ -1360,6 +1638,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili5);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(3));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 
@@ -1368,6 +1649,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili6);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(2));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili7 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili6);
@@ -1375,6 +1659,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili7);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(1));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 					String shangjidaili8 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili7);
@@ -1382,6 +1669,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 					params.put("user_id",shangjidaili8);
 					params.put("policy_id",StringUtil.getMapValue(map, "id"));
 					params.put("money",mmm.get(0));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
 					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
 			}
