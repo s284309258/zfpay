@@ -112,7 +112,6 @@ public class AgentUserReportRecordServiceImpl implements AgentUserReportRecordSe
 			//七牛线上图片BASE64位流
 			String subAgentIdImg = Base64Utils.ImageToBase64ByOnline(card_photo_url+"?imageView2/1/w/1080/h/1920");
 			subAgentIdImg = subAgentIdImg.replaceAll("\r|\n|\\s","");
-			Base64Utils.Base64ToImage(subAgentIdImg,"D:\\subAgentIdImg.jpg");
 			//（5）请求数据对象
 			Map<String, Object> detailsMap = new HashMap<String, Object>();
 			detailsMap.put("subAgentAccount", userInfoMap.get("user_tel").toString());//子级代理账户
@@ -158,14 +157,12 @@ public class AgentUserReportRecordServiceImpl implements AgentUserReportRecordSe
 				String card_photo1 = SysParamConstant.qiniu_domain+"/"+userCardMap.get("card_photo").toString().split(",")[0];//线上图片路径URL
 				String cardImg2 = Base64Utils.ImageToBase64ByOnline(card_photo1+"?imageView2/1/w/1080/h/1920");
 				cardImg2 = cardImg2.replaceAll("\r|\n|\\s","");
-				Base64Utils.Base64ToImage(cardImg2,"D:\\cardImg2.jpg");
 				repeatMap.put("subAgentSettAccountImg",cardImg2);
 
 				String card_photo3 = SysParamConstant.qiniu_domain+"/"+userInfoMap.get("card_photo").toString().split(",")[2];//线上图片路径URL
 				//七牛线上图片BASE64位流
 				String subAgentIdImg3 = Base64Utils.ImageToBase64ByOnline(card_photo3+"?imageView2/1/w/1080/h/1920");
 				subAgentIdImg3 = subAgentIdImg3.replaceAll("\r|\n|\\s","");
-				Base64Utils.Base64ToImage(subAgentIdImg3,"D:\\subAgentIdImg3.jpg");
 				repeatMap.put("subAgentIdAndSettAccountImg",subAgentIdImg3);
 				//userAccountMap.get("app_id").toString(), repeatMap,userAccountMap.get("app_key").toString() code -> E-PROXYAPI-994
 				R reportResult = zhongFuInterfaceService.requestType7007(userAccountMap.get("app_id").toString(), repeatMap,userAccountMap.get("app_key").toString());
