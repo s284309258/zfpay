@@ -49,7 +49,7 @@ public class TypeStatusConstant {
 	public static final String user_eport_status_00 = "0";
 
 	/**
-	 * 用户报备状态：未报备
+	 * 用户报备状态：已报备
 	 */
 	public static final String user_eport_status_01 = "1";
 
