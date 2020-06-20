@@ -1832,14 +1832,14 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 	public void getDataActivatedState() {
 		LOGGER.info("------------------中付激活信息接口-START-------------");
 		try{
-			//获取传统POS未激活列表
+			//获取传统POS未激活有交易pos列表
 			List<Map<String, Object>> traposList = zhongFuDataAcquireMapper.getTraposUnactivatedStateList();
 			if(traposList!=null && traposList.size()>0){
 				for(Map<String, Object> trapos : traposList){
 					SpringUtils.getAopProxy(this).getDataActivatedStateRecord(trapos, ZhongFuInterfaceCodeConstant.machine_type_02);
 				}
 			}
-			//获取MPOS政策信息列表
+			//获取MPOS未激活有交易pos列表
 			List<Map<String, Object>> mposList =zhongFuDataAcquireMapper.getMposUnactivatedStateList();
 			if(mposList!=null && mposList.size()>0){
 				for(Map<String, Object> mpos : mposList){
@@ -1864,7 +1864,7 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 		try{
 			String startTime = "20180101000000";
 			String endTime = TimeUtil.getDayFormat4();
-			//通过7002接口取交易数据
+			//通过7006接口取激活数据
 			R transposData = zhongFuInterfaceService.requestType7006(StringUtil.getMapValue(map, "app_id"), StringUtil.getMapValue(map, "sn"), startTime, endTime, machine_type, String.valueOf(1), StringUtil.getMapValue(map, "app_key"));
 			//获取异常
 			if(!R.Type.SUCCESS.value.equals(transposData.get("code").toString())) {

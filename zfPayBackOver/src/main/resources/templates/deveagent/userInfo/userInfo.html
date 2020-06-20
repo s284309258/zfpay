@@ -90,6 +90,10 @@
 	            <a class="btn btn-success" onclick="batchSysAuthAudit();" shiro:hasPermission="deveagent:userInfo:sysAuthAudit">
 		            <i class="fa fa-eye"></i> 批量审核实名
 		        </a>
+				<!-- 表格：批量修改报备状态 -->
+				<a class="btn btn-success" onclick="batchsysBatchFiling();" shiro:hasPermission="deveagent:userInfo:sysBatchFiling">
+					<i class="fa fa-eye"></i> 批量修改报备状态
+				</a>
 		        <!-- 表格：导出数据 -->
 	            <a class="btn btn-danger" onclick="removeAll()" shiro:hasPermission="deveagent:userInfo:remove">
 		            <i class="fa fa-remove"></i> 批量删除
@@ -505,7 +509,7 @@
     			$.modal.open("批量审核实名认证", url, '800', '450');
     		});
 		}
-		
+
 		
 		//代理报备
 		function sysReport(id) {
@@ -615,6 +619,34 @@
     			var url = prefix + '/del/' + pos_ids;
     			$.modal.open("批量删除用户信息", url, '800', '450');
     		});
+		}
+
+		//批量修改报备状态
+		function batchsysBatchFiling(){
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+			if (rows.length == 0) {
+				$.modal.alertWarning("请至少选择一条记录");
+				return;
+			}
+			for(var i=0;i<rows.length;i++){
+				if(rows[i].report_status!=1){
+					$.modal.alertWarning("只能选择已报备的用户");
+					return;
+				}
+			}
+			$.modal.confirm("确认要选中这" + rows.length + "个账号吗?", function() {
+				var user_ids = "";
+				// 遍历所有选择的行数据，取每条数据对应的ID
+				$.each(rows, function(i, row) {
+					if(i<rows.length-1){
+						user_ids=user_ids+row['id']+",";
+					}else{
+						user_ids=user_ids+row['id'];
+					}
+				});
+				var url = prefix + '/batchsysBatchFiling/' + user_ids;
+				$.modal.open("批量修改用户报备", url, '800', '450');
+			});
 		}
 		
 	</script>

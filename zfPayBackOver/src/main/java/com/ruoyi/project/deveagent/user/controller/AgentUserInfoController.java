@@ -174,7 +174,7 @@ public class AgentUserInfoController extends BaseController
             return prefix + "/batchSysAuthAudit";
     	}
     }
-		
+
 		
 	/**
 	 * 批量实名认证审核用户账号
@@ -189,8 +189,39 @@ public class AgentUserInfoController extends BaseController
     {
         return agentUserInfoService.batchSysAuthAuditAgentUser(params);
     }
-	
-	
+
+	/**
+	 * 跳转修改报备状态页面
+	 * @param id
+	 * @param mmap
+	 * @return
+	 */
+	@GetMapping("/batchsysBatchFiling/{id}")
+	@RequiresPermissions("deveagent:userInfo:sysBatchFiling")
+	public String batchsysBatchFiling(@PathVariable("id") String id,String operParam, ModelMap mmap)
+	{
+		if(!ShiroUtils.getSysUser().isAuth()) {
+			return "redirect:/system/user/profile/toIsAuth?id="+id+"&operParam="+operParam+"&bus_type="+VerifyConstant.AuthVerfiy_AgentbatchsysBatchFilingUserInfo;
+		}else {
+			mmap.put("id", id);
+			mmap.put("operParam", operParam);
+			return prefix + "/batchsysBatchFiling";
+		}
+	}
+
+	/**
+	 * 批量修改报备状态用户账号
+	 * @param params
+	 * @return
+	 */
+	@RequiresPermissions("deveagent:userInfo:sysBatchFiling")
+	@Log(title = "用户信息管理", businessType = BusinessType.UPDATE)
+	@PostMapping("/batchsysBatchFiling")
+	@ResponseBody
+	public R batchsysBatchFiling(@RequestParam Map<String, Object> params)
+	{
+		return agentUserInfoService.batchsysBatchFiling(params);
+	}
 	
 	/**
 	 * 跳转编辑用户信息页面

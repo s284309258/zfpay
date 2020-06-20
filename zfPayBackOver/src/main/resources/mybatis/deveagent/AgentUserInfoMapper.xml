@@ -959,7 +959,7 @@
 	<!-- 更新用户报备状态 -->
 	<update id="updateAgentUserReportStatus" parameterType="java.util.Map">
 		UPDATE t_user_info
-			SET report_status='1',
+			SET report_status=${map.report_status},
 			serial_no=#{map.serial_no}
 		WHERE id=#{map.user_id}
 	</update>

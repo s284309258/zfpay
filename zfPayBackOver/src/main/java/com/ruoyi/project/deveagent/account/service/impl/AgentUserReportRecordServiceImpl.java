@@ -111,7 +111,7 @@ public class AgentUserReportRecordServiceImpl implements AgentUserReportRecordSe
 			String card_photo_url = SysParamConstant.qiniu_domain+"/"+userInfoMap.get("card_photo").toString().split(",")[card_photo_num];//线上图片路径URL
 			//七牛线上图片BASE64位流
 			String subAgentIdImg = Base64Utils.ImageToBase64ByOnline(card_photo_url+"?imageView2/1/w/1080/h/1920");
-			subAgentIdImg = subAgentIdImg.replaceAll("\r|\n|\\s","");
+			subAgentIdImg = StringUtil.replaceBlank(subAgentIdImg);
 			//（5）请求数据对象
 			Map<String, Object> detailsMap = new HashMap<String, Object>();
 			detailsMap.put("subAgentAccount", userInfoMap.get("user_tel").toString());//子级代理账户
@@ -156,13 +156,13 @@ public class AgentUserReportRecordServiceImpl implements AgentUserReportRecordSe
 
 				String card_photo1 = SysParamConstant.qiniu_domain+"/"+userCardMap.get("card_photo").toString().split(",")[0];//线上图片路径URL
 				String cardImg2 = Base64Utils.ImageToBase64ByOnline(card_photo1+"?imageView2/1/w/1080/h/1920");
-				cardImg2 = cardImg2.replaceAll("\r|\n|\\s","");
+				cardImg2 = StringUtil.replaceBlank(cardImg2);
 				repeatMap.put("subAgentSettAccountImg",cardImg2);
 
 				String card_photo3 = SysParamConstant.qiniu_domain+"/"+userInfoMap.get("card_photo").toString().split(",")[2];//线上图片路径URL
 				//七牛线上图片BASE64位流
 				String subAgentIdImg3 = Base64Utils.ImageToBase64ByOnline(card_photo3+"?imageView2/1/w/1080/h/1920");
-				subAgentIdImg3 = subAgentIdImg3.replaceAll("\r|\n|\\s","");
+				subAgentIdImg3 = StringUtil.replaceBlank(subAgentIdImg3);
 				repeatMap.put("subAgentIdAndSettAccountImg",subAgentIdImg3);
 				//userAccountMap.get("app_id").toString(), repeatMap,userAccountMap.get("app_key").toString() code -> E-PROXYAPI-994
 				R reportResult = zhongFuInterfaceService.requestType7007(userAccountMap.get("app_id").toString(), repeatMap,userAccountMap.get("app_key").toString());
@@ -230,6 +230,7 @@ public class AgentUserReportRecordServiceImpl implements AgentUserReportRecordSe
 			}
 			//（8）更新用户报备状态
 			userReportRecordMap.put("serial_no",serialNo);
+			userReportRecordMap.put("report_status",TypeStatusConstant.user_eport_status_01);
 			i = agentUserInfoMapper.updateAgentUserReportStatus(userReportRecordMap);
 			return R.ok("报备成功");
 		} catch (Exception e) {

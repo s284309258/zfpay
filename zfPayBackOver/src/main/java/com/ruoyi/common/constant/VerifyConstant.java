@@ -71,8 +71,11 @@ public class VerifyConstant {
 	 * 业务类型：删除用户信息
 	 */
 	public static final String AuthVerfiy_AgentDelUserInfo = "AuthVerfiy_AgentDelUserInfo";
-	
-	
+
+	/**
+	 * 业务类型：修改用户报备状态
+	 */
+	public static final String AuthVerfiy_AgentbatchsysBatchFilingUserInfo = "AuthVerfiy_AgentbatchsysBatchFilingUserInfo";
 	
 	/**
 	 * 业务类型：单个审核用户结算卡

@@ -327,6 +327,67 @@ public class AgentUserInfoServiceImpl implements AgentUserInfoService {
 		}
 	}
 
+	@Override
+	public R batchsysBatchFiling(Map<String, Object> params) {
+		if(!ShiroUtils.getSysUser().isAuth()) {
+			return R.error(Type.WARN, "身份信息未认证，不能操作");
+		}
+		if(StringUtils.isEmpty(StringUtil.getMapValue(params, "remark"))) {
+			return R.error(Type.WARN, "请输入操作备注");
+		}
+		int success_num = 0;//成功数量
+		int failure_num = 0;//失败数量
+		String failure_msg = "";//失败消息
+		//拼接id转换成long型数组
+		String[] user_ids = Convert.toStrArray(StringUtil.getMapValue(params, "user_ids"));
+		for(int i=0;i<user_ids.length;i++) {
+			Map<String, Object> userMap = new HashMap<>();
+			userMap.put("remark", params.get("remark"));
+			userMap.put("user_id", user_ids[i]);
+			//依次修改每一个账号
+			R result = SpringUtils.getAopProxy(this).sysBatchFilingOper(userMap);
+			if(R.Type.SUCCESS.value.equals(result.get("code").toString())) {
+				success_num++;
+			}else {
+				failure_num++;
+				failure_msg = failure_msg+"<br/>"+result.get("msg").toString();
+			}
+		}
+		if(failure_num>0) {
+			failure_msg = "修改结果：成功"+success_num+"条，失败"+failure_num+"条<br/>失败信息如下：<br/>"+failure_msg;
+		}else {
+			failure_msg = "修改结果：成功"+success_num+"条，失败"+failure_num+"条";
+		}
+		return R.ok(failure_msg);
+	}
+
+	/**
+	 * 单个修改报备状态
+	 * @param userMap
+	 * @return
+	 */
+	@Transactional
+	public R sysBatchFilingOper(Map<String, Object> userMap) {
+		try {
+			int i=0;
+			//（1）更新用户报备状态
+			userMap.put("report_status", TypeStatusConstant.user_eport_status_00);
+			userMap.put("manager_id", ShiroUtils.getUserId());
+			i = agentUserInfoMapper.updateAgentUserReportStatus(userMap);
+			if(i != 1) {
+				return R.error(Type.WARN, "用户编号"+userMap.get("user_id").toString()+"：报备状态更新失败");
+			}
+			//（2）缓存清理
+			redisUtils.remove(RedisNameConstants.zfpay_user_freeze+userMap.get("user_id").toString());
+			redisUtils.remove(RedisNameConstants.zfpay_user_info_id+userMap.get("user_id").toString());
+
+			return R.ok("审核成功");
+		} catch (Exception e) {
+			e.printStackTrace();
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			return R.error(Type.WARN, "用户编号"+userMap.get("user_id").toString()+"：审核异常");
+		}
+	}
 
 	/**
 	 * 根据用户id查询用户详情

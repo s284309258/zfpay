@@ -109,6 +109,12 @@ public interface AgentUserInfoService {
 	 */
 	R batchRemoveAgentUserInfo(Map<String, Object> params);
 
+	/**
+	 * 批量修改报备状态
+	 * @param params
+	 * @return
+	 */
+	R batchsysBatchFiling(Map<String, Object> params);
 }
 	
 	

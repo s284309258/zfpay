@@ -42,7 +42,17 @@ public class TypeStatusConstant {
 	 * 用户实名认证状态：认证成功
 	 */
 	public static final String user_info_auth_status_09 = "09";
-	
+
+	/**
+	 * 用户报备状态：未报备
+	 */
+	public static final String user_eport_status_00 = "0";
+
+	/**
+	 * 用户报备状态：未报备
+	 */
+	public static final String user_eport_status_01 = "1";
+
 	/**
 	 * 用户结算卡状态：待审核
 	 */

@@ -20,7 +20,8 @@ public class BackUrlConstant {
 		BackUrlMap.put(VerifyConstant.AuthVerfiy_AgentEditUserInfo, "deveagent/userInfo/edit");
 		//删除用户信息
 		BackUrlMap.put(VerifyConstant.AuthVerfiy_AgentDelUserInfo, "deveagent/userInfo/del");
-		
+		//修改用户报备状态
+		BackUrlMap.put(VerifyConstant.AuthVerfiy_AgentbatchsysBatchFilingUserInfo,"/deveagent/userInfo/batchsysBatchFiling");
 		//单个审核用户结算卡
 		BackUrlMap.put(VerifyConstant.AuthVerfiy_AgentSysAuditCardInfo, "deveagent/userCard/sysCardAudit");
 		//批量审核用户结算卡

@@ -302,11 +302,13 @@
 			t1.app_id,
 			t1.app_key
 		FROM
-			t_sys_traditional_pos_info t
+		t_sys_traditional_pos_info t
 		LEFT JOIN sys_user_account t1 ON t.account_id = t1.id
+		LEFT JOIN t_user_traditional_pos_info t2 ON t.sn = t2.sn
 		WHERE
 			t.act_status = '0'
 		AND t.dis_status = '1'
+		AND t2.trade_status = '1'
 	</select>
 	
 	<!-- 未激活POS机列表（MPOS） -->
@@ -319,9 +321,11 @@
 		FROM
 			t_sys_mpos_info t
 		LEFT JOIN sys_user_account t1 ON t.account_id = t1.id
+		LEFT JOIN t_user_mpos_info t2 ON t.sn = t2.sn
 		WHERE
 			t.act_status = '0'
 		AND t.dis_status = '1'
+		AND t2.trade_status = '1'
 	</select>
 	
 	<!-- 更新POS机激活状态（传统POS） -->
