@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.activitympos.mapper.AgentUserMposAssessInfoMapper">
+
+	<!-- 查询MPOS系统考核列表 -->
+	<select id="getAgentUserMposAssessInfoList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			t.id,
+			t.user_id,
+			t.manager_id,
+			t.assess_name,
+			t.assess_type,
+			t.status,
+			t.sn_list,
+			t.deduct_money,
+			t.expenditure,
+			t.start_date,
+			t.end_date,
+			CASE
+				WHEN #{map.today_date} &lt; t.start_date THEN "0" 
+				WHEN #{map.today_date} &gt;= t.start_date AND #{map.today_date} &lt;= t.end_date THEN "1" 
+				WHEN #{map.today_date} &gt; t.end_date THEN "2" 
+			END AS open_status,
+		 	t.remark,
+		 	t.create_by,
+		 	t.update_by,
+			 DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			 DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			 t1.user_tel,
+			t1.real_name
+		FROM
+			t_user_mpos_assess_info t
+		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
+		<where>
+			t.manager_id = #{map.manager_id} 
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.assess_type != null and map.assess_type != ''">
+				AND t.assess_type = #{map.assess_type}
+			</if>
+			<if test="map.status != null and map.status != ''">
+				AND t.status = #{map.status}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t1.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t1.real_name = #{map.real_name}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.activityBeginTime != null and map.activityBeginTime != ''">
+				AND t.start_date &gt;= date_format(#{map.map.activityBeginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.activityEndTime != null and map.activityEndTime != ''">
+				AND t.end_date &lt;= date_format(#{map.activityEndTime},'%Y%m%d')
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 导出MPOS系统考核列表 -->
+	<select id="selectAgentUserMposAssessInfoList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.activitympos.domain.AgentUserMposAssessInfo" >
+		SELECT
+			t.id,
+			t.user_id,
+			t.manager_id,
+			t.assess_name,
+			t.assess_type,
+			t.status,
+			t.sn_list,
+			t.deduct_money,
+			t.expenditure,
+			t.start_date,
+			t.end_date,
+			t.remark,
+			t.create_by,
+			t.update_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t1.user_tel,
+			t1.real_name
+		FROM
+			t_user_mpos_assess_info t
+		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
+		<where>
+			t.manager_id = #{map.manager_id} 
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.assess_type != null and map.assess_type != ''">
+				AND t.assess_type = #{map.assess_type}
+			</if>
+			<if test="map.status != null and map.status != ''">
+				AND t.status = #{map.status}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t1.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t1.real_name = #{map.real_name}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.activityBeginTime != null and map.activityBeginTime != ''">
+				AND t.start_date &gt;= date_format(#{map.map.activityBeginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.activityEndTime != null and map.activityEndTime != ''">
+				AND t.end_date &lt;= date_format(#{map.activityEndTime},'%Y%m%d')
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 查询该设备号（机器编号）是否已经参与活动 -->
+	<select id="getAgentHaveJoinSnNum" parameterType="java.util.Map" resultType="int" >
+		SELECT
+			count(*)
+		FROM
+			t_user_mpos_assess_info
+		WHERE
+			FIND_IN_SET(#{map.sn}, sn_list)
+	</select>
+	
+	
+	<!-- 新增保存系统考核信息 -->
+	<insert id="addAgentUserMposAssessInfo" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="map.id" >
+		insert into t_user_mpos_assess_info 
+			(user_id,manager_id,assess_name,assess_type,sn_list,deduct_money,
+			 expenditure,start_date,end_date,cre_date,cre_time,create_by,remark)
+			values 
+			(#{map.user_id},#{map.manager_id},#{map.assess_name},#{map.assess_type},#{map.sn_list},#{map.deduct_money},
+			#{map.expenditure},#{map.start_date},#{map.end_date},#{map.cre_date},#{map.cre_time},#{map.create_by},#{map.remark})
+	</insert>
+	
+	
+	<!-- 根据id删除考核活动 -->
+	<delete id="deleteAgentUserMposAssessInfo" parameterType="java.util.Map" >
+		delete from t_user_mpos_assess_info where id=#{map.assess_id} AND manager_id=#{map.manager_id}
+	</delete>
+	
+	
+	<!-- 根据id查询考核活动详情 -->
+	<select id="getAgentUserMposAssessInfoById" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT
+			t.id,
+			t.job_id,
+			t.user_id,
+			t.manager_id,
+			t.assess_name,
+			t.assess_type,
+			t.status,
+			t.sn_list,
+			t.deduct_money,
+			t.expenditure,
+			t.start_date,
+			t.end_date,
+			t.remark,
+			t.create_by,
+			t.update_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t1.user_tel
+		FROM
+			t_user_mpos_assess_info t
+		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
+		where t.id=#{assess_id}
+	</select>
+	
+	
+	<!-- 更新活动绑定任务id -->
+	<update id="updateAgentUserMposAssessInfoJobId" parameterType="java.util.Map" >
+		update t_user_mpos_assess_info set job_id=#{map.job_id} where id=#{map.id}
+	</update>
+	
+	
+</mapper>

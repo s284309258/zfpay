@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.syspospolicy.mapper.SysPosPolicyMapper">
+
+	<select id="selectUserPOSBelongList" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from (
+		select tt.id,tt.real_name,tt.user_tel,t.sn,card_settle_price,cloud_settle_price,single_profit_rate,cash_back_rate,tt.manager_id,t.cre_date,'02' as pos_type from t_user_mpos_info t inner join t_user_info tt on t.user_id=tt.id where del=0 and state_status=1
+		union all
+		select tt.id,tt.real_name,tt.user_tel,t.sn,card_settle_price,cloud_settle_price,single_profit_rate,cash_back_rate,tt.manager_id,t.cre_date,'01' as pos_type from t_user_traditional_pos_info t inner join t_user_info tt on t.user_id=tt.id where del=0 and state_status=1 and t.pos_type is null
+		union all
+		select tt.id,tt.real_name,tt.user_tel,t.sn,card_settle_price,cloud_settle_price,single_profit_rate,cash_back_rate,tt.manager_id,t.cre_date,'03' as pos_type from t_user_traditional_pos_info t inner join t_user_info tt on t.user_id=tt.id where del=0 and state_status=1 and t.pos_type='epos'
+		) t where t.manager_id=#{manager_id}
+		<if test="sn!=null and sn!=''">
+			and t.sn like concat('%',#{sn},'%')
+		</if>
+		<if test="real_name!=null and real_name!=''">
+			and t.real_name=#{real_name}
+		</if>
+		<if test="user_tel!=null and user_tel!=''">
+			and t.user_tel=#{user_tel}
+		</if>
+		<if test="pos_type!=null and pos_type!=''">
+			and t.pos_type=#{pos_type}
+		</if>
+		<if test="policy==1">
+			and exists(select 1 from t_sys_pos_policy_info where sn=t.sn and isuse=1)
+		</if>
+		<if test="policy==0">
+			and not exists(select 1 from t_sys_pos_policy_info where sn=t.sn and isuse=1)
+		</if>
+		<!-- 开始时间检索 -->
+		<if test="beginTime != null and beginTime != ''">
+			AND cre_date &gt;= date_format(#{beginTime},'%Y%m%d')
+		</if>
+		<!-- 结束时间检索 -->
+		<if test="endTime != null and endTime != ''">
+			AND cre_date &lt;= date_format(#{endTime},'%Y%m%d')
+		</if>
+	</select>
+
+	<select id="selectAgentPosPolicyList" parameterType="java.util.Map" resultType="java.util.Map" >
+		select * from (
+		select t.sn,module_type,policy_name,policy_id,iscomplete,complete_date,ttt.real_name,ttt.user_tel,tt.user_id,t.create_date,t.id
+		from t_sys_pos_policy_info t,t_user_mpos_info tt,t_user_info ttt
+		where t.sn=tt.sn and tt.user_id=ttt.id and ttt.manager_id=#{manager_id} and tt.state_status=1 and tt.del=0
+		union
+		select t.sn,module_type,policy_name,policy_id,iscomplete,complete_date,ttt.real_name,ttt.user_tel,tt.user_id,t.create_date,t.id
+		from t_sys_pos_policy_info t,t_user_traditional_pos_info tt,t_user_info ttt
+		where t.sn=tt.sn and tt.user_id=ttt.id and ttt.manager_id=#{manager_id} and tt.state_status=1 and tt.del=0
+		) t where 1=1
+		<if test="sn!=null and sn!=''">
+			and t.sn like concat('%',#{sn},'%')
+		</if>
+		<if test="module_type!=null and module_type!=''">
+			and t.module_type=#{module_type}
+		</if>
+		<if test="iscomplete!=null and iscomplete!=''">
+			and t.iscomplete=#{iscomplete}
+		</if>
+		<if test="real_name!=null and real_name!=''">
+			and t.real_name=#{real_name}
+		</if>
+		<if test="user_tel!=null and user_tel!=''">
+			and t.user_tel=#{user_tel}
+		</if>
+		<if test="policy!=0">
+			and t.policy_id=#{policy}
+		</if>
+		<!-- 开始时间检索 -->
+		<if test="beginTime != null and beginTime != ''">
+			AND create_date &gt;= date_format(#{beginTime},'%Y%m%d')
+		</if>
+		<!-- 结束时间检索 -->
+		<if test="endTime != null and endTime != ''">
+			AND create_date &lt;= date_format(#{endTime},'%Y%m%d')
+		</if>
+
+	</select>
+
+	<!-- 查询系统MPOS信息列表 -->
+	<select id="selectSysPosPolicyList" parameterType="java.util.Map" resultType="java.util.Map" >
+		select * from t_sys_pos_policy_define where manager_id=#{manager_id}
+		<if test="policy_name!=null and policy_name!=''">
+			and policy_name like concat('%',#{policy_name},'%')
+		</if>
+		<if test="policy_type!=null and policy_type!=''">
+			and policy_type=#{policy_type}
+		</if>
+		<!-- 开始时间检索 -->
+		<if test="beginTime != null and beginTime != ''">
+			AND cre_date &gt;= date_format(#{beginTime},'%Y%m%d')
+		</if>
+		<!-- 结束时间检索 -->
+		<if test="endTime != null and endTime != ''">
+			AND cre_date &lt;= date_format(#{endTime},'%Y%m%d')
+		</if>
+	</select>
+
+	<insert id="insertPolicyDefine">
+		insert into t_sys_pos_policy_define(policy_type,policy_name,begin_date,end_date,policy_quantity,
+		policy_amount,remark,manager_id,policy_begin_day,policy_end_day,pos_type,policy_income)
+ 		values(#{map.policy_type},#{map.policy_name},#{map.begin_date},#{map.end_date},#{map.policy_quantity},
+ 		#{map.policy_amount},#{map.remark},#{map.manager_id},#{map.policy_begin_day},#{map.policy_end_day},
+ 		(case when #{map.pos_type}='01' then 'TraditionalPOS' when #{map.pos_type}='02' then 'MPOS' else null end),
+ 		#{map.policy_income})
+	</insert>
+
+	<select id="selectSysPosPolicyInfo" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from t_sys_pos_policy_define where id=#{id}
+	</select>
+
+	<update id="editPolicyInfo" parameterType="java.util.Map">
+		update t_sys_pos_policy_define set policy_name=#{policy_name},begin_date=#{begin_date},end_date=#{end_date},policy_begin_day=#{policy_begin_day},
+		policy_end_day=#{policy_end_day},policy_amount=#{policy_amount},policy_quantity=#{policy_quantity},policy_income=#{policy_income},upd_by=#{upd_by},upd_date=now(),remark=#{remark},isuse=#{isuse}
+		where id=#{id}
+	</update>
+
+	<update id="editPolicySNInfo1" parameterType="java.util.Map">
+		update t_sys_pos_policy_info set module1_end_date=#{end_date},module1_deduct=#{policy_amount},isuse=#{isuse} where policy_id=#{id}
+	</update>
+
+	<update id="editPolicySNInfo2" parameterType="java.util.Map">
+		update t_sys_pos_policy_info set module2_reward=#{policy_amount},module2_quantity=#{policy_quantity},module2_active_end_day=#{policy_end_day},
+		module2_active_begin_day=#{policy_begin_day},isuse=#{isuse}
+		where policy_id=#{id}
+	</update>
+
+	<update id="editPolicySNInfo3" parameterType="java.util.Map">
+		update t_sys_pos_policy_info set module3_reward=#{policy_amount},module3_quantity=#{policy_quantity},module3_active_end_day=#{policy_end_day},isuse=#{isuse} where policy_id=#{id}
+	</update>
+
+	<update id="editPolicySNInfo4" parameterType="java.util.Map">
+		update t_sys_pos_policy_info set module4_deduct=#{policy_amount},module4_quantity=#{policy_quantity},module4_active_end_day=#{policy_end_day},isuse=#{isuse} where policy_id=#{id}
+	</update>
+
+	<update id="editPolicySNInfo5" parameterType="java.util.Map">
+		update t_sys_pos_policy_info set module5_reward=#{policy_amount},module5_income=#{policy_income},isuse=#{isuse} where policy_id=#{id}
+	</update>
+
+	<delete id="delPolicySNInfo" parameterType="java.lang.String">
+		delete from t_sys_pos_policy_info where policy_id in(${ids})
+	</delete>
+
+	<delete id="delPolicyInfo" parameterType="java.lang.String">
+		delete from t_sys_pos_policy_define where id in(${ids})
+	</delete>
+
+	<insert id="insertPolicySNInfo1" parameterType="java.util.Map">
+		insert into t_sys_pos_policy_info(policy_name,sn,module1_pickup_date,module1_end_date,module1_deduct,module_type,policy_id)
+		values(#{policy_name},#{sn},#{module1_pickup_date},#{module1_end_date},#{module1_deduct},1,#{policy_id})
+	</insert>
+
+	<insert id="insertPolicySNInfo2" parameterType="java.util.Map">
+		insert into t_sys_pos_policy_info(policy_name,sn,module2_reward,module2_quantity,module2_active_end_day,module2_active_begin_day,module_type,policy_id)
+		values(#{policy_name},#{sn},#{module2_reward},#{module2_quantity},#{module2_active_end_day},#{module2_active_begin_day},2,#{policy_id})
+	</insert>
+
+	<insert id="insertPolicySNInfo3" parameterType="java.util.Map">
+		insert into t_sys_pos_policy_info(policy_name,sn,module3_reward,module3_quantity,module3_active_end_day,module_type,policy_id)
+		values(#{policy_name},#{sn},#{module3_reward},#{module3_quantity},#{module3_active_end_day},3,#{policy_id})
+	</insert>
+
+	<insert id="insertPolicySNInfo4" parameterType="java.util.Map">
+		insert into t_sys_pos_policy_info(policy_name,sn,module4_deduct,module4_quantity,module4_active_end_day,module_type,policy_id)
+		values(#{policy_name},#{sn},#{module4_deduct},#{module4_quantity},#{module4_active_end_day},4,#{policy_id})
+	</insert>
+
+	<insert id="insertPolicySNInfo5" parameterType="java.util.Map">
+		insert into t_sys_pos_policy_info(policy_name,sn,module5_reward,module5_income,module_type,policy_id)
+		values(#{policy_name},#{sn},#{module5_reward},#{module5_quantity},5,#{policy_id})
+	</insert>
+	
+</mapper>

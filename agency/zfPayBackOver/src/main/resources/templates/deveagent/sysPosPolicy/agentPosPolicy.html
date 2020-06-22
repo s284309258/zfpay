@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('代理系统MPOS列表')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+<body class="gray-bg">
+	
+	<!-- 系统参数列表 -->
+	<div class="container-div ui-layout-center">
+		<div class="row">
+			
+			<!-- 最上面的搜索框 -->
+			<div class="col-sm-12 search-collapse">
+				<form id="user-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								SN号：<input type="text" name="sn" id="sn" />
+							</li>
+							<li>
+								政策类型：
+								<select name="module_type" id="module_type" th:with="type=${@dict.getType('sys_pos_policy_type')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								选择政策：
+								<select id="policy" name="policy">
+									<option value="0">所有</option>
+									<option th:each="po : ${policyList}" th:text="${po.policy_name}" th:value="${po.id}"></option>
+								</select>
+							</li>
+							<li>
+								是否完成：
+								<select name="iscomplete" id="iscomplete" th:with="type=${@dict.getType('user_pos_info_activity_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								代理姓名：<input type="text" name="real_name" id="real_name" />
+							</li>
+							<li>
+								代理电话：<input type="text" name="user_tel" id="user_tel" />
+							</li>
+							<li class="select-time">
+								<label>创建时间： </label>
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="beginTime"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+
+			<!-- 上面的各项增删改查导入导出操作 -->
+			<div class="btn-group-sm" id="toolbar" role="group">
+				<!-- 操作封装：添加信息 全屏 -->
+				<a class="btn btn-success" onclick="$.operate.removeAll()">
+					<i class="fa fa-remove"></i> 删除政策标识
+				</a>
+			</div>
+	        <!-- bootstrap表格数据部分 -->
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+			
+		</div>
+	</div>
+	
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		//详情
+		var detailFlag = [[${@permission.hasPermi('deveagent:sysMposInfo:detail')}]];
+		//编辑
+		var editFlag = [[${@permission.hasPermi('deveagent:sysMposInfo:edit')}]];
+		//删除
+		var removeFlag = [[${@permission.hasPermi('deveagent:sysMposInfo:remove')}]];
+	
+		var datas_activity_status = [[${@dict.getType('user_pos_info_activity_status')}]];
+		var datas_del = [[${@dict.getType('sys_activity_info_del')}]];
+		var datas_trade_status = [[${@dict.getType('user_pos_info_trade_status')}]];
+		var sys_pos_policy_type = [[${@dict.getType('sys_pos_policy_type')}]];
+		var datas_cash_back_status = [[${@dict.getType('sys_pos_info_cash_back_status')}]];
+		var datas_act_status = [[${@dict.getType('sys_pos_info_act_status')}]];
+		var benefit_record_money_pos_type = [[${@dict.getType('benefit_record_money_pos_type')}]];
+		var user_pos_info_activity_status = [[${@dict.getType('user_pos_info_activity_status')}]];
+	
+		//前缀路径
+		var prefix = "/deveagent/agentPosPolicy";
+		
+		//初始化方法
+		$(function() {
+			//初始化时间范围
+			intiTime();
+		   	//查询系统MPOS机列表
+		    queryAgentSysMposInfoList();
+		});
+		
+		//查询系统MPOS机列表
+		function queryAgentSysMposInfoList() {
+		    var options = {
+		        url: prefix + "/list",//URL列表路径
+		        createUrl: prefix + "/add/{id}",//新增路径
+		        updateUrl: prefix + "/edit/{id}",//编辑路径
+		        detailUrl: prefix + "/detail/{id}",//详情路径
+				removeUrl: prefix + "/remove/",//详情路径
+		        exportUrl: prefix + "/export",//导出路径
+		        importPosUrl: prefix + "/importData",//导入路径
+		        importTemplateUrl: prefix + "/importTemplate",//导入模板下载路径
+		        modalName: "考核政策",//模块名称：用户
+		        showExport: true,
+		        sortName: 'id',
+	          	sortOrder: 'desc',
+		        //列信息
+		        columns: [{
+		            checkbox: true
+		        },
+				{
+					field : 'id',
+					sortable: true,
+					title : 'id'
+				},
+		        {
+					field : 'sn',
+					sortable: true,
+					title : 'sn编号'
+				},
+				{
+					field : 'policy_id',
+					sortable: true,
+					title : '政策ID'
+				},
+				{
+					field : 'module_type',
+					sortable: true,
+					title : '政策考核类型',
+					formatter: function(value, row, index) {
+						// 回显数据字典
+						return $.table.selectDictLabel(sys_pos_policy_type, value);
+					}
+				},
+				{
+					field : 'policy_name',
+					sortable: true,
+					title : '政策考核名称'
+				},
+				{
+					field : 'iscomplete',
+					sortable: true,
+					title : '是否完成',
+					formatter: function(value, row, index) {
+						// 回显数据字典
+						return $.table.selectDictLabel(user_pos_info_activity_status, value);
+					}
+				},
+				{
+					field : 'complete_date',
+					sortable: true,
+					title : '政策完成时间'
+				},
+				{
+					field : 'real_name',
+					sortable: true,
+					title : '直属代理姓名'
+				},
+				{
+					field : 'user_tel',
+					sortable: true,
+					title : '直属代理电话'
+				},
+				{
+					field : 'create_date',
+					sortable: true,
+					title : '政策创建时间'
+				}]
+		    };
+		    //表格初始化
+		    $.table.init(options);
+		}
+
+	</script>
+</body>
+
+</html>

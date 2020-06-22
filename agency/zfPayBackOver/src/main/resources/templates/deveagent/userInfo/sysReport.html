@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('代理报备用户账号')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+	<th:block th:include="include :: bootstrap-fileinput-css" />
+</head>
+<body class="gray-bg">
+	
+	<!-- 系统参数列表 -->
+	<div class="container-div ui-layout-center">
+		<div class="row">
+			
+			<!-- 最上面的搜索框 -->
+			<div class="col-sm-12 search-collapse">
+				<form id="user-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								<input type="hidden" name="user_id" id="user_id" th:value="${agentUserInfo.id}" readonly >
+								<input type="hidden" name="status" id="status" value="09" readonly >
+								手机号：<input type="text" name="user_tel" id="user_tel" />
+							</li>
+							<li>
+								卡账号：<input type="text" name="account" id="account" />
+							</li>
+							<li>
+								卡账户名：<input type="text" name="account_name" id="account_name" />
+							</li>
+							<li>
+								银行代码：<input type="text" name="bank_code" id="bank_code" />
+							</li>
+							<li>
+								银行名称：<input type="text" name="bank_name" id="bank_name" />
+							</li>
+							<li>
+								卡状态：
+								<select name="status" id="status" th:with="type=${@dict.getType('user_card_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								是否默认卡：
+								<select name="is_default" id="is_default" th:with="type=${@dict.getType('user_card_is_default')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li class="select-time">
+								<label>创建时间： </label>
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="beginTime"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+			
+			<div class="wrapper wrapper-content animated fadeInRight ibox-content" style="margin-top: 130px">
+				<h3>请确认报备用户信息</h3>
+				<form class="form-horizontal m" id="form-userReportRecord-sysReport">
+			       	<div class="form-group">
+						<label class="col-sm-1 control-label ">代理账号：</label>
+						<div class="col-sm-4">
+							<input type="hidden" name="user_id" id="user_id" th:value="${agentUserInfo.id}" >
+							<select class="form-control" name="account_id" id="account_id" th:with="accountList=${@account.getUserAccount()}" required >
+								<option value="">请选择代理账号</option>
+								<option th:each="account : ${accountList}" th:text="${account.app_id}" th:value="${account.id}"></option>
+							</select>
+						</div>
+						<label class="col-sm-1 control-label ">子级代理账户：</label>
+						<div class="col-sm-4">
+							<input type="hidden" name="status" id="status" th:value="${agentUserInfo.status}" readonly>
+							<input class="form-control" type="text" name="user_tel" id="user_tel" th:value="${agentUserInfo.user_tel}" readonly/>
+						</div>
+					</div> 
+					
+					<div class="form-group">
+						<label class="col-sm-1 control-label ">子级代理名称：</label>
+						<div class="col-sm-4">
+							<input class="form-control" type="text" name="real_name" id="real_name" th:value="${agentUserInfo.real_name}" readonly/>
+						</div>
+						<label class="col-sm-1 control-label ">子级代理身份证号：</label>
+						<div class="col-sm-4">
+							<input class="form-control" type="text" name="id_card" id="id_card" th:value="${agentUserInfo.id_card}" readonly/>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-1 control-label ">子级代理身份证图片：</label>
+						<div class="col-sm-4">
+							<select class="form-control" name="card_photo_num" id="card_photo_num" required >
+								<option value="">请选择报备的身份证图片信息</option>
+								<option value="0">第一张</option>
+								<option value="1">第二张</option>
+								<option value="2">第三张</option>
+							</select>
+							<label style="color: red">备注：请选择身份证正面照</label>
+						</div>
+						<label class="col-sm-1 control-label ">子级代理结算账号：</label>
+						<div class="col-sm-4">
+							<input type="hidden" name="card_id" id="card_id" value="" readonly >
+							<textarea rows="" cols="" name="card_no" id="card_no" class="form-control" placeholder="请选择下方的子级代理结算账号" required ></textarea>
+						</div>
+					</div> 
+					
+					<div class="form-group"> 
+			        	<label class="col-sm-1 control-label">认证证件照：</label>  
+			            <div class="col-sm-9">
+			                <div class="ibox float-e-margins">
+			                    <div class="ibox-content">
+			                        <div class="form-group">
+				                        <div class="file-loading">
+				                        	<input type="hidden" name="card_photo" id="card_photo" th:value="${agentUserInfo.card_photo}" >
+								            <input id="fileinput-demo-card_photo" name="file"  type="file"  >
+								        </div>
+			                        </div>
+			                    </div>
+			                </div>
+			            </div>
+			       	</div>
+					
+					
+					<div class="form-group">
+						<label class="col-sm-1 control-label ">操作备注：</label>
+						<div class="col-sm-9">
+							<textarea rows="" cols="" name="remark" id="remark" class="form-control" placeholder="请输入操作备注" required ></textarea>
+						</div>
+					</div> 
+					
+					<div class="form-group row" align="center" >
+						<div class="col-sm-4">
+							<button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保 存</button>&nbsp;
+						</div>
+						<div class="col-sm-4">
+				   	 		<button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭 </button>
+				   	 	</div>
+					</div>
+			   	</form>
+			   	
+			</div>
+			
+			
+			<!-- 上面的各项增删改查导入导出操作 -->
+	        <div class="btn-group-sm" id="toolbar" role="group" style="margin-top: 10px">
+		        <a class="btn btn-success" onclick="selectCard()">
+	            	<i class="fa fa-check"></i> 选中结算账号
+	        	</a>
+	        </div>
+	        
+	        <!-- bootstrap表格数据部分 -->
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+			
+		</div>
+		
+	</div>
+	
+	
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: bootstrap-fileinput-js" />
+	<script th:inline="javascript">
+		$(document).ready(function () {
+			//实名认证证件照
+			var card_photo_data = [];
+			var card_photo=$("#card_photo").val();
+			var card_photos = card_photo.split(",");
+			for(var i=0;i<card_photos.length;i++){
+				card_photo_data.push(qiniu_domain+card_photos[i]);
+			}
+			initFileInput2(card_photo_data,"card_photo");
+			
+			function initFileInput2(initDataArray,inputId){
+				//初始化fileinput控件（第一次初始化）
+			    $("#fileinput-demo-"+inputId+"").fileinput({
+			        'theme': 'explorer-fas',
+			        allowedFileExtensions : ['jpg', 'png','gif'],//接收的文件后缀,
+			        uploadAsync:true,//采用同步上传
+			        maxFileCount: 10,//表示允许同时上传的最大文件个数
+			        validateInitialCount:true,
+			        overwriteInitial: false,
+			        initialPreviewAsData: true,
+			        showUpload: false, //是否显示上传按钮
+			        showRemove: false, //是否显示删除按钮
+			        showBrowse: false,//是否显示移除按钮
+			        showCaption:false,//是否显示标题
+			        initialPreview: initDataArray,
+			        layoutTemplates :{
+			            actionDelete:'', //去除上传预览的缩略图中的删除图标
+			            actionUpload:'',//去除上传预览缩略图中的上传图片；
+			            //actionZoom:''   //去除上传预览缩略图中的查看详情预览的缩略图标。
+			       }
+			    })
+			}
+		});
+	
+	
+	
+	
+		//详情
+		var detailFlag = [[${@permission.hasPermi('deveagent:userCard:detail')}]];
+	
+		var datas_status = [[${@dict.getType('user_card_status')}]];
+		var datas_is_default = [[${@dict.getType('user_card_is_default')}]];
+
+		//前缀路径
+		var prefix = "/deveagent/userCard";
+	
+		//初始化方法
+		$(function() {
+			//初始化时间范围
+			intiTime();
+		   	//查询用户结算卡列表
+		    queryAgentUserCardList();
+		});
+		
+		//查询用户结算卡列表
+		function queryAgentUserCardList() {
+		    var options = {
+		        url: prefix + "/list",//URL列表路径
+		        detailUrl: prefix + "/detail/{id}",//详情路径
+		        exportUrl: prefix + "/export",//导出路径
+		        modalName: "用户结算卡信息",//模块名称：用户
+		        showExport: true,
+		        queryParams: queryParams,
+		        sortName: 'id',
+	          	sortOrder: 'desc',
+		        //列信息
+		        columns: [{
+		        	radio: true
+		        },
+		        {
+					field : 'id', 
+					title : '编号',
+					sortable: true,
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detail(\'' + row.id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+		            title: '操作',
+		            align: 'center',
+		            formatter: function(value, row, index) {
+		            	//事件数组
+		                var actions = [];
+		              	//详情按钮
+		            	actions.push('<a class="btn btn-warning btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="detail(\'' + row.id + '\')"><i class="fa fa-search"></i>详细</a>');
+		            	if(row.status==00){
+			                //结算卡审核
+			                actions.push('<a class="btn btn-primary btn-xs ' + sysCardAuditFlag + '" href="javascript:void(0)" onclick="sysCardAudit(\'' + row.id + '\')"><i class="fa fa-edit"></i>结算卡审核 </a>');
+			           	}
+		              	return actions.join('');
+		            }
+		        },
+		        {
+					field : 'manager_id', 
+					title : '代理编号'
+				},
+				{
+					field : 'user_id', 
+					title : '用户编号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailUser(\'' + row.user_id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'user_tel', 
+					title : '手机号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailUser(\'' + row.user_id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'real_name', 
+					title : '姓名'
+				},
+				{
+					field : 'account_name', 
+					title : '卡账户名'
+				},
+				{
+					field : 'account', 
+					title : '卡账号'
+				},
+				{
+					field : 'id_card', 
+					title : '身份证号'
+				},
+				{
+					field : 'bank_code', 
+					title : '银行代码'
+				},
+				{
+					field : 'bank_name', 
+					title : '银行名称',
+					align: 'center',
+				  	formatter: function(value, row, index) {
+				      	return $.table.tooltip(value);
+				  	}
+				},
+				{
+					field : 'status', 
+					title : '状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_status, value);
+		            }
+				},
+				{
+					field : 'is_default', 
+					title : '是否默认卡',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_is_default, value);
+		            }
+				},
+				/* {
+		            field: 'card_photo',
+		            title: '卡照片',
+		            formatter: function(value, row, index) {
+		            	if(value != null && value != ""){
+		            		var imgs = value.split(",");
+			            	var imgResult = "";
+			            	for(var i=0;i<imgs.length;i++){
+			            		imgResult = imgResult + $.table.imageView(qiniu_domain+imgs[i]);
+			            	}
+			            	return imgResult;
+		            	}
+					}
+		        }, */
+				{
+					field : 'remark', 
+					title : '操作备注',
+					align: 'center',
+				  	formatter: function(value, row, index) {
+				      	return $.table.tooltip(value);
+				  	}
+				},
+				{
+					field : 'cre_date', 
+					title : '创建时间',
+					sortable: true
+				},
+				{
+					field : 'up_date', 
+					title : '更新时间',
+					sortable: true
+				},
+				{
+					field : 'update_by', 
+					title : '更新人'
+				}]
+		    };
+		    //表格初始化
+		    $.table.init(options);
+		}
+		
+		
+		//参数处理
+		function queryParams(params) {
+			var search = $.table.queryParams(params);
+			search.user_id = $('#user_id').val();//选中的值
+			search.status = $('#status').val();//选中的值
+			return search;
+		}
+		
+		
+		/* 查询卡详情 */
+		function detail(id){
+			var url = prefix+'/detail/'+id;
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		   	$.modal.openTab("编号"+id+"结算卡详情", url);
+		}
+		
+		
+		/* 选择结算卡 */
+		function selectCard(){
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+    		if (rows.length == 0) {
+    			$.modal.alertWarning("请选择一个结算账号");
+    			return;
+    		}
+    		$.modal.confirm("确认要选中该结算卡吗?", function() {
+    			$("#card_id").val(rows[0].id);
+    			$("#card_no").text(rows[0].account);
+    		});
+		}
+		
+		
+		function submitHandler() {
+         	if($("#account_id").val()==''){
+         		layer.msg("请选择代理账号",{icon:5,time : 1000});
+         		return;
+         	}else if($("#status").val()!='09'){
+         		layer.msg("该用户未实名认证成功，不能报备",{icon:5,time : 1000});
+         		return;
+         	}else if($("#card_photo_num").val()==''){
+         		layer.msg("请选择子级代理身份证图片",{icon:5,time : 1000});
+         		return;
+         	}else if($("#card_id").val()==''){
+         		layer.msg("请选择子级代理结算账号",{icon:5,time : 1000});
+         		return;
+         	}else if($("#remark").val()==''){
+         		layer.msg("请输入操作备注",{icon:5,time : 1000});
+         		return;
+         	}
+       		$.operate.saveTab("/deveagent/userReportRecord/sysReport", $('#form-userReportRecord-sysReport').serialize());
+ 		}
+	</script>
+</body>
+
+</html>

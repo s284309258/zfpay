@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<th:block th:include="include :: header('编辑系统MPOS')" />、
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+
+	<form class="form-horizontal m" id="form-sysTraditionalPosInfo-edit">
+       	<!-- 代理中付账号 -->
+		<div class="form-group">
+			<label class="col-sm-3 control-label"><span style="color: red; ">*</span>代理中付账号：</label>
+			<div class="col-sm-8" id="account_id_location">
+			</div>
+		</div>
+       	<div class="form-group">
+			<label class="col-sm-3 control-label ">商户号：</label>
+			<input type="hidden" name=pos_id id="pos_id" th:value="${id}" readonly="true">
+			<div class="col-sm-8">
+				<input class="form-control" type="text" name="mer_id" id="mer_id" placeholder="请输入商户号（可不填）" />
+			</div>
+		</div> 
+		<div class="form-group">
+			<label class="col-sm-3 control-label ">商户名称：</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text" name="mer_name" id="mer_name" placeholder="请输入商户名称（可不填）" />
+			</div>
+		</div> 
+		<div class="form-group">
+			<label class="col-sm-3 control-label ">商户姓名：</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text" name="name" id="name" placeholder="请输入商户姓名（可不填）" />
+			</div>
+		</div> 
+		<div class="form-group">
+			<label class="col-sm-3 control-label ">商户手机号：</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text" name="tel" id="tel" placeholder="请输入商户手机号（可不填）" />
+			</div>
+		</div> 
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>返现获取类型：</label>
+			<div class="col-sm-2">
+                <input type="radio" name="cash_back_type" value="0" required ><label>设置</label>
+			</div>
+			<div class="col-sm-2">
+                <input type="radio" name="cash_back_type" value="1" required ><label>中付</label>
+			</div>
+		</div> 
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>返现条件：</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text" name="cash_back_condition" id="cash_back_condition" placeholder="请输入返现条件" required/>
+			</div>
+		</div> 
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>返现金额：</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text" name="cash_back_money" id="cash_back_money" placeholder="请输入返现金额" required/>
+			</div>
+		</div> 
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>刷卡费率（%）：</label>
+			<div class="col-sm-8" id="credit_card_rate_location">
+			</div>
+		</div>
+		<!--add byqh 201912-->
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>VIP秒到(商圈)刷卡费率（%）：</label>
+			<div class="col-sm-8" id="credit_card_rate_location_vip">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>云闪付费率（%）：</label>
+			<div class="col-sm-8" id="cloud_flash_rate_location">
+			</div>
+		</div> 
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>微信费率（%）：</label>
+			<div class="col-sm-8" id="weixin_rate_location">
+			</div>
+		</div> 
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>支付宝费率（%）：</label>
+			<div class="col-sm-8" id="zhifubao_rate_location">
+			</div>
+		</div> 
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>操作备注：</label>
+			<div class="col-sm-8">
+				<textarea rows="" cols="" name="remark" id="remark" class="form-control" placeholder="请输入操作备注" required ></textarea>
+			</div>
+		</div> 
+   	</form>
+</div>
+
+<th:block th:include="include :: footer" />
+<script type="text/javascript">
+var id = [[${id}]]; 
+
+$("#form-sysTraditionalPosInfo-edit").validate({
+	rules:{
+      	cash_back_type: {
+	        required: true
+      	},
+      	cash_back_condition: {
+	        required: true
+      	},
+      	cash_back_money: {
+	        required: true
+      	},
+      	credit_card_rate: {
+	        required: true
+      	},
+		credit_card_rate_vip: {
+			required: true
+		},
+      	cloud_flash_rate: {
+	        required: true
+      	},
+    	weixin_rate: {
+	        required: true
+      	},
+      	zhifubao_rate: {
+	        required: true
+      	},
+      	remark: {
+	        required: true
+      	}
+	},
+	messages: {
+        cash_back_type: {
+            required: "请输入返现获取类型"
+        },
+        cash_back_condition: {
+            required: "请输入返现条件"
+        },
+        cash_back_money: {
+            required: "请输入返现金额"
+        },
+        credit_card_rate: {
+            required: "请输入刷卡费率（%）"
+        },
+		credit_card_rate_vip: {
+			required: "请输入VIP秒到(商圈)刷卡费率（%）"
+		},
+        cloud_flash_rate: {
+            required: "请输入云闪付费率（%）"
+        },
+        weixin_rate: {
+            required: "请输入微信费率"
+        },
+        zhifubao_rate: {
+            required: "请输入支付宝费率"
+        },
+        remark: {
+            required: "请输入操作备注"
+        }
+ 	},
+	focusCleanup: true
+});
+
+
+function submitHandler() {
+   	if ($.validate.form()) {
+		$.operate.save("/deveagent/sysTraditionalPosInfo/edit", $('#form-sysTraditionalPosInfo-edit').serialize());
+   	}
+}
+
+$(document).ready(function () {
+	//查询参数基本信息
+	$.ajax({
+		url: "/deveagent/sysTraditionalPosInfo/getAgentSysTraditionalPosInfoById",
+		type: 'post',
+		dataType:"json",
+		data:{
+			'id' : id,
+		},
+		success:function(data){
+			$("#mer_id").val(data.mer_id);
+			$("#mer_name").val(data.mer_name);
+			$("#name").val(data.name);
+			$("#tel").val(data.tel);
+			$("#cash_back_condition").val(data.cash_back_condition);
+			$("#cash_back_money").val(data.cash_back_money);
+			//初始化代理中付账号
+			initAgentAccount(data.account_id,"account_id","account_id_location");
+			//初始化返现获取类型
+			initRadio(data.cash_back_type,"cash_back_type");
+			//初始化刷卡费率
+			initParamRate(data.credit_card_rate,"credit_card_rate","credit_card_rate_location","1");
+			//初始化刷卡费率VIP
+			initParamRate(data.credit_card_rate_vip,"credit_card_rate_vip","credit_card_rate_location_vip","1");
+			//初始化云闪付费率
+			initParamRate(data.cloud_flash_rate,"cloud_flash_rate","cloud_flash_rate_location","4");
+			//初始化微信费率
+			initParamRate(data.weixin_rate,"weixin_rate","weixin_rate_location","6");
+			//初始化支付宝费率
+			initParamRate(data.zhifubao_rate,"zhifubao_rate","zhifubao_rate_location","8");
+  		}
+	}); 
+	
+	
+	//初始化代理中付账号
+	function initAgentAccount(value, valueName, objLocation,rateType){
+		//查询相应的业务类型列表
+		$.ajax({
+			cache : true,
+			type : "post",
+			url : "/deveagent/userAccount/getAgentValidUserAccountList",
+			data : {
+			},
+			async : false,
+			error : function(request) {
+				parent.layer.alert("网络超时");
+			},
+			success : function(data) {
+				var obj='<select class="form-control" name="'+valueName+'" id="'+valueName+'" required  ><option value="">请选择代理中付账号</option>';
+				for(var i=0;i<data.length;i++){
+					obj=obj+'<option value='+data[i].id+'>'+data[i].app_id+'</option>';
+				}
+				obj=obj+"</select></li>";
+				$("#"+objLocation+"").html(obj);
+				$("#"+valueName+"").find("option[value='"+value+"']").attr("selected",true);
+			}
+		});
+	}
+	
+	
+	//初始化radio
+	function initRadio(value, valueName){
+		$("[name='"+valueName+"'][value='" + value + "']").prop("checked", "checked");
+	}
+	
+	
+	//初始化参数信息
+	function initParamRate(value, valueName, objLocation,rateType){
+		//查询相应的业务类型列表
+		$.ajax({
+			cache : true,
+			type : "post",
+			url : "/devemana/sysParamRate/getManaParamRateListByType",
+			data : {
+				'type' : rateType
+			},
+			async : false,
+			error : function(request) {
+				parent.layer.alert("网络超时");
+			},
+			success : function(data) {
+				var obj='<select class="form-control" name="'+valueName+'" id="'+valueName+'" required  ><option value="">请选择参数值</option>';
+				for(var i=0;i<data.length;i++){
+					obj=obj+'<option value='+parseFloat(data[i].rate).toFixed(3)+'>'+parseFloat(data[i].rate).toFixed(3)+'</option>';
+				}
+				obj=obj+"</select></li>";
+				$("#"+objLocation+"").html(obj);
+				$("#"+valueName+"").find("option[value='"+parseFloat(value).toFixed(3)+"']").attr("selected",true);
+			}
+		});
+	}
+});
+</script>
+</body>
+</html>

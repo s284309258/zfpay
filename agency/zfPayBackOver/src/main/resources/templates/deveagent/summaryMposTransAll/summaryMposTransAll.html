@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('代理MPOS商户数据汇总列表')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<STYLE>
+		.fixed-table-footer, .fixed-table-header{
+			overflow: visible;
+		}
+
+	</STYLE>
+</head>
+<body class="gray-bg">
+	
+	<!-- 系统参数列表 -->
+	<div class="container-div ui-layout-center">
+		<div class="row">
+			
+			<!-- 最上面的搜索框 -->
+			<div class="col-sm-12 search-collapse">
+				<form id="user-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								手机号：<input type="text" name="user_tel" id="user_tel" />
+							</li>
+							<li>
+								姓名：<input type="text" name="real_name" id="real_name" />
+							</li>
+							<li>
+								设备号（机器编号）：<input type="text" name="sn" id="sn" />
+							</li>
+							<li>
+								商户类型：
+								<select name="state_status" id="state_status" th:with="type=${@dict.getType('user_pos_share_benefit_record_state_type')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								是否有交易：
+								<select name="trade_status" id="trade_status" th:with="type=${@dict.getType('user_pos_info_trade_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li class="select-time">
+								<label>创建时间： </label>
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="beginTime"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="searchTable()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="resetTable()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+			
+			<!-- 上面的各项增删改查导入导出操作 -->
+	        <div class="btn-group-sm" id="toolbar" role="group">
+		        <!-- 表格：导出数据 -->
+	            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="deveagent:summaryMposTransAll:export">
+		            <i class="fa fa-download"></i>导出
+		        </a>
+	        </div>
+
+	        
+	        <!-- bootstrap表格数据部分 -->
+			<div class="col-sm-12 select-table table-striped">
+				<table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+			<div class="fixed-table-footer" style="margin-right: 0px;">
+				<table class="table table-hover" style="width: 1658px;"><tbody><tr><td style=""><div class="th-inner">&nbsp;</div>
+					<div class="fht-cell"></div></td><td style=""><div class="th-inner">&nbsp;</div><div class="fht-cell"></div></td>
+					<td style="text-align: center; "><div class="th-inner">&nbsp;</div><div class="fht-cell"></div></td><td style="">
+						<div class="th-inner">&nbsp;</div><div class="fht-cell"></div></td><td style=""><div class="th-inner">
+						<span>总业绩：</span><span id="sum_performance">0</span></div><div class="fht-cell"></div></td><td style="">
+						<span>总笔数：</span><span id="sum_num">0</span><div class="fht-cell"></div>
+					</td>
+					</tr></tbody></table>
+			</div>
+		</div>
+	</div>
+	
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		var datas_trade_status = [[${@dict.getType('user_pos_info_trade_status')}]];
+		var user_pos_share_benefit_record_state_type = [[${@dict.getType('user_pos_share_benefit_record_state_type')}]];
+		//前缀路径
+		var prefix = "/deveagent/summaryMposTransAll";
+		
+		//初始化方法
+		$(function() {
+			//初始化时间范围
+			intiTime();
+		   	//查询代理MPOS商户数据汇总列表
+		    querySummaryMposTransAllList();
+            //汇总数据
+            setTimeout("summaryManaUserInfoList()","1000");
+        });
+
+		//自定义搜索事件
+		function searchTable(){
+			$.table.search();
+			//汇总数据
+			setTimeout("summaryManaUserInfoList()","1000");
+		}
+
+		//自定义搜索事件
+		function resetTable(){
+			$.form.reset();
+			//汇总数据
+			setTimeout("summaryManaUserInfoList()","1000");
+		}
+
+		//汇总数据统计
+		function summaryManaUserInfoList(){
+			$.ajax({
+				url:"/deveagent/summaryMposTransAll/summaryMposTransAllList",
+				type:"post",
+				dataType:"json",
+				data:{
+					'user_tel' : $("#user_tel").val(),
+					'real_name' : $("#real_name").val(),
+					'sn' : $("#sn").val(),
+					'state_status' : $("#state_status").val(),
+					'trade_status' : $("#auth_status").val(),
+					'beginTime' : $("#startTime").val(),
+					'endTime' : $("#endTime").val()
+				},
+				success:function(data){
+					$("#sum_performance").html(data.sum_performance);
+					$("#sum_num").html(data.sum_num);
+				},
+				error:function(){
+					alert("error");
+				}
+			});
+		}
+		
+		//查询代理MPOS商户数据汇总列表
+		function querySummaryMposTransAllList() {
+
+		    var options = {
+		        url: prefix + "/list",//URL列表路径
+		        exportUrl: prefix + "/export",//导出路径
+		        modalName: "代理MPOS商户数据汇总信息",//模块名称：用户
+		        showExport: true,
+		        sortName: 'id',
+	          	sortOrder: 'desc',
+		        //列信息
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+					field : 'id', 
+					title : '编号1',
+					sortable: true,
+					formatter: function(value, row, index) {
+
+						return '<a href="javascript:void(0)" onclick="detail(\'' + row.id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'up_date', 
+					title : '更新时间',
+					sortable: true
+				},
+				{
+					field : 'manager_id', 
+					title : '代理编号'
+				},
+				{
+					field : 'user_id', 
+					title : '用户编号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailUser(\'' + row.user_id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'user_tel', 
+					title : '手机号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailUser(\'' + row.user_id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'sn', 
+					title : '设备号（机器编号）',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailMpos(\'' + row.sn + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'real_name', 
+					title : '姓名'
+				},
+				{
+					field : 'state_status',
+					title : '商户类型',
+					align: 'center',
+					formatter: function(value, row, index) {
+						// 回显数据字典
+						return $.table.selectDictLabel(user_pos_share_benefit_record_state_type, value);
+					}
+				},
+				{
+					field : 'trade_status',
+					title : '是否有交易',
+					align: 'center',
+					formatter: function(value, row, index) {
+						// 回显数据字典
+						return $.table.selectDictLabel(datas_trade_status, value);
+					}
+				},
+				{
+					field : 'performance', 
+					title : '总业绩',
+                    footerFormatter:function (value) {
+                        return "<span id='sum_performance'>总业绩：0.00<span>";
+                    }
+				},
+				{
+					field : 'num', 
+					title : '总笔数',
+                    footerFormatter:function (value) {
+                        return "<span id='sum_num'>总笔数：0.00<span>";
+                    }
+				},
+				{
+					field : 'merchant_performance', 
+					title : '直营总业绩'
+				},
+				{
+					field : 'merchant_num', 
+					title : '直营总笔数'
+				},
+				{
+					field : 'agency_performance', 
+					title : '代理总业绩'
+				},
+				{
+					field : 'agency_num', 
+					title : '代理总笔数'
+				},
+				{
+					field : 'benefit', 
+					title : '总收入'
+				},
+				{
+					field : 'share_benefit', 
+					title : '分润收入'
+				},
+				{
+					field : 'single_benefit', 
+					title : '单笔收入'
+				},
+				{
+					field : 'return_benefit', 
+					title : '机具返现收入'
+				},
+				{
+					field : 'activity_benefit', 
+					title : '活动收入'
+				},
+				{
+					field : 'merchant_benefit', 
+					title : '直营总收入'
+				},
+				{
+					field : 'merchant_share_benefit', 
+					title : '直营分润收入'
+				},
+				{
+					field : 'merchant_single_benefit', 
+					title : '直营单笔收入'
+				},
+				{
+					field : 'merchant_return_benefit', 
+					title : '直营机具返现收入'
+				},
+				{
+					field : 'merchant_activity_benefit', 
+					title : '直营活动收入'
+				},
+				{
+					field : 'agency_benefit', 
+					title : '代理总收入'
+				},
+				{
+					field : 'agency_share_benefit', 
+					title : '代理分润收入'
+				},
+				{
+					field : 'agency_single_benefit', 
+					title : '代理单笔收入'
+				},
+				{
+					field : 'agency_return_benefit', 
+					title : '代理机具返现收入'
+				},
+
+				]
+		    };
+		    //表格初始化
+		    $.table.init(options);
+		}
+		
+		
+		/* 查询MPOS详情 */
+		function detailMpos(id){
+			var url = '/deveagent/sysMposInfo/detail/'+id;
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		   	$.modal.openTab("编号"+id+"MPOS详情", url);
+		}
+
+	</script>
+
+</body>
+</html>

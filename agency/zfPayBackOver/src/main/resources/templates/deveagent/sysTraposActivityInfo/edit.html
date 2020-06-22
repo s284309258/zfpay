@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<th:block th:include="include :: header('线上活动(传统POS)编辑')" />、
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+	<th:block th:include="include :: bootstrap-fileinput-css" />
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+	<form class="form-horizontal m" id="form-sysTraposActivityInfo-edit">
+       	<div class="form-group">
+			<label class="col-sm-1 control-label ">活动名称：</label>
+			<div class="col-sm-10">
+				<input type="hidden" name=activity_id id="activity_id" th:value="${id}" readonly="true">
+				<input type="hidden" name="cover_url" id="old_cover_url"  >
+				<input type="hidden" name="detail_url" id="old_detail_url" >
+				<input type="hidden" name="new_cover_url" id="new_cover_url"  >
+				<input type="hidden" name="new_detail_url" id="new_detail_url" >
+				<input class="form-control" type="text" name="activity_name" id="activity_name" placeholder="请输入活动名称"  />
+			</div>
+		</div> 
+		
+		<div class="form-group">
+			<label class="col-sm-1 control-label">活动时间范围：</label>
+			<div class="col-sm-4">
+				<input type="text" name="start_date" value=""  placeholder="请选择活动开始时间" autocomplete="off"
+					onfocus="WdatePicker({ startDate: '%y%M01' , dateFmt:'yyyyMMdd', alwaysUseStartDate:true })" 
+					id="datemin" class="form-control" >
+			</div>
+			<div class="col-sm-1" style="width: 10px">
+				<span>-</span>
+			</div>
+			<div class="col-sm-4">
+				<input type="text" name="end_date" value=""  placeholder="请选择活动结束时间" autocomplete="off"
+					onfocus="WdatePicker({startDate: '%y%M01' , minDate:'#F{$dp.$D(\'datemin\')}', dateFmt:'yyyyMMdd', alwaysUseStartDate:true })" 
+					id="datemax" class="form-control" >
+			</div>
+		</div>
+		
+		<div class="form-group"> 
+        	<label class="col-sm-1 control-label ">活动封面图：</label>  
+            <div class="col-sm-10">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="form-group">
+	                        <div class="file-loading">
+					            <input id="fileinput-demo-new_cover_url" name="file"  type="file" >
+					        </div>
+                        </div>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+       	</div>
+         
+        <div class="form-group"> 
+        	<label class="col-sm-1 control-label ">活动详情图：</label>  
+            <div class="col-sm-10">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="form-group">
+	                        <div class="file-loading">
+					            <input id="fileinput-demo-new_detail_url" type="file" name="file" multiple>
+					        </div>
+                        </div>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+       	</div>
+		
+		<div class="form-group">
+			<label class="col-sm-1 control-label ">操作备注：</label>
+			<div class="col-sm-10">
+				<input class="form-control" type="text" name="remark" id="remark" placeholder="请输入操作备注"  />
+			</div>
+		</div> 
+   	</form>
+   	
+</div>
+
+<div class="row" style="margin-bottom: 50px">
+	<div class="col-sm-offset-5 col-sm-10">
+	    <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保 存</button>&nbsp;
+	    <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭 </button>
+	</div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: wdatePicker-js" />
+<th:block th:include="include :: bootstrap-fileinput-js" />
+<script type="text/javascript">
+var id = [[${id}]]; 
+
+//时间校验
+jQuery.validator.addMethod("isValidEndDate", function(value, element) {  
+	var nowTime = getNowFormatDate();  
+	return value>=nowTime;  
+}, "结束日期必须大于等于当前日期"); 
+
+//js获取当前日期格式
+function getNowFormatDate(){
+	var day = new Date();
+    var Year = 0;
+    var Month = 0;
+    var Day = 0;
+    var CurrentDate = "";
+    Year= day.getFullYear();//支持IE和火狐浏览器.
+    Month= day.getMonth()+1;
+    Day = day.getDate();
+    CurrentDate += Year;
+    if (Month >= 10 ){
+     	CurrentDate += Month;
+    }else{
+     	CurrentDate += "0" + Month;
+    }
+    if (Day >= 10 ){
+     	CurrentDate += Day ;
+    }else{
+     	CurrentDate += "0" + Day ;
+    }
+    return CurrentDate;
+}
+
+
+$("#form-sysTraposActivityInfo-edit").validate({
+	rules:{
+		activity_name: {
+	        required: true
+      	},
+      	start_date: {
+	        required: true
+      	},
+      	end_date: {
+	        required: true,
+	        isValidEndDate:true
+      	},
+      	remark: {
+	        required: true
+      	}
+	},
+	messages: {
+		activity_name: {
+            required: "请输入活动名称"
+        },
+        start_date: {
+            required: "请选择活动开始时间"
+        },
+        end_date: {
+            required: "请选择活动结束时间",
+            isValidEndDate: "结束日期必须大于等于当前日期"
+        },
+        remark: {
+            required: "请输入操作备注"
+        }
+ 	},
+	focusCleanup: true
+});
+
+
+function submitHandler() {
+   	if ($.validate.form()) {
+		if($("#cover_url").val()==""&&$("#old_cover_photo").val()==""){
+			layer.msg("请上传活动封面图",{icon:5,time : 1000});
+			return;
+		}else if($("#detail_url").val()==""&&$("#old_slide_photos").val()==""){
+			layer.msg("请上传活动详情图",{icon:5,time : 1000});
+			return;
+		}else{
+			if($("#new_cover_url").val()!=""){
+				$("#old_cover_url").val($("#new_cover_url").val());
+			}
+			if($("#new_detail_url").val()!=""){
+				$("#old_detail_url").val($("#new_detail_url").val());
+			}
+			$.operate.saveTab("/deveagent/sysTraposActivityInfo/edit", $('#form-sysTraposActivityInfo-edit').serialize());
+		}
+   	}
+}
+
+$(document).ready(function () {
+	//查询参数基本信息
+	$.ajax({
+		url: "/deveagent/sysTraposActivityInfo/getAgentSysTraposActivityInfoById",
+		type: 'post',
+		dataType:"json",
+		data:{
+			'id' : id,
+		},
+		success:function(data){
+			$("#old_cover_url").val(data.cover_url);
+			$("#old_detail_url").val(data.detail_url);
+			$("#activity_name").val(data.activity_name);
+			$("#datemin").val(data.start_date);
+			$("#datemax").val(data.end_date);
+			
+			//活动封面
+			var cover_url_data = [];
+			cover_url_data.push(qiniu_domain+$("#old_cover_url").val());
+			initFileInput1(cover_url_data,"new_cover_url","支持单图片拖拽上传<br>建议图片格式：jpg<br>尺寸大小：1035 x 450px(或 690x300px)");
+			
+			//活动详情
+			var detail_url_data = [];
+			detail_url_data.push(qiniu_domain+$("#old_detail_url").val());
+			initFileInput1(detail_url_data,"new_detail_url","支持单图片拖拽上传<br>建议图片格式：jpg<br>尺寸大小：宽度默认为 1000 px ，高度随意");
+  		}
+	}); 
+	
+	
+	function initFileInput1(initDataArray,inputId,description){
+		//初始化fileinput控件（第一次初始化）
+	    $("#fileinput-demo-"+inputId+"").fileinput({
+	    	dropZoneTitle : description,
+	    	'theme': 'explorer-fas',
+	        'uploadUrl': '/develop/upload/photopUpload',//上传的地址
+	        allowedFileExtensions : ['jpg', 'png','gif'],//接收的文件后缀,
+	        uploadAsync:true,//false 同步上传，后台用数组接收，true 异步上传，每次上传一个file,会调用多次接口
+	        removeFromPreviewOnError:true, //当选择的文件不符合规则时，例如不是指定后缀文件、大小超出配置等，选择的文件不会出现在预览框中，只会显示错误信息
+	        maxFileCount: 1,//表示允许同时上传的最大文件个数
+	        validateInitialCount:true,
+	        overwriteInitial: true,
+	        initialPreviewAsData: true,
+	        initialPreview: initDataArray,
+	        msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+	        layoutTemplates :{
+	            actionDelete:'', //去除上传预览的缩略图中的删除图标
+	            actionUpload:'',//去除上传预览缩略图中的上传图片；
+	            //actionZoom:''   //去除上传预览缩略图中的查看详情预览的缩略图标。
+	       }
+	    })
+	       .on("fileuploaded", function(event, data) {
+	       	data=data.response;
+	       	if(data.code=='0'){
+	       		$("#"+inputId+"").val(data.url);
+	       	}else{
+	       		layer.msg(data.msg,{icon:5,time : 1000});
+	       	}
+	   	})
+	   	.on('fileerror', function(event, data, msg) {  //一个文件上传失败
+	       	alert('文件上传失败！'+msg);
+	   	}); 
+	}   
+	
+});
+</script>
+</body>
+</html>

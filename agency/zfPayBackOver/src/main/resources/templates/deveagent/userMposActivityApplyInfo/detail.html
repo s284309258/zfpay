@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('活动申请详情')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+	<th:block th:include="include :: bootstrap-fileinput-css" />
+</head>
+<body class="gray-bg">
+	
+	<!-- 系统参数列表 -->
+	<div class="container-div ui-layout-center">
+		<div class="row">
+			<!-- 最上面的搜索框 -->
+			<div class="col-sm-12 search-collapse" >
+				<form id="user-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								<input type="hidden" name="sn_list" id="sn_list" th:value=${applyInfo.sn_list} >
+								手机号：<input type="text" name="user_tel" id="user_tel" />
+							</li>
+							<li>
+								设备号（机器编号）：<input type="text" name="sn" id="sn" />
+							</li>
+							<li>
+								归属状态：
+								<select name="state_status" id="state_status" th:with="type=${@dict.getType('user_pos_info_state_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								删除状态：
+								<select name="del" id="del" th:with="type=${@dict.getType('sys_all_table_del')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								是否有交易：
+								<select name="trade_status" id="trade_status" th:with="type=${@dict.getType('user_pos_info_trade_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								商户号：<input type="text" name="mer_id" id="mer_id" />
+							</li>
+							<li>
+								商户名称：<input type="text" name="mer_name" id="mer_name" />
+							</li>
+							<li>
+								商户姓名：<input type="text" name="name" id="name" />
+							</li>
+							<li>
+								商户手机号：<input type="text" name="tel" id="tel" />
+							</li>
+							<li>
+								返现获取类型：
+								<select name="cash_back_type" id="cash_back_type" th:with="type=${@dict.getType('sys_pos_info_cash_back_type')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								返现状态：
+								<select name="cash_back_status" id="cash_back_status" th:with="type=${@dict.getType('sys_pos_info_cash_back_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								激活状态：
+								<select name="act_status" id="act_status" th:with="type=${@dict.getType('sys_pos_info_act_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li class="select-time">
+								<label>创建时间： </label>
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="beginTime"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+		
+			
+			<div class="wrapper wrapper-content animated fadeInRight ibox-content" style="margin-top: 170px">
+				<form class="form-horizontal m" id="form-userMposInfo-add">
+					<h3>申请订单基本信息</h3>
+					<div class="form-group">
+						<label class="col-sm-1 control-label">订单号：</label>
+						<div class="col-sm-3">
+							<input class="form-control" type="text" th:value="${applyInfo.order_id}" disabled="disabled" />
+						</div>
+						<label class="col-sm-1 control-label">审核状态：</label>
+						<div class="col-sm-3">
+							<input class="form-control" type="text" th:value="${@dict.getLabel('user_activity_apply_info_status',applyInfo.status)}" disabled="disabled"  />
+						</div>
+						<label class="col-sm-1 control-label">创建时间：</label>
+						<div class="col-sm-3">
+							<input class="form-control" type="text" th:value="${applyInfo.cre_date}" disabled="disabled"  />
+						</div>
+					</div>
+					
+					<hr><h3>申请用户基本信息</h3>
+					<div class="form-group">
+						<label class="col-sm-1 control-label">用户编号：</label>
+						<div class="col-sm-3">
+							<input class="form-control" type="text" th:value="${applyInfo.id}" disabled="disabled" />
+						</div>
+						<label class="col-sm-1 control-label">用户手机号：</label>
+						<div class="col-sm-3">
+							<input class="form-control" type="text" th:value="${applyInfo.user_tel}" disabled="disabled"  />
+						</div>
+						<label class="col-sm-1 control-label">直推人数：</label>
+						<div class="col-sm-3">
+							<input class="form-control" type="text" th:value="${applyInfo.referer_num}" disabled="disabled"  />
+						</div>
+						<label class="col-sm-1 control-label">团队人数：</label>
+						<div class="col-sm-3">
+							<input class="form-control" type="text" th:value="${applyInfo.under_num}" disabled="disabled" />
+						</div>
+						<label class="col-sm-1 control-label">用户状态：</label>
+						<div class="col-sm-3">
+							<input class="form-control" type="text" th:value="${@dict.getLabel('user_info_status',applyInfo.user_status)}" disabled="disabled"  />
+						</div>
+						<label class="col-sm-1 control-label">实名状态：</label>
+						<div class="col-sm-3">
+							<input class="form-control" type="text" th:value="${@dict.getLabel('user_info_auth_status',applyInfo.auth_status)}" disabled="disabled"  />
+						</div>
+					</div>
+					<!-- 实名信息 -->
+					<div class="form-group" th:if="${applyInfo.auth_status!='00'}">
+						<label class="col-sm-1 control-label">真实姓名：</label>
+						<div class="col-sm-3">
+							<input class="form-control" type="text" th:value="${applyInfo.real_name}" disabled="disabled" />
+						</div>
+						<label class="col-sm-1 control-label">身份证号：</label>
+						<div class="col-sm-3">
+							<input class="form-control" type="text" th:value="${applyInfo.id_card}" disabled="disabled"  />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-1 control-label">账户余额：</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:value="${applyInfo.money}" disabled="disabled" />
+						</div>
+						<label class="col-sm-1 control-label">到账金额：</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:value="${applyInfo.settle_money}" disabled="disabled"  />
+						</div>
+						<label class="col-sm-1 control-label">扣除金额：</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:value="${applyInfo.deduct_money}" disabled="disabled"  />
+						</div>
+						<label class="col-sm-1 control-label">今日收益：</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:value="${applyInfo.today_benefit}" disabled="disabled" />
+						</div>
+						<label class="col-sm-1 control-label">累计收益：</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:value="${applyInfo.total_benefit}" disabled="disabled"  />
+						</div>
+						<label class="col-sm-1 control-label">单笔手续费：</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:value="${applyInfo.settle_single_feet_money}" disabled="disabled"  />
+						</div>
+						<label class="col-sm-1 control-label">比例手续费：</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:value="${applyInfo.single_rate_feet_money}" disabled="disabled"  />
+						</div>
+					</div>
+			       	
+			       	<div class="form-group"> 
+						<label class="col-sm-1 control-label">用户头像：</label>  
+			            <div class="col-sm-3">
+			                <div class="ibox float-e-margins">
+			                    <div class="ibox-content">
+			                        <div class="form-group">
+				                        <div class="file-loading">
+				                        	<input type="hidden" name="head_photo" id="head_photo" th:value="${applyInfo.head_photo}" >
+								            <input id="fileinput-demo-head_photo" name="file"  type="file"  >
+								        </div>
+			                        </div>
+			                    </div>
+			                </div>
+			            </div>
+			        	<label class="col-sm-1 control-label" th:if="${applyInfo.auth_status!='00'}">认证证件照：</label>  
+			            <div class="col-sm-7" th:if="${applyInfo.auth_status!='00'}">
+			                <div class="ibox float-e-margins">
+			                    <div class="ibox-content">
+			                        <div class="form-group">
+				                        <div class="file-loading">
+				                        	<input type="hidden" name="card_photo" id="card_photo" th:value="${applyInfo.card_photo}" >
+								            <input id="fileinput-demo-card_photo" name="file"  type="file"  >
+								        </div>
+			                        </div>
+			                    </div>
+			                </div>
+			            </div>
+			       	</div>
+			       	
+			       	<hr><h3>申请活动基本信息</h3>
+					<div class="form-group">
+						<label class="col-sm-1 control-label">活动编号：</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:value="${applyInfo.activity_id}" disabled="disabled" />
+						</div>
+						<label class="col-sm-1 control-label">活动订单号：</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:value="${applyInfo.activity_order_id}" disabled="disabled"  />
+						</div>
+						<label class="col-sm-1 control-label">活动名称：</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:value="${applyInfo.activity_name}" disabled="disabled"  />
+						</div>
+						<label class="col-sm-1 control-label">活动类型：</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:value="${@dict.getLabel('sys_activity_info_activity_type',applyInfo.activity_type)}" disabled="disabled"  />
+						</div>
+						<label class="col-sm-1 control-label">活动名称：</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:value="${applyInfo.activity_name}" disabled="disabled"  />
+						</div>
+						<label class="col-sm-1 control-label">开始日期：</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:value="${applyInfo.start_date}" disabled="disabled"  />
+						</div>
+						<label class="col-sm-1 control-label">结束日期：</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:value="${applyInfo.end_date}" disabled="disabled"  />
+						</div>
+						<label class="col-sm-1 control-label">活动状态：</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:value="${@dict.getLabel('sys_activity_info_status',applyInfo.activity_status)}" disabled="disabled"  />
+						</div>
+					</div>
+					<div class="form-group"> 
+						<label class="col-sm-1 control-label">活动封面图：</label>  
+			            <div class="col-sm-3">
+			                <div class="ibox float-e-margins">
+			                    <div class="ibox-content">
+			                        <div class="form-group">
+				                        <div class="file-loading">
+				                        	<input type="hidden" name="cover_url" id="cover_url" th:value="${applyInfo.cover_url}" >
+								            <input id="fileinput-demo-cover_url" name="file"  type="file"  >
+								        </div>
+			                        </div>
+			                    </div>
+			                </div>
+			            </div>
+			        	<label class="col-sm-1 control-label">活动详情图：</label>  
+			            <div class="col-sm-7">
+			                <div class="ibox float-e-margins">
+			                    <div class="ibox-content">
+			                        <div class="form-group">
+				                        <div class="file-loading">
+				                        	<input type="hidden" name="detail_url" id="detail_url" th:value="${applyInfo.detail_url}" >
+								            <input id="fileinput-demo-detail_url" name="file"  type="file"  >
+								        </div>
+			                        </div>
+			                    </div>
+			                </div>
+			            </div>
+			       	</div>
+			       	
+			       	
+			       	<hr><h3>申请活动奖励类型信息</h3>
+					<div class="form-group">
+						<label class="col-sm-1 control-label">活动奖励编号：</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:value="${applyInfo.activity_reward_id}" disabled="disabled" />
+						</div>
+						<label class="col-sm-1 control-label">库存数量：</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:value="${applyInfo.pos_num}" disabled="disabled"  />
+						</div>
+						<label class="col-sm-1 control-label">奖励金额：</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:value="${applyInfo.reward_money}" disabled="disabled"  />
+						</div>
+						<label class="col-sm-1 control-label">交易额（万）：</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:value="${applyInfo.expenditure}" disabled="disabled"  />
+						</div>
+					</div>
+			       	
+			   	</form>
+			   	
+			</div>
+			
+			<!-- 上面的各项增删改查导入导出操作 -->
+	        <div class="btn-group-sm" id="toolbar" role="group" style="margin-top: 10px">
+	        </div>
+	        
+	        <!-- bootstrap表格数据部分 -->
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+			
+		</div>
+		
+	</div>
+	
+	
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: bootstrap-fileinput-js" />
+	<script th:inline="javascript">
+		//详情
+		var detailFlag = [[${@permission.hasPermi('deveagent:userMposInfo:detail')}]];
+		
+		var datas_state_status = [[${@dict.getType('user_pos_info_state_status')}]];
+		var datas_activity_status = [[${@dict.getType('user_pos_info_activity_status')}]];
+		var datas_del = [[${@dict.getType('sys_activity_info_del')}]];
+		var datas_trade_status = [[${@dict.getType('user_pos_info_trade_status')}]];
+		var datas_cash_back_type = [[${@dict.getType('sys_pos_info_cash_back_type')}]];
+		var datas_cash_back_status = [[${@dict.getType('sys_pos_info_cash_back_status')}]];
+		var datas_act_status = [[${@dict.getType('sys_pos_info_act_status')}]];
+
+
+		//前缀路径
+		var prefix = "/deveagent/userMposInfo";
+	
+		//初始化方法
+		$(function() {
+			//用户头像
+			var head_photo_data = [];
+			head_photo_data.push(qiniu_domain+$("#head_photo").val());
+			initFileInput1(head_photo_data,"head_photo");
+			
+			//实名认证证件照
+			var card_photo_data = [];
+			var card_photo=$("#card_photo").val();
+			if(card_photo!=null && card_photo!=''){
+				var card_photos = card_photo.split(",");
+				for(var i=0;i<card_photos.length;i++){
+					card_photo_data.push(qiniu_domain+card_photos[i]);
+				}
+				initFileInput2(card_photo_data,"card_photo");
+			}
+			
+			//活动封面图
+			var cover_url_data = [];
+			cover_url_data.push(qiniu_domain+$("#cover_url").val());
+			initFileInput1(cover_url_data,"cover_url");
+			
+			//活动详情图
+			var detail_url_data = [];
+			detail_url_data.push(qiniu_domain+$("#detail_url").val());
+			initFileInput1(detail_url_data,"detail_url"); 
+			
+			//初始化时间范围
+			intiTime();
+			//查询用户MPOS机列表
+		    queryAgentUserMposInfoList();
+		});
+		
+		//查询用户MPOS机列表
+		function queryAgentUserMposInfoList() {
+		    var options = {
+		        url: prefix + "/list",//URL列表路径
+		        updateUrl: prefix + "/edit/{id}",//编辑路径
+		        detailUrl: prefix + "/detail/{id}",//详情路径
+		        exportUrl: prefix + "/export",//导出路径
+		        modalName: "用户MPOS信息",//模块名称：用户
+		        showExport: true,
+		        queryParams: queryParams,
+		        sortName: 'id',
+	          	sortOrder: 'desc',
+		        //列信息
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+					field : 'id', 
+					title : '编号'
+				},
+		        {
+					field : 'manager_id', 
+					title : '代理编号'
+				},
+				{
+					field : 'user_id', 
+					title : '用户编号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailUser(\'' + row.user_id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'user_tel', 
+					title : '手机号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailUser(\'' + row.user_id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'sn', 
+					title : '设备号（机器编号）',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailMpos(\'' + row.sn + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'card_settle_price', 
+					title : '刷卡结算底价'
+				},
+				{
+					field : 'cloud_settle_price', 
+					title : '云闪付结算底价'
+				},
+				{
+					field : 'single_profit_rate', 
+					title : '单笔分润比例'
+				},
+				{
+					field : 'cash_back_rate', 
+					title : '返现比例'
+				},
+				{
+					field : 'state_status', 
+					title : '归属状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_state_status, value);
+		            }
+				},
+				{
+					field : 'activity_status', 
+					title : '是否参与活动',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_activity_status, value);
+		            }
+				},
+				{
+					field : 'del', 
+					title : '删除状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_del, value);
+		            }
+				},
+				{
+					field : 'trade_status', 
+					title : '是否有交易',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_trade_status, value);
+		            }
+				},
+				{
+					field : 'mer_id', 
+					title : '商户号'
+				},
+				{
+					field : 'mer_name', 
+					title : '商户名称'
+				},
+				{
+					field : 'name', 
+					title : '商户姓名'
+				},
+				{
+					field : 'tel', 
+					title : '商户手机号'
+				},
+				{
+					field : 'cash_back_type', 
+					title : '返现获取类型',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_cash_back_type, value);
+		            }
+				},
+				{
+					field : 'cash_back_condition', 
+					title : '返现条件'
+				},
+				{
+					field : 'cash_back_money', 
+					title : '返现金额'
+				},
+				{
+					field : 'cash_back_status', 
+					title : '返现状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_cash_back_status, value);
+		            }
+				},
+				{
+					field : 'credit_card_rate', 
+					title : '刷卡费率（%）'
+				},
+				{
+					field : 'cloud_flash_rate', 
+					title : '云闪付费率（%）'
+				},
+				{
+					field : 'act_status', 
+					title : '激活状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_act_status, value);
+		            }
+				},
+				{
+					field : 'act_user_id', 
+					title : '激活时所属用户'
+				},
+				{
+					field : 'act_date', 
+					title : '激活时间'
+				},
+				{
+					field : 'cre_date', 
+					title : '创建时间',
+					sortable: true
+				},
+				{
+					field : 'up_date', 
+					title : '更新时间',
+					sortable: true
+				}]
+		    };
+		    //表格初始化
+		    $.table.init(options);
+		}
+		
+		
+		/* 查询MPOS详情 */
+		function detailMpos(id){
+			var url = '/deveagent/sysMposInfo/detail/'+id;
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		   	$.modal.openTab("编号"+id+"MPOS详情", url);
+		}
+		
+		
+		//参数处理
+		function queryParams(params) {
+			var search = $.table.queryParams(params);
+			search.sn_list = $('#sn_list').val();//选中的值
+			return search;
+		}
+		
+		
+		function initFileInput1(initDataArray,inputId){
+			//初始化fileinput控件（第一次初始化）
+		    $("#fileinput-demo-"+inputId+"").fileinput({
+		        'theme': 'explorer-fas',
+		        allowedFileExtensions : ['jpg', 'png','gif'],//接收的文件后缀,
+		        uploadAsync:true,//采用同步上传
+		        validateInitialCount:true,
+		        overwriteInitial: false,
+		        initialPreviewAsData: true,
+		        showUpload: false, //是否显示上传按钮
+		        showRemove: false, //是否显示删除按钮
+		        showBrowse: false,//是否显示移除按钮
+		        showCaption:false,//是否显示标题
+		        initialPreview: initDataArray,
+		        layoutTemplates :{
+		            actionDelete:'', //去除上传预览的缩略图中的删除图标
+		            actionUpload:'',//去除上传预览缩略图中的上传图片；
+		            //actionZoom:''   //去除上传预览缩略图中的查看详情预览的缩略图标。
+		       }
+		    })
+		}   
+		
+		function initFileInput2(initDataArray,inputId){
+			//初始化fileinput控件（第一次初始化）
+		    $("#fileinput-demo-"+inputId+"").fileinput({
+		        'theme': 'explorer-fas',
+		        allowedFileExtensions : ['jpg', 'png','gif'],//接收的文件后缀,
+		        uploadAsync:true,//采用同步上传
+		        maxFileCount: 10,//表示允许同时上传的最大文件个数
+		        validateInitialCount:true,
+		        overwriteInitial: false,
+		        initialPreviewAsData: true,
+		        showUpload: false, //是否显示上传按钮
+		        showRemove: false, //是否显示删除按钮
+		        showBrowse: false,//是否显示移除按钮
+		        showCaption:false,//是否显示标题
+		        initialPreview: initDataArray,
+		        layoutTemplates :{
+		            actionDelete:'', //去除上传预览的缩略图中的删除图标
+		            actionUpload:'',//去除上传预览缩略图中的上传图片；
+		            //actionZoom:''   //去除上传预览缩略图中的查看详情预览的缩略图标。
+		       }
+		    })
+		}
+
+	</script>
+
+</body>
+
+</html>

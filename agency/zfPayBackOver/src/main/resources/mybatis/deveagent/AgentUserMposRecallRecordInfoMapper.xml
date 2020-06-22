@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.usermpos.mapper.AgentUserMposRecallRecordInfoMapper">
+
+	<!-- 查询用户MPOS召回记录列表 -->
+	<select id="getAgentUserMposRecallRecordInfoList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			t.id,
+			t.send_user_id,
+			t.acce_user_id,
+			t.sn,
+			t.status,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t1.manager_id,
+			t2.user_tel AS send_user_tel,
+			t2.real_name AS send_real_name,
+			t3.user_tel AS acce_user_tel,
+			t3.real_name AS acce_real_name
+		FROM
+			t_user_mpos_recall_record_info t
+		INNER JOIN t_sys_mpos_info t1 ON t.sn = t1.sn
+		INNER JOIN t_user_info t2 ON t.send_user_id = t2.id
+		LEFT JOIN t_user_info t3 ON t.acce_user_id = t3.id
+		<where>
+			(t2.id=#{map.uid} or t2.parent_chain like concat(#{map.chain},'%'))
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.send_user_id != null and map.send_user_id != ''">
+				AND t.send_user_id = #{map.send_user_id}
+			</if>
+			<if test="map.send_real_name != null and map.send_real_name != ''">
+				AND t2.real_name = #{map.send_real_name}
+			</if>
+			<if test="map.acce_user_id != null and map.acce_user_id != ''">
+				AND t.acce_user_id = #{map.acce_user_id}
+			</if>
+			<if test="map.acce_real_name != null and map.acce_real_name != ''">
+				AND t3.real_name = #{map.acce_real_name}
+			</if>
+			<if test="map.sn != null and map.sn != ''">
+				AND t.sn = #{map.sn}
+			</if>
+			<if test="map.status != null and map.status != ''">
+				AND t.status = #{map.status}
+			</if>
+			<if test="map.send_user_tel != null and map.send_user_tel != ''">
+				AND t2.user_tel = #{map.send_user_tel}
+			</if>
+			<if test="map.acce_user_tel != null and map.acce_user_tel != ''">
+				AND t3.user_tel = #{map.acce_user_tel}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 导出用户MPOS召回记录列表 -->
+	<select id="selectAgentUserMposRecallRecordInfoList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.usermpos.domain.AgentUserMposRecallRecordInfo" >
+		SELECT
+			t.id,
+			t.send_user_id,
+			t.acce_user_id,
+			t.sn,
+			t.status,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t1.manager_id,
+			t2.user_tel AS send_user_tel,
+			t2.real_name AS send_real_name,
+			t3.user_tel AS acce_user_tel,
+			t3.real_name AS acce_real_name
+		FROM
+			t_user_mpos_recall_record_info t
+		INNER JOIN t_sys_mpos_info t1 ON t.sn = t1.sn
+		INNER JOIN t_user_info t2 ON t.send_user_id = t2.id
+		LEFT JOIN t_user_info t3 ON t.acce_user_id = t3.id
+		<where>
+			(t2.id=#{map.uid} or t2.parent_chain like concat(#{map.chain},'%'))
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.send_user_id != null and map.send_user_id != ''">
+				AND t.send_user_id = #{map.send_user_id}
+			</if>
+			<if test="map.acce_user_id != null and map.acce_user_id != ''">
+				AND t.acce_user_id = #{map.acce_user_id}
+			</if>
+			<if test="map.sn != null and map.sn != ''">
+				AND t.sn = #{map.sn}
+			</if>
+			<if test="map.status != null and map.status != ''">
+				AND t.status = #{map.status}
+			</if>
+			<if test="map.send_user_tel != null and map.send_user_tel != ''">
+				AND t2.user_tel = #{map.send_user_tel}
+			</if>
+			<if test="map.acce_user_tel != null and map.acce_user_tel != ''">
+				AND t3.user_tel = #{map.acce_user_tel}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+</mapper>

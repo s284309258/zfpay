@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('用户报备列表')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+<body class="gray-bg">
+	
+	<!-- 系统参数列表 -->
+	<div class="container-div ui-layout-center">
+		<div class="row">
+			
+			<!-- 最上面的搜索框 -->
+			<div class="col-sm-12 search-collapse">
+				<form id="user-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								代理账号：<input type="text" name="agent_account" id="agent_account" />
+							</li>
+							<li>
+								子级代理账户：<input type="text" name="sub_agent_account" id="sub_agent_account" />
+							</li>
+							<li>
+								子级代理名称：<input type="text" name="sub_agent_name" id="sub_agent_name" />
+							</li>
+							<li>
+								子级代理身份证号：<input type="text" name="sub_agent_id_num" id="sub_agent_id_num" />
+							</li>
+							<li>
+								子级代理结算账号：<input type="text" name="sub_agent_sett_account" id="sub_agent_sett_account" />
+							</li>
+							<li>
+								手机号：<input type="text" name="user_tel" id="user_tel" />
+							</li>
+							<li>
+								报备信息标识：
+								<select name="is_report" id="is_report" th:with="type=${@dict.getType('user_report_record_detail_is_report')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li class="select-time">
+								<label>创建时间： </label>
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="beginTime"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+			
+			<!-- 上面的各项增删改查导入导出操作 -->
+	        <div class="btn-group-sm" id="toolbar" role="group">
+		        <!-- 表格：导出数据 -->
+	            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="deveagent:userReportRecordDetail:export">
+		            <i class="fa fa-download"></i> 导出
+		        </a>
+	        </div>
+
+	        
+	        <!-- bootstrap表格数据部分 -->
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+			
+		</div>
+	</div>
+	
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		//审核
+		var sysAuditFlag = [[${@permission.hasPermi('deveagent:userApplyScanRecordInfo:sysAudit')}]];
+		var datas_is_report = [[${@dict.getType('user_report_record_detail_is_report')}]];
+	
+		//前缀路径
+		var prefix = "/deveagent/userReportRecordDetail";
+		
+		//初始化方法
+		$(function() {
+			//初始化时间范围
+			intiTime();
+		   	//查询用户解绑记录(MPOS)列表
+		    queryAgentUserReportRecordDetailList();
+		});
+		
+		//查询用户解绑记录(MPOS)列表
+		function queryAgentUserReportRecordDetailList() {
+		    var options = {
+		        url: prefix + "/list",//URL列表路径
+		        detailUrl: prefix + "/detail/{id}",//详情路径
+		        exportUrl: prefix + "/export",//导出路径
+		        modalName: "用报备记录",//模块名称：用户
+		        showExport: true,
+		        sortName: 'id',
+	          	sortOrder: 'desc',
+		        //列信息
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+					field : 'id', 
+					title : '编号',
+					sortable: true
+				},
+		        {
+					field : 'manager_id', 
+					title : '代理编号'
+				},
+				{
+					field : 'record_id', 
+					title : '报备记录编号'
+				},
+				{
+					field : 'user_id', 
+					title : '用户编号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailUser(\'' + row.user_id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'user_tel', 
+					title : '手机号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailUser(\'' + row.user_id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'real_name', 
+					title : '姓名'
+				},
+				{
+					field : 'agent_account', 
+					title : '代理账号'
+				},
+				{
+					field : 'sub_agent_account', 
+					title : '子级代理账户'
+				},
+				{
+					field : 'sub_agent_name', 
+					title : '子级代理名称'
+				},
+				{
+					field : 'sub_agent_id_num', 
+					title : '子级代理身份证号'
+				},
+				{
+					field : 'sub_agent_id_img', 
+					title : '子级代理身份证号',
+					formatter: function(value, row, index) {
+						return $.table.imageView(qiniu_domain+value);
+					}
+				},
+				{
+					field : 'sub_agent_sett_account', 
+					title : '子级代理结算账号'
+				},
+				{
+					field : 'is_report', 
+					title : '归属状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_is_report, value);
+		            }
+				},
+				{
+					field : 'cre_date', 
+					title : '创建时间',
+					sortable: true
+				},
+				{
+					field : 'remark', 
+					title : '备注'
+				},
+				{
+					field : 'create_by', 
+					title : '创建者'
+				}]
+		    };
+		    //表格初始化
+		    $.table.init(options);
+		}
+		
+		
+		/* 查询用户详情 */
+		function detailUser(id){
+			var url = '/deveagent/userInfo/detail/'+id;
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		   	$.modal.openTab("编号"+id+"用户详情", url);
+		}
+		
+	</script>
+</body>
+</html>

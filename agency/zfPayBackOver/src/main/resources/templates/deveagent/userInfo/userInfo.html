@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('代理用户信息列表')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+<body class="gray-bg">
+	
+	<!-- 系统参数列表 -->
+	<div class="container-div ui-layout-center">
+		<div class="row">
+			
+			<!-- 最上面的搜索框 -->
+			<div class="col-sm-12 search-collapse">
+				<form id="user-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								手机号：<input type="text" name="user_tel" id="user_tel" />
+							</li>
+							<li>
+								姓名：<input type="text" name="real_name" id="real_name" />
+							</li>
+							<li>
+								会员状态：
+								<select name="status" id="status" th:with="type=${@dict.getType('user_info_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								会员认证状态：
+								<select name="auth_status" id="auth_status" th:with="type=${@dict.getType('user_info_auth_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								推荐人手机号：<input type="text" name="referer_user_tel" id="referer_user_tel" />
+							</li>
+							<li class="select-time">
+								<label>创建时间： </label>
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="beginTime"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="searchTable()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+			
+			<!-- 上面的各项增删改查导入导出操作 -->
+	        <div class="btn-group-sm" id="toolbar" role="group">
+		        <!-- 表格：导出数据 -->
+	            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="deveagent:userInfo:export">
+		            <i class="fa fa-download"></i> 导出
+		        </a>
+		        <!-- 操作封装：修改信息，全屏 -->
+		        <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="deveagent:userInfo:edit">
+		            <i class="fa fa-edit"></i> 修改
+		        </a>
+<!--		        <a class="btn btn-success single disabled" onclick="selectParentUser()" shiro:hasPermission="deveagent:userInfo:list">-->
+<!--		            <i class="fa fa-user"></i> 查看父级团队-->
+<!--		        </a>-->
+		        <!-- 查看父级团队信息 -->
+		        <a class="btn btn-danger single disabled" onclick="selectChildrenUser()" shiro:hasPermission="deveagent:userInfo:list">
+		            <i class="fa fa-user"></i> 查看伞下团队
+		        </a>
+		        <!-- 表格：导出数据 -->
+	            <a class="btn btn-warning" onclick="batchSysFreeze();" shiro:hasPermission="deveagent:userInfo:sysFreeze">
+		            <i class="fa fa-download"></i> 批量冻结
+		        </a>
+		        <!-- 表格：导出数据 -->
+	            <a class="btn btn-primary" onclick="batchSysNoFreeze();" shiro:hasPermission="develop:userInfo:sysFreeze">
+		            <i class="fa fa-download"></i> 批量解冻
+		        </a>
+		        <!-- 表格：导出数据 -->
+	            <a class="btn btn-success" onclick="batchSysAuthAudit();" shiro:hasPermission="deveagent:userInfo:sysAuthAudit">
+		            <i class="fa fa-eye"></i> 批量审核实名
+		        </a>
+		        <!-- 表格：导出数据 -->
+	            <a class="btn btn-danger" onclick="removeAll()" shiro:hasPermission="deveagent:userInfo:remove">
+		            <i class="fa fa-remove"></i> 批量删除
+		        </a>
+		        
+		        
+		        <!-- <a class="btn btn-danger" onclick="zfCeshi1()" shiro:hasPermission="deveagent:userInfo:list">
+		            <i class="fa fa-edit"></i> 高返现活动结算-测试
+		        </a>
+		        
+		        <a class="btn btn-warning" onclick="zfCeshi2()" shiro:hasPermission="deveagent:userInfo:list">
+		            <i class="fa fa-edit"></i> 交易量活动结算-测试
+		        </a>
+		        
+		        <a class="btn btn-primary" onclick="zfCeshi3()" shiro:hasPermission="deveagent:userInfo:list">
+		            <i class="fa fa-edit"></i> 处理交易数据-测试
+		        </a>
+		        
+		        <a class="btn btn-success" onclick="zfCeshi4()" shiro:hasPermission="deveagent:userInfo:list">
+		            <i class="fa fa-edit"></i> 处理机器返现-测试
+		        </a>
+		        
+		        <a class="btn btn-danger" onclick="toCeshi1()" shiro:hasPermission="deveagent:userInfo:list">
+		            <i class="fa fa-edit"></i> 修改系统日期（测试）
+		        </a> -->
+		        
+	        </div>
+
+	        
+	        <!-- bootstrap表格数据部分 -->
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+			
+		</div>
+	</div>
+	
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		//详情
+		var detailFlag = [[${@permission.hasPermi('deveagent:userInfo:detail')}]];
+		//冻结解冻
+		var sysFreezeFlag = [[${@permission.hasPermi('deveagent:userInfo:sysFreeze')}]];
+		//实名认证审核
+		var sysAuthAuditFlag = [[${@permission.hasPermi('deveagent:userInfo:sysAuthAudit')}]];
+		//代理报备
+		var sysReportFlag = [[${@permission.hasPermi('deveagent:userReportRecord:add')}]];
+		//编辑
+		var editFlag = [[${@permission.hasPermi('deveagent:userInfo:edit')}]];
+		//删除
+		var removeFlag = [[${@permission.hasPermi('deveagent:userInfo:remove')}]];
+	
+		var datas_grade = [[${@dict.getType('user_info_grade')}]];
+		var datas_status = [[${@dict.getType('user_info_status')}]];
+		var datas_auth_status = [[${@dict.getType('user_info_auth_status')}]];
+		var datas_report_status = [[${@dict.getType('user_info_report_status')}]];
+	
+		//前缀路径
+		var prefix = "/deveagent/userInfo";
+		
+		//初始化方法
+		$(function() {
+			//初始化时间范围
+			intiTime();
+		   	//查询用户列表
+		    queryAgentUserInfoList();
+		  	//汇总数据
+		    setTimeout("summaryAgentUserInfoList()","1000"); 
+		});
+		
+		//查询用户列表
+		function queryAgentUserInfoList() {
+		    var options = {
+		        url: prefix + "/list",//URL列表路径
+		        updateUrl: prefix + "/edit/{id}",//编辑路径
+		        detailUrl: prefix + "/detail/{id}",//详情路径
+		        exportUrl: prefix + "/export",//导出路径
+		        modalName: "代理用户信息",//模块名称：用户
+		        showFooter: true,
+		        showExport: true,
+		        sortName: 'id',
+	          	sortOrder: 'desc',
+		        //列信息
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+					field : 'id', 
+					title : '编号',
+					sortable: true,
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detail(\'' + row.id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					title: '&#12288;&#12288;&#12288;&#12288;&#12288;操作&#12288;&#12288;&#12288;&#12288;&#12288;',
+		            align: 'center',
+		            formatter: function(value, row, index) {
+		            	//事件数组
+		                var actions = [];
+		              	//详情按钮
+		            	actions.push('<a class="btn btn-warning btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="detail(\'' + row.id + '\')"><i class="fa fa-search"></i>详细  </a> ');
+		            	//编辑按钮：修改信息 全屏
+		            	actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑 </a> ');
+		            	if(row.status==0){
+			                //冻结
+			                actions.push('<a class="btn btn-primary btn-xs ' + sysFreezeFlag + '" href="javascript:void(0)" onclick="sysFreeze(\'' + row.id + '\')"><i class="fa fa-key"></i>冻结 </a> ');
+			           	}else{
+			              	//解冻
+			               	actions.push('<a class="btn btn-danger btn-xs ' + sysFreezeFlag + '" href="javascript:void(0)" onclick="sysNoFreeze(\'' + row.id + '\')"><i class="fa fa-key"></i>解冻 </a>');
+			           	}
+		            	if(row.auth_status==04){
+			                //实名认证审核
+			                actions.push('<a class="btn btn-danger btn-xs ' + sysAuthAuditFlag + '" href="javascript:void(0)" onclick="sysAuthAudit(\'' + row.id + '\')"><i class="fa fa-edit"></i>实名认证审核 </a>');
+			           	}
+		            	if(row.referer_num==0 && row.auth_status!=09){
+		            		//删除按钮：删除信息
+			              	actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="#" onclick="remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除   </a>');
+		            	}
+		            	if(row.auth_status==09){
+			                //用户信息报备
+			                actions.push('<a class="btn btn-danger btn-xs ' + sysReportFlag + '" href="javascript:void(0)" onclick="sysReport(\'' + row.id + '\')"><i class="fa fa-edit"></i>用户信息报备 </a>');
+			           	}
+		              	return actions.join('');
+		            }
+		        },
+		        {
+					field : 'manager_id', 
+					title : '代理编号'
+				},
+				{
+					field : 'user_tel', 
+					title : '手机号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detail(\'' + row.id + '\')">' + value + '</a>';
+		            },
+		            footerFormatter:function (value) {
+				        // return "<span id='sum_settle_money'>到账总金额：0.00<span>";
+				    }
+				},
+				{
+					field : 'real_name', 
+					title : '姓名',
+					footerFormatter:function (value) {
+				        // return "<span id='sum_deduct_money'>扣除总金额：0.00<span>";
+				    }
+				},
+				{
+					field : 'id_card', 
+					title : '身份证号',
+					formatter: function(value, row, index) {
+						if(value!=null && value!=''){
+							return '<a href="javascript:void(0)" onclick="detail(\'' + row.id + '\')">' + value + '</a>';
+						}
+		            },
+					footerFormatter:function (value) {
+				        // return "<span id='sum_today_benefit'>今日总收益：0.00<span>";
+				    }
+				},
+				{
+					field : 'referer_user_tel', 
+					title : '推荐人手机号',
+					formatter: function(value, row, index) {
+						if(value!=null && value!=''){
+							return '<a href="javascript:void(0)" onclick="detail(\'' + row.referer_id + '\')">' + value + '</a>';
+						}
+		            },
+		            footerFormatter:function (value) {
+				        // return "<span id='sum_total_benefit'>累计总收益：0.00<span>";
+				    }
+				},
+				{
+					field : 'referer_real_name', 
+					title : '推荐人姓名',
+					footerFormatter:function (value) {
+				        // return "<span id='sum_settle_single_feet_money'>结算单笔总手续费：0.00<span>";
+				    }
+				},
+				{
+					field : 'money', 
+					title : '账户余额',
+					sortable: true,
+					footerFormatter:function (value) {
+					  	// return "<span id='sum_single_rate_feet_money'>结算比例总手续费：0.00<span>";
+					}
+				},
+				{
+					field : 'settle_money', 
+					title : '到账金额',
+					sortable: true
+				},
+				{
+					field : 'deduct_money', 
+					title : '扣除金额',
+					sortable: true
+				},
+				{
+					field : 'today_benefit', 
+					title : '今日收益',
+					sortable: true
+				},
+				{
+					field : 'total_benefit', 
+					title : '累计收益',
+					sortable: true
+				},
+				{
+					field : 'settle_single_feet_money', 
+					title : '单笔手续费',
+					sortable: true
+				},
+				{
+					field : 'single_rate_feet_money', 
+					title : '比例手续费',
+					sortable: true
+				},
+				{
+					field : 'status', 
+					title : '状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_status, value);
+		            }
+				},
+				{
+					field : 'auth_status', 
+					title : '认证状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_auth_status, value);
+		            }
+				},
+				{
+					field : 'report_status', 
+					title : '报备状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_report_status, value);
+		            }
+				},
+				{
+					field : 'referer_num', 
+					title : '直推人',
+					sortable: true
+				},
+				{
+					field : 'under_num', 
+					title : '团队人',
+					sortable: true
+				}]
+		    };
+		    //表格初始化
+		    $.table.init(options);
+		}
+		
+		
+		//自定义搜索事件
+		function searchTable(){
+			$.table.search();
+			//汇总数据
+		    setTimeout("summaryAgentUserInfoList()","1000"); 
+		}
+
+		
+		//汇总数据统计
+		function summaryAgentUserInfoList (){
+			$.ajax({
+				url:"/deveagent/userInfo/summaryAgentUserInfoList",
+				type:"post",
+				dataType:"json",
+				data:{
+					'user_tel' : $("#user_tel").val(),
+					'real_name' : $("#real_name").val(),
+					'status' : $("#status").val(),
+					'auth_status' : $("#auth_status").val(),
+					'referer_user_tel' : $("#referer_user_tel").val(),
+					'beginTime' : $("#startTime").val(),
+					'endTime' : $("#endTime").val()
+				},
+				success:function(data){
+					$("#sum_money").html("账户总余额："+data.sum_money);
+					$("#sum_settle_money").html("到账总金额："+data.sum_settle_money);
+					$("#sum_deduct_money").html("扣除总金额："+data.sum_deduct_money);
+					$("#sum_today_benefit").html("今日总收益："+data.sum_today_benefit);
+					$("#sum_total_benefit").html("累计总收益："+data.sum_total_benefit);
+					$("#sum_settle_single_feet_money").html("结算单笔总手续费："+data.sum_settle_single_feet_money);
+					$("#sum_single_rate_feet_money").html("结算比例总手续费："+data.sum_single_rate_feet_money);
+				},
+				error:function(){
+					alert("error");
+				}
+			});
+		}
+		
+		
+		/* 查询用户详情 */
+		function detail(id){
+			var url = prefix + '/detail/'+id;
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		   	$.modal.openTab("编号"+id+"用户详情", url);
+		}
+		
+		
+		//冻结账号
+		function sysFreeze(id) {
+		    var url = prefix + '/toSysFreeze/' + id+"?operParam=1";
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		    $.modal.open("冻结账号", url, '800', '450');
+		}
+		
+		
+		//解冻账号
+		function sysNoFreeze(id) {
+		    var url = prefix + '/toSysFreeze/' + id+"?operParam=0";
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		    $.modal.open("解冻账号", url, '800', '450');
+		}
+		
+		
+		//批量冻结账号
+		function batchSysFreeze(){
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+    		if (rows.length == 0) {
+    			$.modal.alertWarning("请至少选择一条记录");
+    			return;
+    		}
+    		for(var i=0;i<rows.length;i++){
+    			if(rows[i].status==1){
+    				$.modal.alertWarning("不能选择未冻结的账号");
+    				return;
+    			}
+    		}
+    		$.modal.confirm("确认要冻结选中的" + rows.length + "个账号吗?", function() {
+    			var user_ids = "";
+    			// 遍历所有选择的行数据，取每条数据对应的ID
+    			$.each(rows, function(i, row) {
+    				if(i<rows.length-1){
+    					user_ids=user_ids+row['id']+",";
+    				}else{
+    					user_ids=user_ids+row['id'];
+    				}
+    			});
+    			var url = prefix + '/toSysFreeze/' + user_ids+"?operParam=1";
+    			$.modal.open("冻结账号", url, '800', '450');
+    		});
+		}
+		
+		
+		//批量解冻账号
+		function batchSysNoFreeze(){
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+    		if (rows.length == 0) {
+    			$.modal.alertWarning("请至少选择一条记录");
+    			return;
+    		}
+    		for(var i=0;i<rows.length;i++){
+    			if(rows[i].status==0){
+    				$.modal.alertWarning("不能选择已冻结的账号");
+    				return;
+    			}
+    		}
+    		$.modal.confirm("确认要解冻选中的" + rows.length + "个账号吗?", function() {
+    			var user_ids = "";
+    			// 遍历所有选择的行数据，取每条数据对应的ID
+    			$.each(rows, function(i, row) {
+    				if(i<rows.length-1){
+    					user_ids=user_ids+row['id']+",";
+    				}else{
+    					user_ids=user_ids+row['id'];
+    				}
+    			});
+    			var url = prefix + '/toSysFreeze/' + user_ids+"?operParam=0";
+    			$.modal.open("冻结账号", url, '800', '450');
+    		});
+		}
+		
+		
+		//实名认证审核
+		function sysAuthAudit(id) {
+		    var url = prefix + '/sysAuthAudit/' + id;
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		    $.modal.openTab("实名认证审核", url, '800', '450');
+		}
+		
+		
+		//批量实名认证审核
+		function batchSysAuthAudit(){
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+    		if (rows.length == 0) {
+    			$.modal.alertWarning("请至少选择一条记录");
+    			return;
+    		}
+    		for(var i=0;i<rows.length;i++){
+    			if(rows[i].auth_status!=04){
+    				$.modal.alertWarning("只能选择待审核的实名认证用户");
+    				return;
+    			}
+    		}
+    		$.modal.confirm("确认要选中这" + rows.length + "个账号吗?", function() {
+    			var user_ids = "";
+    			// 遍历所有选择的行数据，取每条数据对应的ID
+    			$.each(rows, function(i, row) {
+    				if(i<rows.length-1){
+    					user_ids=user_ids+row['id']+",";
+    				}else{
+    					user_ids=user_ids+row['id'];
+    				}
+    			});
+    			var url = prefix + '/batchSysAuthAudit/' + user_ids;
+    			$.modal.open("批量审核实名认证", url, '800', '450');
+    		});
+		}
+		
+		
+		//代理报备
+		function sysReport(id) {
+		    var url = prefix + '/sysReport/' + id;
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		    $.modal.openTab("代理报备", url, '800', '450');
+		}
+		
+		
+		//查看父级团队
+		function selectParentUser(){
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+    		if (rows.length != 1) {
+    			$.modal.alertWarning("请选择一条记录查看");
+    			return;
+    		}
+    		var url = prefix + '/parentUser/' + rows[0].id;
+		    $.modal.openTab("查看父级团队成员", url);
+		}
+		
+		
+		//查看伞下团队
+		function selectChildrenUser(){
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+    		if (rows.length != 1) {
+    			$.modal.alertWarning("请选择一条记录查看");
+    			return;
+    		}
+    		var url = prefix + '/childrenUser/' + rows[0].id;
+		    $.modal.openTab("查看伞下团队成员", url);
+		}
+		
+		
+		/* 查看父级成员信息 */
+		function parentUser(id) {
+		    var url = prefix + '/parentUser/' + id;
+		    $.modal.openTab("查看父级团队成员", url);
+		}
+		
+		
+		/* 查看伞下成员信息 */
+		function childrenUser(id) {
+		    var url = prefix + '/childrenUser/' + id;
+		    $.modal.openTab("查看伞下团队成员", url);
+		}
+		
+		
+		
+		/* 高返现活动结算-测试 */
+		function zfCeshi1(){
+			$.operate.post("/develop/backTest/zfCeshi1");
+		}
+		
+		//交易量活动结算-测试
+		function zfCeshi2(){
+			$.operate.post("/develop/backTest/zfCeshi2");
+		}
+		
+		//处理交易数据-测试
+		function zfCeshi3(){
+			$.operate.post("/develop/backTest/zfCeshi3");
+		}
+		
+		//处理机器返现-测试
+		function zfCeshi4(){
+			$.operate.post("/develop/backTest/zfCeshi4");
+		}
+		
+		/* 修改系统日期测试 */
+		function toCeshi1(){
+			var url = '/develop/backTest/toCeshi1';
+			$.modal.open("活动测试1", url);
+		}
+		
+		
+		//删除用户信息
+		function remove(id) {
+		    var url = prefix + '/del/' + id;
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		    $.modal.open("删除用户信息", url, '800', '450');
+		}
+		
+		
+		//批量删除用户信息
+		function removeAll(){
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+    		if (rows.length == 0) {
+    			$.modal.alertWarning("请至少选择一条记录");
+    			return;
+    		}
+    		for(var i=0;i<rows.length;i++){
+    			if(rows[i].referer_num!='0' || rows.auth_status==09){
+    				$.modal.alertWarning("只能选择未实名且未推荐人的用户");
+        			return;
+    			}
+    		}
+    		$.modal.confirm("确认要删除选中的" + rows.length + "条数据吗?", function() {
+    			var pos_ids = "";
+    			// 遍历所有选择的行数据，取每条数据对应的ID
+    			$.each(rows, function(i, row) {
+    				if(i<rows.length-1){
+    					pos_ids=pos_ids+row['id']+",";
+    				}else{
+    					pos_ids=pos_ids+row['id'];
+    				}
+    			});
+    			var url = prefix + '/del/' + pos_ids;
+    			$.modal.open("批量删除用户信息", url, '800', '450');
+    		});
+		}
+		
+	</script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('平台系统费率参数列表')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+<body class="gray-bg">
+	
+	<!-- 系统参数列表 -->
+	<div class="container-div ui-layout-center">
+		<div class="row">
+			
+			<!-- 最上面的搜索框 -->
+			<div class="col-sm-12 search-collapse">
+				<form id="user-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								类型：
+								<select name="type" id="type" th:with="type=${@dict.getType('sys_param_rate_type')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li class="select-time">
+								<label>创建时间： </label>
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="beginTime"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+			
+			<!-- 上面的各项增删改查导入导出操作 -->
+	        <div class="btn-group-sm" id="toolbar" role="group">
+	        	<!-- 操作封装：新增 -->
+				<a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="devemana:sysParamRate:add">
+	                <i class="fa fa-plus"></i> 新增
+	            </a>
+	            <!-- 操作封装：修改信息，全屏 -->
+		        <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="devemana:sysParamRate:edit">
+		            <i class="fa fa-edit"></i> 修改
+		        </a>
+		         <!-- 表格：导出数据 -->
+	            <a class="btn btn-danger" onclick="removeAll()" shiro:hasPermission="devemana:sysParamRate:remove">
+		            <i class="fa fa-remove"></i> 批量删除
+		        </a>
+		        <!-- 表格：导出数据 -->
+	            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="devemana:sysParamRate:export">
+		            <i class="fa fa-download"></i> 导出
+		        </a>
+	        </div>
+
+	        
+	        <!-- bootstrap表格数据部分 -->
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+			
+		</div>
+	</div>
+	
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		//编辑
+		var editFlag = [[${@permission.hasPermi('devemana:sysParamRate:edit')}]];
+		//删除
+		var removeFlag = [[${@permission.hasPermi('devemana:sysParamRate:remove')}]];
+	
+		var datas_type= [[${@dict.getType('sys_param_rate_type')}]];
+	
+		//前缀路径
+		var prefix = "/devemana/sysParamRate";
+		
+		//初始化方法
+		$(function() {
+			//初始化时间范围
+			intiTime();
+		   	//查询系统费率参数列表
+		    queryManaSysParamRateList();
+		});
+		
+		//查询系统费率参数列表
+		function queryManaSysParamRateList() {
+		    var options = {
+		        url: prefix + "/list",//URL列表路径
+		        createUrl: prefix + "/add",//新增路径
+		        updateUrl: prefix + "/edit/{id}",//编辑路径
+		        exportUrl: prefix + "/export",//导出路径
+		        modalName: "系统费率参数信息",//模块名称：用户
+		        showFooter: true,
+		        showExport: true,
+		        sortName: 'type,rate',
+	          	sortOrder: 'asc',
+		        //列信息
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+					field : 'id', 
+					title : '编号',
+					sortable: true,
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detail(\'' + row.id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					title: '操作',
+		            align: 'center',
+		            formatter: function(value, row, index) {
+		            	//事件数组
+		                var actions = [];
+		            	//编辑按钮：修改信息 全屏
+		            	actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑  </a> ');
+		            	//删除按钮：删除信息
+		              	actions.push('<a class="btn btn-primary btn-xs ' + removeFlag + '" href="#" onclick="remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除   </a>');
+		              	return actions.join('');
+		            }
+		        },
+				{
+					field : 'type', 
+					title : '类型',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_type, value);
+		            }
+				},
+				{
+					field : 'rate', 
+					title : '费率（单位%）',
+					sortable: true
+				},
+				{
+					field : 'remark', 
+					title : '操作备注',
+					align: 'center',
+				  	formatter: function(value, row, index) {
+				      	return $.table.tooltip(value);
+				  	}
+				},
+				{
+					field : 'cre_date', 
+					title : '创建时间',
+					sortable: true
+				},
+				{
+					field : 'create_by', 
+					title : '创建人'
+				},
+				{
+					field : 'up_date', 
+					title : '更新时间',
+					sortable: true
+				},
+				{
+					field : 'update_by', 
+					title : '更新人'
+				}]
+		    };
+		    //表格初始化
+		    $.table.init(options);
+		}
+		
+		
+		//删除
+		function remove(id) {
+		    var url = prefix + '/remove/' + id;
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		    $.modal.open("删除系统费率", url, '800', '450');
+		}
+		
+		
+		//批量删除
+		function removeAll(){
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+    		if (rows.length == 0) {
+    			$.modal.alertWarning("请至少选择一条记录");
+    			return;
+    		}
+    		$.modal.confirm("确认要删除选中的" + rows.length + "条数据吗?", function() {
+    			var param_rate_ids = "";
+    			// 遍历所有选择的行数据，取每条数据对应的ID
+    			$.each(rows, function(i, row) {
+    				if(i<rows.length-1){
+    					param_rate_ids=param_rate_ids+row['id']+",";
+    				}else{
+    					param_rate_ids=param_rate_ids+row['id'];
+    				}
+    			});
+    			var url = prefix + '/remove/' + param_rate_ids;
+    			$.modal.open("批量删除系统费率", url, '800', '450');
+    		});
+		}
+		
+	</script>
+</body>
+</html>

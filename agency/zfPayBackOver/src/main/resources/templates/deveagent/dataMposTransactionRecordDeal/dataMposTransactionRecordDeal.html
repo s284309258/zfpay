@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('代理MPOS账号政策记录列表')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+<body class="gray-bg">
+	
+	<!-- 系统参数列表 -->
+	<div class="container-div ui-layout-center">
+		<div class="row">
+			
+			<!-- 最上面的搜索框 -->
+			<div class="col-sm-12 search-collapse">
+				<form id="user-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								设备号（机器编号）：<input type="text" name="sn" id="sn" />
+							</li>
+							<li>
+								app_id：<input type="text" name="app_id" id="app_id" />
+							</li>
+							<li>
+								归属代理账号：<input type="text" name="affiliation_agent_account" id="affiliation_agent_account" />
+							</li>
+							<li>
+								商户号：<input type="text" name="mer_id" id="mer_id" />
+							</li>
+							<li>
+								终端号：<input type="text" name="trml_id" id="trml_id" />
+							</li>
+							<li>
+								参考号：<input type="text" name="tran_ref_code" id="tran_ref_code" />
+							</li>
+							<li>
+								交易卡号：<input type="text" name="card_no" id="card_no" />
+							</li>
+							<li>
+								交易类型：
+								<select name="trans_type" id="trans_type" th:with="type=${@dict.getType('data_pos_transaction_record_trans_type')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								交易产品：
+								<select name="trans_product" id="trans_product" th:with="type=${@dict.getType('data_pos_transaction_record_trans_product')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								卡类型：
+								<select name="card_type" id="card_type" th:with="type=${@dict.getType('data_pos_transaction_record_card_type')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								出款状态：
+								<select name="sett_status" id="sett_status" th:with="type=${@dict.getType('data_pos_transaction_record_sett_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								冲正标识：
+								<select name="process_flag" id="process_flag" th:with="type=${@dict.getType('data_pos_transaction_record_process_flag')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								挥卡交易认证标识：
+								<select name="is_authentication" id="is_authentication" th:with="type=${@dict.getType('data_pos_transaction_record_is_authentication')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								处理状态：
+								<select name="status" id="status" th:with="type=${@dict.getType('data_pos_transaction_record_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li class="select-time">
+								<label>创建时间： </label>
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="beginTime"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+			
+			<!-- 上面的各项增删改查导入导出操作 -->
+	        <div class="btn-group-sm" id="toolbar" role="group">
+		        <!-- 表格：导出数据 -->
+	            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="deveagent:dataMposTransactionRecord:export">
+		            <i class="fa fa-download"></i> 导出
+		        </a>
+	        </div>
+
+	        
+	        <!-- bootstrap表格数据部分 -->
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+			
+		</div>
+	</div>
+	
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		//前缀路径
+		var prefix = "/deveagent/dataMposTransactionRecord";
+		
+		var datas_trans_type = [[${@dict.getType('data_pos_transaction_record_trans_type')}]];
+		var datas_trans_product = [[${@dict.getType('data_pos_transaction_record_trans_product')}]];
+		var datas_card_type = [[${@dict.getType('data_pos_transaction_record_card_type')}]];
+		var datas_sett_status = [[${@dict.getType('data_pos_transaction_record_sett_status')}]];
+		var datas_process_flag = [[${@dict.getType('data_pos_transaction_record_process_flag')}]];
+		var datas_is_authentication = [[${@dict.getType('data_pos_transaction_record_is_authentication')}]];
+		var datas_status = [[${@dict.getType('data_pos_transaction_record_status')}]];
+		
+		//初始化方法
+		$(function() {
+			//初始化时间范围
+			intiTime();
+		   	//查询代理交易数据记录列表
+		    queryDataMposTransactionRecordList();
+		});
+		
+		//查询代理交易数据记录列表
+		function queryDataMposTransactionRecordList() {
+		    var options = {
+		        url: prefix + "/list",//URL列表路径
+		        exportUrl: prefix + "/export",//导出路径
+		        modalName: "代理MPOS交易数据记录信息",//模块名称：用户
+		        showExport: true,
+		        sortName: 'id',
+	          	sortOrder: 'desc',
+		        //列信息
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+					field : 'id', 
+					title : '编号',
+					sortable: true
+				},
+				{
+					field : 'manager_id', 
+					title : '代理编号'
+				},
+				{
+					field : 'account_id', 
+					title : '账号编号'
+				},
+				{
+					field : 'app_id', 
+					title : 'app_id'
+				},
+				{
+					field : 'affiliation_agent_account', 
+					title : '归属代理账号'
+				},
+				{
+					field : 'sn', 
+					title : '设备号（机器编号）',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailMpos(\'' + row.sn + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'mer_id', 
+					title : '商户号'
+				},
+				{
+					field : 'mer_name', 
+					title : '商户名称'
+				},
+				{
+					field : 'trml_id', 
+					title : '终端号'
+				},
+				{
+					field : 'trans_amount', 
+					title : '交易金额'
+				},
+				{
+					field : 'trans_time', 
+					title : '交易时间'
+				},
+				{
+					field : 'tran_ref_code', 
+					title : '参考号'
+				},
+				{
+					field : 'trans_type', 
+					title : '交易类型',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_trans_type, value);
+		            }
+				},
+				{
+					field : 'trans_product', 
+					title : '交易产品',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_trans_product, value);
+		            }
+				},
+				{
+					field : 'card_type', 
+					title : '卡类型',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_card_type, value);
+		            }
+				},
+				{
+					field : 'mer_sett_rate', 
+					title : '商户结算费率'
+				},
+				{
+					field : 'mer_withdraw_fee', 
+					title : '商户提现费'
+				},
+				{
+					field : 'mer_cap_fee', 
+					title : '商户封顶费'
+				},
+				{
+					field : 'agent_cost_rate', 
+					title : '代理成本费率'
+				},
+				{
+					field : 'agent_cap_cost_fee', 
+					title : '代理封顶成本费'
+				},
+				{
+					field : 'sett_status', 
+					title : '出款状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_sett_status, value);
+		            }
+				},
+				{
+					field : 'card_no', 
+					title : '交易卡号'
+				},
+				{
+					field : 'process_flag', 
+					title : '冲正标识',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_sett_status, value);
+		            }
+				},
+				{
+					field : 'is_authentication', 
+					title : '挥卡交易认证标识',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_is_authentication, value);
+		            }
+				},
+				{
+					field : 'status', 
+					title : '处理状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_sett_status, value);
+		            }
+				},
+				{
+					field : 'cre_date', 
+					title : '创建时间',
+					sortable: true
+				},
+				{
+					field : 'up_date', 
+					title : '更新时间',
+					sortable: true
+				}]
+		    };
+		    //表格初始化
+		    $.table.init(options);
+		}
+		
+		
+		/* 查询MPOS详情 */
+		function detailMpos(id){
+			var url = '/deveagent/sysMposInfo/detail/'+id;
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		   	$.modal.openTab("编号"+id+"MPOS详情", url);
+		}
+		
+	</script>
+</body>
+</html>

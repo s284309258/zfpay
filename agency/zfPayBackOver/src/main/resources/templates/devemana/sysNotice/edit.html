@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('修改公告')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+	<th:block th:include="include :: bootstrap-fileinput-css" />
+</head>
+
+<body class="white-bg">
+   
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+   
+    <form class="form-horizontal m" id="form-sysNotice-edit" >
+        <input type="hidden" id="notice_id" name="notice_id" th:value="${sysNotice.id}" readonly="true" >
+        
+        <div class="form-group">	
+            <label class="col-sm-1 control-label">公告标题：</label>
+            <div class="col-sm-10">
+                <input type="text" name="notice_title" id="old_notice_title" th:value="${sysNotice.notice_title}" class="form-control" required >
+                <input type="hidden" name="notice_content" id="old_notice_content" th:value="${sysNotice.notice_content}" readonly="true" >
+                <input type="hidden" name="new_notice_content" id="new_notice_content"  >
+            </div>
+        </div>
+        
+        <div class="form-group"> 
+	       	<label class="col-sm-1 control-label ">公告内容：</label>  
+	        <div class="col-sm-10">
+	         	<div class="ibox float-e-margins">
+	            	<div class="ibox-content">
+	                  	<div class="form-group">
+	                    	<div class="file-loading">
+					            <input id="fileinput-demo-new_notice_content" name="file"  type="file" multiple="multiple" >
+					        </div>
+	                  	</div>
+	             	</div>
+	          	</div>
+	      	</div>
+	   	</div>
+	      	
+		<div class="form-group">
+			<label class="col-sm-1 control-label">公告状态：</label>
+			<div class="col-sm-10">
+			    <div class="radio-box" th:each="dict : ${@dict.getType('sys_notice_status')}">
+					<input type="radio" th:id="${dict.dictCode}" name="status" th:value="${dict.dictValue}" th:field="${sysNotice.status}" required >
+					<label th:for="${dict.dictCode}" th:text="${dict.dictLabel}"></label>
+				</div>
+			</div>
+		</div>
+	          
+		<div class="form-group">	
+	        <label class="col-sm-1 control-label">公告备注：</label>
+	        <div class="col-sm-10">
+	            <textarea rows="3" cols="180" name="remark" id="remark" placeholder="请输入备注" required>
+				</textarea>
+	        </div>
+	    </div>
+	</form>
+</div>
+
+<div class="row" style="margin-bottom: 100px">
+	<div class="col-sm-offset-5 col-sm-10">
+	    <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保 存</button>&nbsp;
+	    <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭 </button>
+	</div>
+</div>
+    
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: bootstrap-fileinput-js" />
+    
+<script th:inline="javascript">
+//URL前缀    
+var prefix = ctx + "devemana/sysNotice";
+$("#form-sysNotice-edit").validate({
+	rules:{
+		news_title:{
+			required:true
+		},
+		status: {
+	        required: true
+      	},
+      	remark: {
+	        required: true
+      	}
+	},
+	messages: {
+		news_title: {
+            required: "请输入新闻标题"
+        },
+        status: {
+            required: "请选择状态"
+        },
+        remark: {
+            required: "请输入备注说明"
+        }
+ 	},
+	focusCleanup: true
+});
+
+
+function submitHandler() {
+   	if ($.validate.form()) {
+		if($("#old_notice_content").val()==""){
+			layer.msg("请选择并上传新闻内容",{icon:5,time : 1000});
+			return;
+		}else{
+			if($("#new_notice_content").val()!=""){
+				$("#old_notice_content").val($("#new_notice_content").val());
+			}
+			var notice_content=$("#old_notice_content").val();
+			var last_str=notice_content.substr(notice_content.length-1,1);
+			if(last_str==","){
+				var notice_content=$("#old_notice_content").val();
+				$("#old_notice_content").val(notice_content.substring(0, notice_content.length - 1));
+			}
+			
+			$.operate.saveTab("/devemana/sysNotice/edit", $('#form-sysNotice-edit').serialize());
+		}
+   	}
+}
+
+
+$(document).ready(function () {
+	//公告内容
+	var notice_content_data = [];
+	var notice_content = $("#old_notice_content").val().split(",");
+	for(var i=0;i<notice_content.length;i++){
+		notice_content_data.push(qiniu_domain+notice_content[i]);
+	}
+	initFileInput2(notice_content_data,"new_notice_content","支持单图片拖拽上传<br>建议图片格式：jpg<br>尺寸大小：宽度默认为 1000 px ；高度随意");
+	
+	function initFileInput2(initDataArray,inputId,description){
+		//初始化fileinput控件（第一次初始化）
+	    $("#fileinput-demo-"+inputId+"").fileinput({
+	    	dropZoneTitle : description,
+	    	'theme': 'explorer-fas',
+	        'uploadUrl': '/develop/upload/photopUpload',//上传的地址
+	        allowedFileExtensions : ['jpg', 'png','gif'],//接收的文件后缀,
+	        uploadAsync:true,//false 同步上传，后台用数组接收，true 异步上传，每次上传一个file,会调用多次接口
+	        removeFromPreviewOnError:true, //当选择的文件不符合规则时，例如不是指定后缀文件、大小超出配置等，选择的文件不会出现在预览框中，只会显示错误信息
+	        maxFileCount: 10,//表示允许同时上传的最大文件个数
+	        validateInitialCount:true,
+	        overwriteInitial: true,
+	        initialPreviewAsData: true,
+	        initialPreview: initDataArray,
+	        msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+	        layoutTemplates :{
+	            actionDelete:'', //去除上传预览的缩略图中的删除图标
+	            actionUpload:'',//去除上传预览缩略图中的上传图片；
+	            //actionZoom:''   //去除上传预览缩略图中的查看详情预览的缩略图标。
+	       }
+	    })
+	       .on("fileuploaded", function(event, data) {
+	       	data=data.response;
+	       	if(data.code=='0'){
+	       		$("#"+inputId+"").val($("#"+inputId+"").val()+data.url+",");
+	       	}else{
+	       		layer.msg(data.msg,{icon:5,time : 1000});
+	       	}
+	   	})
+	    .on('fileerror', function(event, data, msg) {  //一个文件上传失败
+	       	alert('文件上传失败！'+msg);
+	   	}); 
+	}
+});
+
+</script>
+</body>
+</html>

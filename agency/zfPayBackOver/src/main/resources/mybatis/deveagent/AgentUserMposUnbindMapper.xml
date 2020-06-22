@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.usermpos.mapper.AgentUserMposUnbindMapper">
+
+	<!-- 查询用户MPOS解绑记录列表 -->
+	<select id="getAgentUserMposUnbindList" parameterType="java.util.Map" resultType="java.util.Map" >
+        select t1.id,t.sn,t2.manager_id,t.mer_id,t.mer_name,t1.user_id,t2.real_name,t2.user_tel,t1.state_status from t_sys_mpos_info t inner join t_user_mpos_info t1 on t.sn=t1.sn
+        inner join t_user_info t2 on t1.user_id=t2.id
+		<where>
+			(t2.id=#{map.uid} or t2.parent_chain like concat(#{map.chain},'%'))
+			and t.act_status='0' and t.dis_status='1' and t1.state_status='1'
+			<if test="map.sn != null and map.sn != ''">
+				AND t.sn = #{map.sn}
+			</if>
+            <if test="map.real_name != null and map.real_name != ''">
+                AND t2.real_name = #{map.real_name}
+            </if>
+            <if test="map.user_tel != null and map.user_tel != ''">
+                AND t2.user_tel = #{map.user_tel}
+            </if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+<!--	&lt;!&ndash; 导出用户MPOS解绑记录列表 &ndash;&gt;-->
+<!--	<select id="selectAgentUserMposUnbindRecordInfoList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.usermpos.domain.AgentUserMposUnbindRecordInfo" >-->
+<!--		SELECT-->
+<!--			t.id,-->
+<!--			t.user_id,-->
+<!--			t.sn,-->
+<!--			t.status,-->
+<!--			t.remark,-->
+<!--			t.update_by,-->
+<!--			DATE_FORMAT(-->
+<!--				STR_TO_DATE(-->
+<!--					CONCAT(t.cre_date, t.cre_time),-->
+<!--					'%Y%m%d%H%i%s'-->
+<!--				),-->
+<!--				'%Y-%m-%d %H:%i:%s'-->
+<!--			) AS cre_date,-->
+<!--			DATE_FORMAT(-->
+<!--				STR_TO_DATE(-->
+<!--					CONCAT(t.up_date, t.up_time),-->
+<!--					'%Y%m%d%H%i%s'-->
+<!--				),-->
+<!--				'%Y-%m-%d %H:%i:%s'-->
+<!--			) AS up_date,-->
+<!--			t1.manager_id,-->
+<!--			t2.user_tel,-->
+<!--			t2.real_name -->
+<!--		FROM-->
+<!--			t_user_mpos_unbind_record_info t-->
+<!--		LEFT JOIN t_sys_mpos_info t1 ON t.sn = t1.sn-->
+<!--		LEFT JOIN t_user_Info t2 ON t.user_id = t2.id-->
+<!--		<where>-->
+<!--			t1.manager_id = #{map.manager_id}-->
+<!--			<if test="map.id != null and map.id != ''">-->
+<!--				AND t.id = #{map.id}-->
+<!--			</if>-->
+<!--			<if test="map.user_id != null and map.user_id != ''">-->
+<!--				AND t.user_id = #{map.user_id}-->
+<!--			</if>-->
+<!--			<if test="map.sn != null and map.sn != ''">-->
+<!--				AND t.sn = #{map.sn}-->
+<!--			</if>-->
+<!--			<if test="map.status != null and map.status != ''">-->
+<!--				AND t.status = #{map.status}-->
+<!--			</if>-->
+<!--			<if test="map.user_tel != null and map.user_tel != ''">-->
+<!--				AND t2.user_tel = #{map.send_user_tel}-->
+<!--			</if>-->
+<!--			<if test="map.real_name != null and map.real_name != ''">-->
+<!--				AND t2.real_name = #{map.real_name}-->
+<!--			</if>-->
+<!--			&lt;!&ndash; 开始时间检索 &ndash;&gt;-->
+<!--			<if test="map.beginTime != null and map.beginTime != ''">-->
+<!--				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')-->
+<!--			</if>-->
+<!--			&lt;!&ndash; 结束时间检索 &ndash;&gt;-->
+<!--			<if test="map.endTime != null and map.endTime != ''">-->
+<!--				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')-->
+<!--			</if>-->
+<!--		</where>-->
+<!--		&lt;!&ndash; 数据范围过滤 &ndash;&gt;-->
+<!--		${map.dataScope}-->
+<!--	</select>-->
+<!--	-->
+<!--	-->
+<!--	&lt;!&ndash;  更新用户MPOS解绑申请状态 &ndash;&gt;-->
+<!--	<update id="updateAgentUserMposUnbindRecordInfoStatus" parameterType="java.util.Map"  >-->
+<!--		update t_user_mpos_unbind_record_info -->
+<!--			set status=#{map.new_status},remark=#{map.remark},-->
+<!--				up_date=#{map.up_date},up_time=#{map.up_time},update_by=#{map.update_by}-->
+<!--		where id=#{map.unbind_id} and status=#{map.old_status}-->
+<!--	</update>-->
+<!--	-->
+<!--	-->
+<!--	&lt;!&ndash; 根据编号查询解绑信息 &ndash;&gt;-->
+<!--	<select id="getAgentUserMposUnbindRecordInfoById" parameterType="java.lang.String" resultType="java.util.Map" >-->
+<!--		SELECT-->
+<!--			*-->
+<!--		FROM-->
+<!--			t_user_mpos_unbind_record_info -->
+<!--		where id=#{unbind_id}-->
+<!--	</select>-->
+	
+</mapper>

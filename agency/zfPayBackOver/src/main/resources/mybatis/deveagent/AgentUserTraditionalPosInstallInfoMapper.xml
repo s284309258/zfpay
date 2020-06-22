@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.usertrapos.mapper.AgentUserTraditionalPosInstallInfoMapper">
+
+	<!-- 查询用户传统POS商户进件列表 -->
+	<select id="getAgentUserTraditionalPosInstallInfoList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			t.id,
+			t.user_id,
+			t.biz_code,
+			t.biz_msg,
+			t.source,
+			t.merchant_name,
+			t.mer_code,
+			t.agent_id,
+			t.settle_flag,
+			t.sdk_push_key,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			t1.manager_id,
+			t1.user_tel,
+			t1.real_name
+		FROM
+			t_user_traditional_pos_install_info t
+		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
+		<where>
+			t1.manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.biz_code != null and map.biz_code != ''">
+				AND t.biz_code = #{map.biz_code}
+			</if>
+			<if test="map.user_id != null and map.user_id != ''">
+				AND t.user_id = #{map.user_id}
+			</if>
+			<if test="map.source != null and map.source != ''">
+				AND t.source = #{map.source}
+			</if>
+			<if test="map.mer_code != null and map.mer_code != ''">
+				AND t.mer_code = #{map.mer_code}
+			</if>
+			<if test="map.agent_id != null and map.agent_id != ''">
+				AND t.agent_id = #{map.agent_id}
+			</if>
+			<if test="map.settle_flag != null and map.settle_flag != ''">
+				AND t.settle_flag = #{map.settle_flag}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t1.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t1.real_name = #{map.real_name}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 导出用户传统POS商户进件列表 -->
+	<select id="selectAgentUserTraditionalPosInstallInfoList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.usertrapos.domain.AgentUserTraditionalPosInstallInfo" >
+		SELECT
+			t.id,
+			t.user_id,
+			t.biz_code,
+			t.biz_msg,
+			t.source,
+			t.merchant_name,
+			t.mer_code,
+			t.agent_id,
+			t.settle_flag,
+			t.sdk_push_key,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			t1.manager_id,
+			t1.user_tel,
+			t1.real_name
+		FROM
+			t_user_traditional_pos_install_info t
+		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
+		<where>
+			t1.manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.biz_code != null and map.biz_code != ''">
+				AND t.biz_code = #{map.biz_code}
+			</if>
+			<if test="map.user_id != null and map.user_id != ''">
+				AND t.user_id = #{map.user_id}
+			</if>
+			<if test="map.source != null and map.source != ''">
+				AND t.source = #{map.source}
+			</if>
+			<if test="map.mer_code != null and map.mer_code != ''">
+				AND t.mer_code = #{map.mer_code}
+			</if>
+			<if test="map.agent_id != null and map.agent_id != ''">
+				AND t.agent_id = #{map.agent_id}
+			</if>
+			<if test="map.settle_flag != null and map.settle_flag != ''">
+				AND t.settle_flag = #{map.settle_flag}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t1.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t1.real_name = #{map.real_name}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 保存装机进件信息 -->
+	<insert id="addAgentUserTraditionalPosInstallInfo" parameterType="java.util.Map" >
+		insert into t_user_traditional_pos_install_info (
+			user_id, biz_code, biz_msg, source, 
+			merchant_name, mer_code, agent_id, settle_flag, 
+			sdk_push_key, remark, create_by, cre_date, cre_time)
+		values (
+			#{map.user_id}, #{map.biz_code}, #{map.biz_msg}, #{map.source}, 
+			#{map.merchant_name}, #{map.mer_code}, #{map.agent_id}, #{map.settle_flag}, 
+			#{map.sdk_push_key}, #{map.remark}, #{map.create_by}, #{map.cre_date}, #{map.cre_time})
+	</insert>
+	
+	
+	<!-- 根据编号查询进件详情 -->
+	<select id="getAgentUserTraditionalPosInstallInfoById" parameterType="java.lang.String" resultType="com.ruoyi.project.deveagent.usertrapos.domain.AgentUserTraditionalPosInstallInfo">
+		SELECT
+			t.id,
+			t.user_id,
+			t.biz_code,
+			t.biz_msg,
+			t.source,
+			t.merchant_name,
+			t.mer_code,
+			t.agent_id,
+			t.settle_flag,
+			t.sdk_push_key,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			t1.manager_id,
+			t1.user_tel
+		FROM
+			t_user_traditional_pos_install_info t
+		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
+		where t.id=#{install_id}
+	</select>
+	
+	
+	<!-- 修改保存进件信息 -->
+	<update id="updateAgentUserTraditionalPosInstallInfo" parameterType="java.util.Map" >
+		update t_user_traditional_pos_install_info
+ 		<set>
+ 			<if test="map.biz_code != null and map.biz_code != ''">biz_code = #{map.biz_code},</if>
+ 			<if test="map.biz_msg != null and map.biz_msg != ''">biz_msg = #{map.biz_msg},</if>
+ 			<if test="map.source != null and map.source != ''">source = #{map.source},</if>
+ 			<if test="map.merchant_name != null and map.merchant_name != ''">merchant_name = #{map.merchant_name},</if>
+ 			<if test="map.mer_code != null and map.mer_code != ''">mer_code = #{map.mer_code},</if>
+ 			<if test="map.agent_id != null and map.agent_id != ''">agent_id = #{map.agent_id},</if>
+ 			<if test="map.settle_flag != null and map.settle_flag != ''">settle_flag = #{map.settle_flag},</if>
+ 			<if test="map.sdk_push_key != null and map.sdk_push_key != ''">sdk_push_key = #{map.sdk_push_key},</if>
+ 			<if test="map.remark != null and map.remark != ''">remark = #{map.remark},</if>
+ 			<if test="map.update_by != null and map.update_by != ''">update_by = #{map.update_by},</if>
+ 			<if test="map.up_date != null and map.up_date != ''">up_date = #{map.up_date},</if>
+ 			<if test="map.up_time != null and map.up_time != ''">up_time = #{map.up_time},</if>
+ 		</set>
+ 		where id=#{map.install_id}
+	</update>
+	
+	
+	<!-- 根据编号删除装机信息 -->
+	<delete id="deleteAgentUserTraditionalPosInstallInfoById" parameterType="java.lang.String" >
+		delete from t_user_traditional_pos_install_info where id=#{install_id}
+	</delete>
+	
+</mapper>

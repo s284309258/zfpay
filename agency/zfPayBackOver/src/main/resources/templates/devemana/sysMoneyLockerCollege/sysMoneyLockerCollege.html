@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('钱柜学院列表')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+
+<body class="gray-bg">
+    
+    <!-- 用户列表 -->
+    <div class="container-div">
+		<div class="row">
+			
+			<!-- 最上面的搜索框 -->
+			<div class="col-sm-12 search-collapse">
+				<form id="notice-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								钱柜学院标题：<input type="text" name="money_locker_title"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+								<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+			
+			<!-- 上面的各项增删改查操作 -->
+	        <div class="btn-group-sm" id="toolbar" role="group">
+		        <!-- 操作封装：添加信息 全屏 -->
+		        <a class="btn btn-success" onclick="$.operate.addTab()" shiro:hasPermission="devemana:sysMoneyLockerCollege:add">
+		            <i class="fa fa-plus"></i> 新增
+		        </a>
+		        <!-- 操作封装：批量删除信息 -->
+		        <a class="btn btn-danger single disabled" onclick="$.operate.removeAll()" shiro:hasPermission="devemana:sysMoneyLockerCollege:remove">
+		            <i class="fa fa-remove"></i> 删除
+		        </a>
+	        </div>
+	        
+	        
+	        <!-- bootstrap表格数据部分 -->
+	        <div class="col-sm-12 select-table table-striped">
+	            <table id="bootstrap-table" data-mobile-responsive="true"></table>
+	        </div>
+	        
+    	</div>
+    </div>
+    
+    
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+    	//删除
+  		var removeFlag = [[${@permission.hasPermi('devemana:sysMoneyLockerCollege:remove')}]];
+  		//详情
+		var detailFlag = [[${@permission.hasPermi('devemana:sysMoneyLockerCollege:detail')}]];
+        
+      	//前缀路径
+        var prefix = ctx + "devemana/sysMoneyLockerCollege";
+
+        
+      	//查询公告列表
+        $(function() {
+            var options = {
+                url: prefix + "/list",//URL列表路径
+                createUrl: prefix + "/add",//新增路径
+                detailUrl: prefix + "/detail/{id}",//详情路径
+                removeUrl: prefix + "/remove",//删除路径
+                modalName: "钱柜学院",//模块名称：用户
+                sortName: 'id',
+	          	sortOrder: 'desc',
+              	//列信息
+                columns: [{
+		            checkbox: true
+		        },
+				{
+					field : 'id', 
+					title : '编号' 
+				},
+				{
+		            title: '操作',
+		            align: 'center',
+		            formatter: function(value, row, index) {
+		            	//事件数组
+		            	var actions = [];
+		            	//详情按钮
+		            	actions.push('<a class="btn btn-warning btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="detail(\'' + row.id + '\')"><i class="fa fa-search"></i>详细</a> ');
+		            	//删除按钮：删除信息
+		            	actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="#" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+						return actions.join('');
+		            }
+		        },
+				{
+					field : 'money_locker_title', 
+					title : '钱柜标题' 
+				},
+				{
+		            field: 'money_locker_cover',
+		            title: '钱柜封面图',
+		            formatter: function(value, row, index) {
+						return $.table.imageView(qiniu_domain+value);
+					}
+		        },
+		        {
+					field : 'remark', 
+					title : '备注' 
+				},
+				{
+					field : 'create_by', 
+					title : '创建者' 
+				},
+				{
+		            field: 'cre_date',
+		            title: '创建时间',
+		            sortable: true
+		        },
+		        {
+					field : 'update_by', 
+					title : '更新者' 
+				},
+				{
+		            field: 'up_date',
+		            title: '更新时间',
+		            sortable: true
+		        }]
+            };
+          	//表格初始化
+            $.table.init(options);
+        });
+      	
+      	
+        /* 查询钱柜学院详情 */
+		function detail(id){
+			var url = prefix+'/detail/'+id;
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		   	$.modal.openTab("编号"+id+"钱柜详情", url);
+		}
+      	
+    </script>
+</body>
+</html>

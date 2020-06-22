@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('流量卡详情')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+	<th:block th:include="include :: bootstrap-fileinput-css" />
+</head>
+<body class="gray-bg">
+	
+	<!-- 系统参数列表 -->
+	<div class="container-div ui-layout-center">
+		<div class="row">
+			<!-- 最上面的搜索框 -->
+			<div class="col-sm-12 search-collapse" >
+				<form id="user-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								<input type="hidden" name="card_no" id="card_no" th:value="${sysTrafficCardInfo.card_no}" >
+								手机号：<input type="text" name="user_tel" id="user_tel" />
+							</li>
+							<li>
+								流量卡号：<input type="text" name="card_no" id="card_no" />
+							</li>
+							<li>
+								归属状态：
+								<select name="state_status" id="state_status" th:with="type=${@dict.getType('user_pos_info_state_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								删除状态：
+								<select name="del" id="del" th:with="type=${@dict.getType('sys_all_table_del')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li class="select-time">
+								<label>创建时间： </label>
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="beginTime"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+		
+			
+			<div class="wrapper wrapper-content animated fadeInRight ibox-content" style="margin-top: 120px">
+				<form class="form-horizontal m" id="form-userMposInfo-add">
+					<h3>该流量卡基本信息</h3>
+					<div class="form-group">
+						<label class="col-sm-1 control-label">编号：</label>
+						<div class="col-sm-3">
+							<input class="form-control" type="text" th:value="${sysTrafficCardInfo.id}" disabled="disabled" />
+						</div>
+						<label class="col-sm-1 control-label">流量卡号：</label>
+						<div class="col-sm-3">
+							<input class="form-control" type="text" th:value="${sysTrafficCardInfo.card_no}" disabled="disabled" />
+						</div>
+						<label class="col-sm-1 control-label">分配状态：</label>
+						<div class="col-sm-3">
+							<input class="form-control" type="text" th:value="${@dict.getLabel('sys_pos_info_dis_status',sysTrafficCardInfo.dis_status)}" disabled="disabled"  />
+						</div>
+					</div>
+			       	
+					<div class="form-group">
+						<label class="col-sm-1 control-label">创建时间：</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:value="${sysTrafficCardInfo.cre_date}" disabled="disabled" />
+						</div>
+						<label class="col-sm-1 control-label">更新时间：</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:value="${sysTrafficCardInfo.up_date}" disabled="disabled"  />
+						</div>
+						<label class="col-sm-1 control-label">创建人：</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:value="${sysTrafficCardInfo.create_by}" disabled="disabled"  />
+						</div>
+						<label class="col-sm-1 control-label">更新人：</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:value="${sysTrafficCardInfo.update_by}" disabled="disabled"  />
+						</div>
+					</div>
+			       	
+			   	</form>
+			   	
+			</div>
+			
+			
+			<!-- 上面的各项增删改查导入导出操作 -->
+	        <div class="btn-group-sm" id="toolbar" role="group" style="margin-top: 15px">
+	        <h3>该流量卡相关分配信息</h3>
+	        </div>
+	        
+	        <!-- bootstrap表格数据部分 -->
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+			
+		</div>
+		
+	</div>
+	
+	
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: bootstrap-fileinput-js" />
+	<script th:inline="javascript">
+		var datas_state_status = [[${@dict.getType('user_pos_info_state_status')}]];
+		var datas_del = [[${@dict.getType('sys_activity_info_del')}]];
+
+
+		//前缀路径
+		var prefix = "/deveagent/userTrafficCardInfo";
+	
+		//初始化方法
+		$(function() {
+			//初始化时间范围
+			intiTime();
+			//查询用户流量卡机列表
+		    queryAgentUserTrafficCardInfoList();
+		});
+		
+		//查询用户流量卡机列表
+		function queryAgentUserTrafficCardInfoList() {
+		    var options = {
+		        url: prefix + "/list",//URL列表路径
+		        detailUrl: prefix + "/detail/{id}",//详情路径
+		        exportUrl: prefix + "/export",//导出路径
+		        modalName: "用户MPOS信息",//模块名称：用户
+		        showExport: true,
+		        sortName: 'id',
+	          	sortOrder: 'desc',
+		        //列信息
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+					field : 'id', 
+					title : '编号'
+				},
+				{
+					field : 'manager_id', 
+					title : '代理编号'
+				},
+				{
+					field : 'user_id', 
+					title : '用户编号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailUser(\'' + row.user_id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'user_tel', 
+					title : '手机号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailUser(\'' + row.user_id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'real_name', 
+					title : '姓名'
+				},
+				{
+					field : 'card_no', 
+					title : '流量卡号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailTrafficCard(\'' + row.card_no + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'state_status', 
+					title : '归属状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_state_status, value);
+		            }
+				},
+				{
+					field : 'del', 
+					title : '删除状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_del, value);
+		            }
+				},
+				{
+					field : 'remark', 
+					title : '备注'
+				},
+				{
+					field : 'cre_date', 
+					title : '创建时间',
+					sortable: true
+				},
+				{
+					field : 'create_by', 
+					title : '创建者'
+				},
+				{
+					field : 'up_date', 
+					title : '更新时间',
+					sortable: true
+				},
+				{
+					field : 'update_by', 
+					title : '更新者'
+				}]
+		    };
+		    //表格初始化
+		    $.table.init(options);
+		}
+		
+		
+		/* 查询流量卡详情 */
+		function detailTrafficCard(id){
+			var url = '/deveagent/sysTrafficCardInfo/detail/'+id;
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		   	$.modal.openTab("编号"+id+"流量卡详情", url);
+		}
+		
+		
+		//参数处理
+		function queryParams(params) {
+			var search = $.table.queryParams(params);
+			search.card_no = $('#card_no').val();//选中的值
+			return search;
+		}
+
+	</script>
+
+</body>
+
+</html>

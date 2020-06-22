@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.account.mapper.AgentUserAccountMapper">
+
+	<!-- 查询用户中付账号列表 -->
+	<select id="getAgentUserAccountList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			id,
+			manager_id,
+			app_id,
+			app_key,
+			app_name,
+			is_start,
+			tran_time,
+			create_by,
+			update_by,
+			remark,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(up_date, up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date
+		FROM
+			sys_user_account
+		<where>
+			manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.app_id != null and map.app_id != ''">
+				AND app_id = #{map.app_id}
+			</if>
+			<if test="map.app_key != null and map.app_key != ''">
+				AND app_key = #{map.app_key}
+			</if>
+			<if test="map.is_start != null and map.is_start != ''">
+				AND is_start = #{map.is_start}
+			</if>
+			<if test="map.del != null and map.del != ''">
+				AND del = #{map.del}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 导出用户中付账号列表 -->
+	<select id="selectAgentUserAccountList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.account.domain.AgentUserAccount" >
+		SELECT
+			id,
+			manager_id,
+			app_id,
+			app_key,
+			app_name,
+			is_start,
+			tran_time,
+			create_by,
+			update_by,
+			remark,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(up_date, up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date
+		FROM
+			sys_user_account
+		<where>
+			manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.app_id != null and map.app_id != ''">
+				AND app_id = #{map.app_id}
+			</if>
+			<if test="map.app_key != null and map.app_key != ''">
+				AND app_key = #{map.app_key}
+			</if>
+			<if test="map.is_start != null and map.is_start != ''">
+				AND is_start = #{map.is_start}
+			</if>
+			<if test="map.del != null and map.del != ''">
+				AND del = #{map.del}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 根据用户id查询中付账号详情 -->
+	<select id="getAgentUserAccountById" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT
+			id,
+			manager_id,
+			app_id,
+			app_key,
+			app_name,
+			is_start,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					tran_time,
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS tran_time,
+			tran_time,
+			create_by,
+			update_by,
+			remark,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(up_date, up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date
+		FROM
+			sys_user_account
+		where id=#{account_id}
+	</select>
+	
+	
+	<!-- 新增保存中付账号 -->
+	<insert id="addAgentUserAccount" parameterType="java.util.Map" >
+		insert into sys_user_account (
+			manager_id, app_id, app_key, app_name, tran_time, is_start, 
+			create_by, remark, cre_date, cre_time)
+		values (
+			#{map.manager_id}, #{map.app_id}, #{map.app_key}, #{map.app_name}, #{map.tran_time}, #{map.is_start}, 
+			#{map.create_by}, #{map.remark}, #{map.cre_date}, #{map.cre_time})
+	</insert>
+	
+	
+	<!-- 更新保存中付账号 -->
+	<update id="updateAgentUserAccount" parameterType="java.util.Map" >
+		update sys_user_account
+    	<set >
+	      	<if test="map.app_id != null and map.app_id != '' " >
+	      		app_id = #{map.app_id},
+	      	</if>
+	      	<if test="map.app_key != null and map.app_key != '' " >
+	      		app_key = #{map.app_key},
+	      	</if>
+	      	<if test="map.app_name != null and map.app_name != '' " >
+	      		app_name = #{map.app_name},
+	      	</if>
+	      	<if test="map.is_start != null and map.is_start != '' " >
+	      		is_start = #{map.is_start},
+	      	</if>
+	      	<if test="map.tran_time != null and map.tran_time != '' " >
+	      		tran_time = #{map.tran_time},
+	      	</if>
+	      	<if test="map.remark != null and map.remark != '' " >
+	      		remark = #{map.remark},
+	      	</if>
+	      	<if test="map.update_by != null and map.update_by != '' " >
+	      		update_by = #{map.update_by},
+	      	</if>
+	      	<if test="map.up_date != null and map.up_date != '' " >
+	      		up_date = #{map.up_date},
+	      	</if>
+	      	<if test="map.up_time != null and map.up_time != '' " >
+	      		up_time = #{map.up_time}
+	      	</if>
+    	</set>
+		where id=#{map.account_id} and manager_id=#{map.manager_id}
+	</update>
+	
+	
+	<!-- 根据id删除中付账号 -->
+	<delete id="delAgentUserAccountById" parameterType="java.util.Map" >
+		delete from sys_user_account where id=#{map.account_id} and manager_id=#{map.manager_id}
+	</delete>
+	
+	
+	<!-- 更新中付账号状态 -->
+	<update id="updateAgentUserAccountStart" parameterType="java.util.Map" >
+		update sys_user_account set 
+			is_start=#{map.new_is_start},remark = #{map.remark},up_date = #{map.up_date},up_time = #{map.up_time}
+		where id=#{map.account_id} and manager_id=#{map.manager_id} and is_start=#{map.old_is_start}
+	</update>
+	
+	
+	<!-- 查询代理有效的中付账号列表 -->
+	<select id="getAgentValidUserAccountList" parameterType="com.ruoyi.project.deveagent.account.domain.AgentUserAccount" resultType="java.util.Map" >
+		SELECT
+			id,
+			app_id
+		FROM
+			sys_user_account
+		where
+			manager_id = #{map.manager_id}
+			<!-- and is_start='0' -->
+	</select>
+	
+	
+	<!-- 查询代理中付账号 -->
+	<select id="getAgentUserAccount" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			id,
+			manager_id,
+			app_id,
+			app_key,
+			app_name,
+			is_start
+		FROM
+			sys_user_account
+		where manager_id=#{map.manager_id} AND id=#{map.account_id}
+		</select>
+	
+</mapper>

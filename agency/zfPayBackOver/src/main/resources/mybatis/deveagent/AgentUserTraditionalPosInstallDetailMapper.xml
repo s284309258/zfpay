@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.usertrapos.mapper.AgentUserTraditionalPosInstallDetailMapper">
+
+	<!-- 查询用户传统POS机具返现记录列表 -->
+	<select id="getAgentUserTraditionalPosInstallDetailList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			t.id,
+			t.install_id,
+			t.terminal,
+			t.machine_id,
+			t.sim_card,
+			t.is_take_machi,
+			t1.user_id,
+			t2.manager_id,
+			t2.user_tel,
+			t2.real_name 
+		FROM
+			t_user_traditional_pos_install_detail t
+		LEFT JOIN t_user_traditional_pos_install_info t1 ON t.install_id = t1.id
+		LEFT JOIN t_user_info t2 ON t1.user_id = t2.id
+		<where>
+			t2.manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.install_id != null and map.install_id != ''">
+				AND t.install_id = #{map.install_id}
+			</if>
+			<if test="map.terminal != null and map.terminal != ''">
+				AND t.user_id = #{map.terminal}
+			</if>
+			<if test="map.machine_id != null and map.machine_id != ''">
+				AND t.machine_id = #{map.machine_id}
+			</if>
+			<if test="map.sim_card != null and map.sim_card != ''">
+				AND t.sim_card = #{map.sim_card}
+			</if>
+			<if test="map.is_take_machi != null and map.is_take_machi != ''">
+				AND t.is_take_machi = #{map.is_take_machi}
+			</if>
+			<if test="map.user_id != null and map.user_id != ''">
+				AND t1.user_id = #{map.user_id}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t2.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t2.real_name = #{map.real_name}
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 导出用户传统POS机具返现记录列表 -->
+	<select id="selectAgentUserTraditionalPosInstallDetailList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.usertrapos.domain.AgentUserTraditionalPosInstallDetail" >
+		SELECT
+			t.id,
+			t.install_id,
+			t.terminal,
+			t.machine_id,
+			t.sim_card,
+			t.is_take_machi,
+			t1.user_id,
+			t2.manager_id,
+			t2.user_tel,
+			t2.real_name 
+		FROM
+			t_user_traditional_pos_install_detail t
+		LEFT JOIN t_user_traditional_pos_install_info t1 ON t.install_id = t1.id
+		LEFT JOIN t_user_info t2 ON t1.user_id = t2.id
+		<where>
+			t2.manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.install_id != null and map.install_id != ''">
+				AND t.install_id = #{map.install_id}
+			</if>
+			<if test="map.terminal != null and map.terminal != ''">
+				AND t.user_id = #{map.terminal}
+			</if>
+			<if test="map.machine_id != null and map.machine_id != ''">
+				AND t.machine_id = #{map.machine_id}
+			</if>
+			<if test="map.sim_card != null and map.sim_card != ''">
+				AND t.sim_card = #{map.sim_card}
+			</if>
+			<if test="map.is_take_machi != null and map.is_take_machi != ''">
+				AND t.is_take_machi = #{map.is_take_machi}
+			</if>
+			<if test="map.user_id != null and map.user_id != ''">
+				AND t1.user_id = #{map.user_id}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t2.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t2.real_name = #{map.real_name}
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 根据编号查询装机详情数量 -->
+	<select id="countAgentUserTraditionalPosInstallDetai" parameterType="java.lang.String" resultType="java.lang.Integer" >
+		select count(*) from t_user_traditional_pos_install_detail where install_id=#{install_id}
+	</select>
+	
+	
+	<!-- 新增商户进件明细 -->
+	<insert id="addAgentUserTraditionalPosInstallDetail" parameterType="java.util.Map" >
+		insert into t_user_traditional_pos_install_detail (
+			install_id, terminal, machine_id, sim_card, 
+			is_take_machi, remark, create_by, cre_date, cre_time)
+		values (
+			#{map.install_id}, #{map.terminal}, #{map.machine_id}, #{map.sim_card}, 
+			#{map.is_take_machi}, #{map.remark}, #{map.create_by}, #{map.cre_date}, #{map.cre_time})
+	</insert>
+	
+	
+	<!-- 根据编号查询商户进件详情 -->
+	<select id="getAgentUserTraditionalPosInstallDetailById" parameterType="java.lang.String" resultType="com.ruoyi.project.deveagent.usertrapos.domain.AgentUserTraditionalPosInstallDetail" >
+		SELECT
+			t.id,
+			t.install_id,
+			t.terminal,
+			t.machine_id,
+			t.sim_card,
+			t.is_take_machi,
+			t1.user_id,
+			t2.manager_id,
+			t2.user_tel
+		FROM
+			t_user_traditional_pos_install_detail t
+		LEFT JOIN t_user_traditional_pos_install_info t1 ON t.install_id = t1.id
+		LEFT JOIN t_user_info t2 ON t1.user_id = t2.id
+		where t.id=#{detail_id}
+	</select>
+	
+	
+	<!-- 修改保存进件明细信息 -->
+	<update id="updateAgentUserTraditionalPosInstallDetail" parameterType="java.util.Map" >
+		update t_user_traditional_pos_install_detail
+ 		<set>
+ 			<if test="map.terminal != null and map.terminal != ''">terminal = #{map.terminal},</if>
+ 			<if test="map.machine_id != null and map.machine_id != ''">machine_id = #{map.machine_id},</if>
+ 			<if test="map.sim_card != null and map.sim_card != ''">sim_card = #{map.sim_card},</if>
+ 			<if test="map.is_take_machi != null and map.is_take_machi != ''">is_take_machi = #{map.is_take_machi},</if>
+ 			<if test="map.remark != null and map.remark != ''">remark = #{map.remark},</if>
+ 			<if test="map.update_by != null and map.update_by != ''">update_by = #{map.update_by},</if>
+ 			<if test="map.up_date != null and map.up_date != ''">up_date = #{map.up_date},</if>
+ 			<if test="map.up_time != null and map.up_time != ''">up_time = #{map.up_time},</if>
+ 		</set>
+ 		where id=#{map.detail_id}
+	</update>
+	
+	
+	<!-- 根据编号删除商户进件明细 -->
+	<delete id="deleteAgentUserTraditionalPosInstallDetailById" parameterType="java.lang.String" >
+		delete from t_user_traditional_pos_install_detail where id=#{detail_id}
+	</delete>
+	
+</mapper>

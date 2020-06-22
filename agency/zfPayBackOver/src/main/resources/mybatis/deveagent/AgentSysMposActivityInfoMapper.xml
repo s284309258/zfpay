@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.activitympos.mapper.AgentSysMposActivityInfoMapper">
+
+	<!-- 查询线上活动(MPOS)列表 -->
+	<select id="getAgentSysMposActivityInfoList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			id,
+			manager_id,
+			order_id,
+			activity_name,
+			activity_type,
+			start_date,
+			end_date,
+			cover_url,
+			detail_url,
+			status,
+			del,
+			CASE
+				WHEN #{map.today_date} &lt; start_date THEN "0" 
+				WHEN #{map.today_date} &gt;= start_date AND #{map.today_date} &lt;= end_date THEN "1" 
+				WHEN #{map.today_date} &gt; end_date THEN "2" 
+			END AS open_status,
+			remark,
+			create_by,
+			update_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(up_date, up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date
+		FROM
+			t_sys_mpos_activity_info 
+		<where>
+			manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND id = #{map.id}
+			</if>
+			<if test="map.order_id != null and map.order_id != ''">
+				AND order_id = #{map.order_id}
+			</if>
+			<if test="map.activity_type != null and map.activity_type != ''">
+				AND activity_type = #{map.activity_type}
+			</if>
+			<if test="map.del != null and map.del != ''">
+				AND del = #{map.del}
+			</if>
+			<if test="map.status != null and map.status != ''">
+				AND status = #{map.status}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.activityBeginTime != null and map.activityBeginTime != ''">
+				AND start_date &gt;= date_format(#{map.map.activityBeginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.activityEndTime != null and map.activityEndTime != ''">
+				AND end_date &lt;= date_format(#{map.activityEndTime},'%Y%m%d')
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 导出线上活动(MPOS)列表 -->
+	<select id="selectAgentSysMposActivityInfoList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.activitympos.domain.AgentSysMposActivityInfo" >
+		SELECT
+			id,
+			manager_id,
+			order_id,
+			activity_name,
+			activity_type,
+			start_date,
+			end_date,
+			cover_url,
+			detail_url,
+			status,
+			del,
+			CASE
+				WHEN #{map.today_date} &lt; start_date THEN "0" 
+				WHEN #{map.today_date} &gt;= start_date AND #{map.today_date} &lt;= end_date THEN "1" 
+				WHEN #{map.today_date} &gt; end_date THEN "2" 
+			END AS open_status,
+			remark,
+			create_by,
+			update_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(up_date, up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date
+		FROM
+			t_sys_mpos_activity_info 
+		<where>
+			manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND id = #{map.id}
+			</if>
+			<if test="map.order_id != null and map.order_id != ''">
+				AND order_id = #{map.order_id}
+			</if>
+			<if test="map.activity_type != null and map.activity_type != ''">
+				AND activity_type = #{map.activity_type}
+			</if>
+			<if test="map.del != null and map.del != ''">
+				AND del = #{map.del}
+			</if>
+			<if test="map.status != null and map.status != ''">
+				AND status = #{map.status}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.activityBeginTime != null and map.activityBeginTime != ''">
+				AND start_date &gt;= date_format(#{map.map.activityBeginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.activityEndTime != null and map.activityEndTime != ''">
+				AND end_date &lt;= date_format(#{map.activityEndTime},'%Y%m%d')
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 新增线上活动(MPOS) -->
+	<insert id="addAgentSysMposActivityInfo" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="map.id" >
+		insert into t_sys_mpos_activity_info 
+			(manager_id,order_id,activity_name,activity_type,start_date,end_date,
+			 cover_url,detail_url,cre_date,cre_time,create_by,remark)
+			values 
+			(#{map.manager_id},#{map.order_id},#{map.activity_name},#{map.activity_type},#{map.start_date},#{map.end_date},
+			#{map.cover_url},#{map.detail_url},#{map.cre_date},#{map.cre_time},#{map.create_by},#{map.remark})
+	</insert>
+	
+	
+	<!-- 根据id查看线上活动(MPOS)详情 -->
+	<select id="getAgentSysMposActivityInfo" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			id,
+			manager_id,
+			order_id,
+			activity_name,
+			activity_type,
+			start_date,
+			end_date,
+			cover_url,
+			detail_url,
+			status,
+			del,
+			CASE
+				WHEN #{map.today_date} &lt; start_date THEN "0" 
+				WHEN #{map.today_date} &gt;= start_date AND #{map.today_date} &lt;= end_date THEN "1" 
+				WHEN #{map.today_date} &gt; end_date THEN "2" 
+			END AS open_status,
+			remark,
+			create_by,
+			update_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(up_date, up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date
+		FROM
+			t_sys_mpos_activity_info 
+		where
+			id = #{map.activity_id}
+	</select>
+	
+	
+	<!-- 修改保存线上活动（只能待发布未删除的状态才能编辑） -->
+	<update id="updateAgentSysMposActivityInfo" parameterType="java.util.Map" >
+		update t_sys_mpos_activity_info
+ 		<set>
+ 			<if test="map.activity_name != null and map.activity_name != ''">activity_name = #{map.activity_name},</if>
+ 			<if test="map.start_date != null and map.start_date != ''">start_date = #{map.start_date},</if>
+ 			<if test="map.end_date != null and map.end_date != ''">end_date = #{map.end_date},</if>
+ 			<if test="map.cover_url != null and map.cover_url != ''">cover_url = #{map.cover_url},</if>
+ 			<if test="map.detail_url != null and map.detail_url != ''">detail_url = #{map.detail_url},</if>
+ 			<if test="map.remark != null and map.remark != ''">remark = #{map.remark},</if>
+ 			<if test="map.update_by != null and map.update_by != ''">update_by = #{map.update_by},</if>
+ 			<if test="map.up_date != null and map.up_date != ''">up_date = #{map.up_date},</if>
+ 			<if test="map.up_time != null and map.up_time != ''">up_time = #{map.up_time},</if>
+ 		</set>
+ 		where id=#{map.activity_id} AND manager_id=#{map.manager_id} AND status='00' AND del='0'
+	</update>
+	
+	
+	<!-- 删除单个线上活动（MPOS）=====》只能删除未发布且未删除的活动 -->
+	<update id="updateAgentSysMposActivityInfoDel" parameterType="java.util.Map" >
+		update t_sys_mpos_activity_info
+ 			set del=#{map.new_del}, update_by=#{map.update_by},
+ 			up_date=#{map.up_date}, up_time=#{map.up_time}
+ 		where id=#{map.activity_id} AND manager_id=#{map.manager_id} AND status=#{map.old_status} AND del=#{map.old_del}
+	</update>
+	
+	
+	<!-- 查询是否存在同类型的正在进行中的未删除的活动信息 -->
+	<select id="getAgentOnMposActivitySameType" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			t.*
+		FROM
+			t_sys_mpos_activity_info t
+		LEFT JOIN t_sys_mpos_activity_info t1 ON t.activity_type = t1.activity_type
+		WHERE
+			t1.id = #{map.activity_id}
+		AND t.status = '09' and t.del='0' and t.manager_id = #{map.manager_id}
+	</select>
+	
+	
+	<!-- 更新线上活动（MPOS）活动状态 -->
+	<update id="updateAgentSysMposActivityInfoStatus" parameterType="java.util.Map" >
+		update t_sys_mpos_activity_info
+ 			set status=#{map.new_status}, update_by=#{map.update_by},
+ 			up_date=#{map.up_date}, up_time=#{map.up_time}
+ 		where id=#{map.activity_id} AND manager_id=#{map.manager_id} AND status=#{map.old_status} AND del=#{map.old_del}
+	</update>
+	
+	
+	<!-- 根据活动id查询活动详情 -->
+	<select id="getAgentSysMposActivityInfoById" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT
+			id,
+			manager_id,
+			order_id,
+			activity_name,
+			activity_type,
+			start_date,
+			end_date,
+			cover_url,
+			detail_url,
+			status,
+			del,
+			remark,
+			create_by,
+			update_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(up_date, up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date
+		FROM
+			t_sys_mpos_activity_info 
+		where
+			id = #{activity_id}
+	</select>
+	
+</mapper>

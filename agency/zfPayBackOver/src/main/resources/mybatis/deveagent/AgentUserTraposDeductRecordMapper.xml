@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.usertrapos.mapper.AgentUserTraposDeductRecordMapper">
+
+	<!-- 查询用户传统POS机具返现记录列表 -->
+	<select id="getAgentUserTraposDeductRecordList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			t.id,
+			t.order_id,
+			t.assess_id,
+			t.user_id,
+			t.sn,
+			t.money,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t1.manager_id,
+			t1.user_tel,
+			t1.real_name,
+			(select policy_name from t_sys_pos_policy_define where id=t.policy_id) as policy_name
+		FROM
+			t_user_trapos_deduct_record t
+		INNER JOIN t_user_info t1 ON t.user_id = t1.id
+		<where>
+			(t1.id=#{map.uid} or t1.parent_chain like concat(#{map.chain},'%'))
+			and t.pos_type is null
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.order_id != null and map.order_id != ''">
+				AND t.order_id = #{map.order_id}
+			</if>
+			<if test="map.user_id != null and map.user_id != ''">
+				AND t.user_id = #{map.user_id}
+			</if>
+			<if test="map.sn != null and map.sn != ''">
+				AND t.sn = #{map.sn}
+			</if>
+			<if test="map.assess_id != null and map.assess_id != ''">
+				AND t.assess_id = #{map.assess_id}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t1.user_tel = #{map.send_user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t1.real_name = #{map.real_name}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 导出用户传统POS机具返现记录列表 -->
+	<select id="selectAgentUserTraposDeductRecordList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.usertrapos.domain.AgentUserTraposDeductRecord" >
+		SELECT
+			t.id,
+			t.order_id,
+			t.assess_id,
+			t.user_id,
+			t.sn,
+			t.money,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t1.manager_id,
+			t1.user_tel,
+			t1.real_name,
+			(select policy_name from t_sys_pos_policy_define where id=t.policy_id) as policy_name
+		FROM
+			t_user_trapos_deduct_record t
+		INNER JOIN t_user_info t1 ON t.user_id = t1.id
+		<where>
+			(t1.id=#{map.uid} or t1.parent_chain like concat(#{map.chain},'%'))
+			and t.pos_type is null
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.order_id != null and map.order_id != ''">
+				AND t.order_id = #{map.order_id}
+			</if>
+			<if test="map.user_id != null and map.user_id != ''">
+				AND t.user_id = #{map.user_id}
+			</if>
+			<if test="map.sn != null and map.sn != ''">
+				AND t.sn = #{map.sn}
+			</if>
+			<if test="map.assess_id != null and map.assess_id != ''">
+				AND t.assess_id = #{map.assess_id}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t1.user_tel = #{map.send_user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t1.real_name = #{map.real_name}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+</mapper>

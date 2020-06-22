@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.account.mapper.AgentUserReportRecordDetailMapper">
+
+	<!-- 查询代理报备列表 -->
+	<select id="getAgentUserReportRecordDetailList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			t.id,
+			t.user_id,
+			t.record_id,
+			t.sub_agent_account,
+			t.sub_agent_name,
+			t.sub_agent_id_num,
+			t.sub_agent_id_img,
+			t.sub_agent_sett_account,
+			t.is_report,
+			t.remark,
+			t.create_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			t1.manager_id,
+			t1.agent_account,
+			t2.user_tel,
+			t2.real_name
+		FROM
+			t_user_report_record_detail t
+		LEFT JOIN t_user_report_record t1 ON t.record_id = t1.id
+		LEFT JOIN t_user_info t2 ON t.user_id = t2.id
+		<where>
+			t1.manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.record_id != null and map.record_id != ''">
+				AND t.record_id = #{map.record_id}
+			</if>
+			<if test="map.sub_agent_account != null and map.sub_agent_account != ''">
+				AND t.sub_agent_account = #{map.sub_agent_account}
+			</if>
+			<if test="map.sub_agent_name != null and map.sub_agent_name != ''">
+				AND t.sub_agent_name = #{map.sub_agent_name}
+			</if>
+			<if test="map.sub_agent_id_num != null and map.sub_agent_id_num != ''">
+				AND t.sub_agent_id_num = #{map.sub_agent_id_num}
+			</if>
+			<if test="map.sub_agent_sett_account != null and map.sub_agent_sett_account != ''">
+				AND t.sub_agent_sett_account = #{map.sub_agent_sett_account}
+			</if>
+			<if test="map.is_report != null and map.is_report != ''">
+				AND t.is_report = #{map.is_report}
+			</if>
+			<if test="map.agent_account != null and map.agent_account != ''">
+				AND t1.agent_account = #{map.agent_account}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t2.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t2.real_name = #{map.real_name}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 导出用户信息 -->
+	<select id="selectAgentUserReportRecordDetailList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.account.domain.AgentUserReportRecordDetail" >
+		SELECT
+			t.id,
+			t.user_id,
+			t.record_id,
+			t.sub_agent_account,
+			t.sub_agent_name,
+			t.sub_agent_id_num,
+			t.sub_agent_id_img,
+			t.sub_agent_sett_account,
+			t.is_report,
+			t.remark,
+			t.create_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			t1.manager_id,
+			t1.agent_account,
+			t2.user_tel,
+			t2.real_name
+		FROM
+			t_user_report_record_detail t
+		LEFT JOIN t_user_report_record t1 ON t.record_id = t1.id
+		LEFT JOIN t_user_info t2 ON t.user_id = t2.id
+		<where>
+			t1.manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.record_id != null and map.record_id != ''">
+				AND t.record_id = #{map.record_id}
+			</if>
+			<if test="map.sub_agent_account != null and map.sub_agent_account != ''">
+				AND t.sub_agent_account = #{map.sub_agent_account}
+			</if>
+			<if test="map.sub_agent_name != null and map.sub_agent_name != ''">
+				AND t.sub_agent_name = #{map.sub_agent_name}
+			</if>
+			<if test="map.sub_agent_id_num != null and map.sub_agent_id_num != ''">
+				AND t.sub_agent_id_num = #{map.sub_agent_id_num}
+			</if>
+			<if test="map.sub_agent_sett_account != null and map.sub_agent_sett_account != ''">
+				AND t.sub_agent_sett_account = #{map.sub_agent_sett_account}
+			</if>
+			<if test="map.is_report != null and map.is_report != ''">
+				AND t.is_report = #{map.is_report}
+			</if>
+			<if test="map.agent_account != null and map.agent_account != ''">
+				AND t1.agent_account = #{map.agent_account}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t2.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t2.real_name = #{map.real_name}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 记录报备信息 -->
+	<insert id="addAgentUserReportRecordDetail" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="map.id" >
+		insert into t_user_report_record_detail (
+			record_id, sub_agent_account, sub_agent_name, sub_agent_id_num, sub_agent_sett_account,
+			is_report, user_id, sub_agent_id_img, remark, create_by, cre_date, cre_time)
+		values (
+			#{map.record_id}, #{map.sub_agent_account}, #{map.sub_agent_name}, #{map.sub_agent_id_num}, #{map.sub_agent_sett_account},
+			#{map.is_report}, #{map.user_id}, #{map.sub_agent_id_img}, #{map.remark}, #{map.create_by}, #{map.cre_date}, #{map.cre_time})
+	</insert>
+	
+	
+</mapper>

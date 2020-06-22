@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.develop.task.mapper.ActivitySettlementMapper">
+	
+	<!-- 高返现活动列表（传统POS） -->
+	<select id="getTraposHighCashbackActivity" parameterType="java.lang.String" resultType="java.util.Map">
+		select 
+			* 
+		from 
+			t_sys_trapos_activity_info 
+	   where start_date &lt;= #{date}
+	     and activity_type = '01' 
+	     and status = '09'
+	</select>
+	
+	<!-- 高返现用户申请列表(传统POS) -->
+	<select id="getTraposApplyHighCashbackActivityList" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			t.id as apply_id,
+			t.activity_reward_id,
+			t.activity_id,
+			t.user_id,
+			t.sn_list,
+			t1.expenditure,
+			t1.pos_num,
+			t1.reward_money
+		FROM
+		(
+			SELECT
+				*
+			FROM
+				t_user_trapos_activity_apply_info
+			WHERE
+				STATUS = '09'
+			AND activity_id = #{activity_id}
+		) t
+		LEFT JOIN t_sys_trapos_activity_reward_info t1 ON t.activity_reward_id = t1.id
+	</select>
+	
+	<!-- 查询高返现活动POS机列表(传统POS) -->
+	<select id="getTraposHighCashbackActivityRewardList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			t.sn,
+			sum(t.merchant_performance) AS expenditure
+		FROM
+			t_summary_traditional_pos_trans_everyday t
+		WHERE
+			t.user_id = #{map.user_id}
+		AND FIND_IN_SET(t.sn, #{map.sn_list})
+		AND t.cre_date BETWEEN #{map.start_date} and #{map.end_date}
+		AND NOT EXISTS (
+			SELECT
+				1
+			FROM
+				t_user_trapos_activity_reward_record t1
+			WHERE
+				t.sn = t1.sn
+			AND t.user_id = t1.user_id
+			AND t1.apply_id = #{map.apply_id}
+		)
+		group by t.sn
+	</select>
+	
+	<!-- 保存活动奖励记录（传统POS） -->
+	<insert id="insertUserTraposActivityRewardRecord" parameterType="java.util.Map">
+		insert into t_user_trapos_activity_reward_record
+		(
+			order_id,
+			user_id,
+			activity_id,
+			activity_reward_id,
+			apply_id,
+			sn,
+			money,
+			expenditure,
+			cre_date,
+			cre_time,
+			policy_id,
+			begin_date,
+			end_date,
+			pos_type
+		)
+		values
+		(
+			#{map.order_id},
+			#{map.user_id},
+			#{map.activity_id},
+			#{map.activity_reward_id},
+			#{map.apply_id},
+			#{map.sn},
+			#{map.money},
+			#{map.expenditure},
+			#{map.cre_date},
+			#{map.cre_time},
+			#{map.policy_id},
+			#{map.begin_date},
+			#{map.end_date},
+			#{map.pos_type}
+		)
+	</insert>
+	
+	<!-- 更新POS参与活动状态（传统POS） -->
+	<update id="updateUserTraposActivityStatus" parameterType="java.util.Map">
+		update t_user_traditional_pos_info
+		   set activity_status = '0'
+		 where user_id = #{map.user_id}
+		   and find_in_set(sn, #{map.sn_list})
+		   and activity_status = '1'
+		   and state_status = '1'
+	</update>
+	
+	<!-- 更新活动结束状态(传统POS) -->
+	<update id="updateTraposActivityEndStatus" parameterType="java.lang.String">
+		update t_sys_trapos_activity_info
+		   set status = '10'
+		 where id = #{activity_id}
+		   and status = '09'
+	</update>
+	
+	<!-- 交易量活动列表（传统POS） -->
+	<select id="getTraposVolumeActivity" parameterType="java.lang.String" resultType="java.util.Map">
+		select 
+			* 
+		from 
+			t_sys_trapos_activity_info 
+	   where start_date &lt;= #{date}
+	     and activity_type = '02' 
+	     and status = '09'
+	</select>
+	
+	<!-- 交易量用户申请列表(传统POS) -->
+	<select id="getTraposApplyVolumeActivityList" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			t.id as apply_id,
+			t.activity_reward_id,
+			t.activity_id,
+			t.user_id,
+			t.sn_list,
+			t1.expenditure,
+			t1.pos_num,
+			t1.reward_money
+		FROM
+		(
+			SELECT
+				*
+			FROM
+				t_user_trapos_activity_apply_info
+			WHERE
+				STATUS = '09'
+			AND activity_id = #{activity_id}
+		) t
+		LEFT JOIN t_sys_trapos_activity_reward_info t1 ON t.activity_reward_id = t1.id
+	</select>
+	
+	<!-- 查询高返现活动POS机列表(传统POS) -->
+	<select id="getTraposVolumeActivityRewardList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			t.sn,
+			sum(t.merchant_performance) AS expenditure
+		FROM
+			t_summary_traditional_pos_trans_month t
+		WHERE
+			t.user_id = #{map.user_id}
+		AND FIND_IN_SET(t.sn, #{map.sn_list})
+		AND t.cre_month = #{map.month}
+		group by t.sn
+	</select>
+	
+	<!-- 高返现活动列表（MPOS） -->
+	<select id="getMposHighCashbackActivity" parameterType="java.lang.String" resultType="java.util.Map">
+		select 
+			* 
+		from 
+			t_sys_mpos_activity_info 
+	   where start_date &lt;= #{date}
+	     and activity_type = '01' 
+	     and status = '09'
+	</select>
+	
+	<!-- 高返现用户申请列表(MPOS) -->
+	<select id="getMposApplyHighCashbackActivityList" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			t.id as apply_id,
+			t.activity_reward_id,
+			t.activity_id,
+			t.user_id,
+			t.sn_list,
+			t1.expenditure,
+			t1.pos_num,
+			t1.reward_money
+		FROM
+		(
+			SELECT
+				*
+			FROM
+				t_user_mpos_activity_apply_info
+			WHERE
+				STATUS = '09'
+			AND activity_id = #{activity_id}
+		) t
+		LEFT JOIN t_sys_mpos_activity_reward_info t1 ON t.activity_reward_id = t1.id
+	</select>
+	
+	<!-- 查询高返现活动POS机列表(MPOS) -->
+	<select id="getMposHighCashbackActivityRewardList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			t.sn,
+			sum(t.merchant_performance) AS expenditure
+		FROM
+			t_summary_mpos_trans_everyday t
+		WHERE
+			t.user_id = #{map.user_id}
+		AND FIND_IN_SET(t.sn, #{map.sn_list})
+		AND t.cre_date BETWEEN #{map.start_date} and #{map.end_date}
+		AND NOT EXISTS (
+			SELECT
+				1
+			FROM
+				t_user_mpos_activity_reward_record t1
+			WHERE
+				t.sn = t1.sn
+			AND t.user_id = t1.user_id
+			AND t1.apply_id = #{map.apply_id}
+		)
+		group by t.sn
+	</select>
+	
+	<!-- 保存活动奖励记录（MPOS） -->
+	<insert id="insertUserMposActivityRewardRecord" parameterType="java.util.Map">
+		insert into t_user_mpos_activity_reward_record
+		(
+			order_id,
+			user_id,
+			activity_id,
+			activity_reward_id,
+			apply_id,
+			sn,
+			money,
+			expenditure,
+			cre_date,
+			cre_time,
+			policy_id,
+			begin_date,
+			end_date
+		)
+		values
+		(
+			#{map.order_id},
+			#{map.user_id},
+			#{map.activity_id},
+			#{map.activity_reward_id},
+			#{map.apply_id},
+			#{map.sn},
+			#{map.money},
+			#{map.expenditure},
+			#{map.cre_date},
+			#{map.cre_time},
+			#{map.policy_id},
+			#{map.begin_date},
+			#{map.end_date}
+		)
+	</insert>
+	
+	<!-- 更新POS参与活动状态（MPOS） -->
+	<update id="updateUserMposActivityStatus" parameterType="java.util.Map">
+		update t_user_mpos_info
+		   set activity_status = '0'
+		 where user_id = #{map.user_id}
+		   and find_in_set(sn, #{map.sn_list})
+		   and activity_status = '1'
+		   and state_status = '1'
+	</update>
+	
+	<!-- 更新活动结束状态(MPOS) -->
+	<update id="updateMposActivityEndStatus" parameterType="java.lang.String">
+		update t_sys_mpos_activity_info
+		   set status = '10'
+		 where id = #{activity_id}
+		   and status = '09'
+	</update>
+	
+	<!-- 交易量活动列表（MPOS） -->
+	<select id="getMposVolumeActivity" parameterType="java.lang.String" resultType="java.util.Map">
+		select 
+			* 
+		from 
+			t_sys_mpos_activity_info 
+	   where start_date &lt;= #{date}
+	     and activity_type = '02' 
+	     and status = '09'
+	</select>
+	
+	<!-- 交易量用户申请列表(MPOS) -->
+	<select id="getMposApplyVolumeActivityList" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			t.id as apply_id,
+			t.activity_reward_id,
+			t.activity_id,
+			t.user_id,
+			t.sn_list,
+			t1.expenditure,
+			t1.pos_num,
+			t1.reward_money
+		FROM
+		(
+			SELECT
+				*
+			FROM
+				t_user_mpos_activity_apply_info
+			WHERE
+				STATUS = '09'
+			AND activity_id = #{activity_id}
+		) t
+		LEFT JOIN t_sys_mpos_activity_reward_info t1 ON t.activity_reward_id = t1.id
+	</select>
+	
+	<!-- 查询高返现活动POS机列表(MPOS) -->
+	<select id="getMposVolumeActivityRewardList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			t.sn,
+			sum(t.merchant_performance) AS expenditure
+		FROM
+			t_summary_mpos_trans_month t
+		WHERE
+			t.user_id = #{map.user_id}
+		AND FIND_IN_SET(t.sn, #{map.sn_list})
+		AND t.cre_month = #{map.month}
+		group by t.sn
+	</select>
+	
+	<!-- 查询未达标任务详情(传统POS) -->
+	<select id="getTraposAssessTask" parameterType="java.lang.String" resultType="java.util.Map">
+		select * from t_user_trapos_assess_info where id = #{assess_id}
+	</select>
+	
+	<!-- 查询未达标激活量任务（传统POS） -->
+	<select id="getTraposActivateAssessTaskList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			sn
+		FROM
+			t_sys_traditional_pos_info
+		WHERE
+			find_in_set(sn, #{map.sn_list})
+		AND act_status = '0'
+	</select>
+	
+	<!-- 保存未达标记录(传统POS) upadte byqh 201912 -->
+	<insert id="insertUserTraposDeductRecord" parameterType="java.util.Map">
+		insert into t_user_trapos_deduct_record
+		(
+			order_id,
+			assess_id,
+			user_id,
+			sn,
+			money,
+			cre_date,
+			cre_time,
+			policy_id,
+			begin_date,
+			end_date,
+			pos_type
+		)
+		values
+		(
+			#{map.order_id},
+			#{map.assess_id},
+			#{map.user_id},
+			#{map.sn},
+			#{map.money},
+			#{map.cre_date},
+			#{map.cre_time},
+			#{map.policy_id},
+			#{map.begin_date},
+			#{map.end_date},
+			#{map.pos_type}
+		)
+	</insert>
+	
+	<!-- 更新任务结束状态(传统POS) -->
+	<update id="updateTraposAssessTaskEndStatus" parameterType="java.util.Map">
+		update t_user_trapos_assess_info
+		   set status = '09',
+		   	   up_date = #{map.up_date},
+		   	   up_time = #{map.up_time}
+		 where id = #{map.id}
+		   and status = '00'
+	</update>
+	
+	<!-- 查询未达标交易量任务（传统POS） -->
+	<select id="getTraposVolumeAssessTaskList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			t.sn,
+			t1.expenditure
+		FROM
+			t_user_traditional_pos_info t
+		LEFT JOIN (
+			SELECT
+				t2.sn,
+				sum(t2.performance) AS expenditure
+			FROM
+				t_summary_traditional_pos_trans_everyday t2
+			WHERE
+				t2.user_id = #{map.user_id}
+			AND FIND_IN_SET(t2.sn, #{map.sn_list})
+			AND t2.cre_date BETWEEN #{map.start_date}
+			AND #{map.end_date}
+			GROUP BY
+				t2.sn
+		) t1 ON t.sn = t1.sn
+		WHERE
+			t.user_id = #{map.user_id}
+		AND FIND_IN_SET(t.sn, #{map.sn_list})
+	</select>
+	
+	<!-- 查询未达标任务详情(MPOS) -->
+	<select id="getMposAssessTask" parameterType="java.lang.String" resultType="java.util.Map">
+		select * from t_user_mpos_assess_info where id = #{assess_id}
+	</select>
+	
+	<!-- 查询未达标激活量任务（MPOS） -->
+	<select id="getMposActivateAssessTaskList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			sn
+		FROM
+			t_sys_mpos_info
+		WHERE
+			find_in_set(sn, #{map.sn_list})
+		AND act_status = '0'
+	</select>
+	
+	<!-- 保存未达标记录(MPOS) -->
+	<insert id="insertUserMposDeductRecord" parameterType="java.util.Map">
+		insert into t_user_mpos_deduct_record
+		(
+			order_id,
+			assess_id,
+			user_id,
+			sn,
+			money,
+			cre_date,
+			cre_time,
+			policy_id,
+			begin_date,
+			end_date
+		)
+		values
+		(
+			#{map.order_id},
+			#{map.assess_id},
+			#{map.user_id},
+			#{map.sn},
+			#{map.money},
+			#{map.cre_date},
+			#{map.cre_time},
+			#{map.policy_id},
+			#{map.begin_date},
+			#{map.end_date}
+		)
+	</insert>
+	
+	<!-- 更新任务结束状态(MPOS) -->
+	<update id="updateMposAssessTaskEndStatus" parameterType="java.util.Map">
+		update t_user_mpos_assess_info
+		   set status = '09',
+		   	   up_date = #{map.up_date},
+		   	   up_time = #{map.up_time}
+		 where id = #{map.id}
+		   and status = '00'
+	</update>
+	
+	<!-- 查询未达标交易量任务（MPOS） -->
+	<select id="getMposVolumeAssessTaskList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			t.sn,
+			t1.expenditure
+		FROM
+			t_user_mpos_info t
+		LEFT JOIN (
+			SELECT
+				t2.sn,
+				sum(t2.performance) AS expenditure
+			FROM
+				t_summary_mpos_trans_everyday t2
+			WHERE
+				t2.user_id = #{map.user_id}
+			AND FIND_IN_SET(t2.sn, #{map.sn_list})
+			AND t2.cre_date BETWEEN #{map.start_date}
+			AND #{map.end_date}
+			GROUP BY
+				t2.sn
+		) t1 ON t.sn = t1.sn
+		WHERE
+			t.user_id = #{map.user_id}
+		AND FIND_IN_SET(t.sn, #{map.sn_list})
+	</select>
+	
+	<!-- 查询是否有返现记录（传统POS） -->
+	<select id="getTraposCashBackRecord" parameterType="java.util.Map" resultType="java.util.Map">
+		select
+			*
+		from t_data_trapos_machine_cashback_record
+		where sn = #{map.sn}
+		and cre_date BETWEEN #{map.start_date} and #{map.end_date}
+	</select>
+	
+	<!-- 查询是否有返现记录（MPOS） -->
+	<select id="getMposCashBackRecord" parameterType="java.util.Map" resultType="java.util.Map">
+		select
+			*
+		from t_data_mpos_machine_cashback_record
+		where sn = #{map.sn}
+		and cre_date BETWEEN #{map.start_date} and #{map.end_date}
+	</select>
+	
+</mapper>

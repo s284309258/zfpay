@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<th:block th:include="include :: header('新增激活期考核')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+
+	<form class="form-horizontal m" id="form-sysPolicyInfo-edit1" >
+		<div class="form-group">
+			<label class="col-sm-3 control-label">政策考核类型：</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text" name="" value="激活期考核" id="" readonly/>
+				<input type="hidden" name="id" th:value="${policy.id}">
+				<input type="hidden" name="policy_type" th:value="${policy.policy_type}">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-3 control-label"><span style="color: red; ">*</span>政策考核名称：</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text" name="policy_name" id="policy_name" th:value="${policy.policy_name}" required/>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-3 control-label"><span style="color: red; ">*</span>考核时间范围：</label>
+			<div class="col-sm-3">
+				<input type="text" th:value="${policy.begin_date}" disabled autocomplete="off"
+					   onfocus="WdatePicker({ startDate: '%y%M01' , dateFmt:'yyyyMMdd', alwaysUseStartDate:true })"
+					   id="datemin" class="form-control" >
+				<input type="hidden" name="begin_date" th:value="${policy.begin_date}">
+			</div>
+			<div class="col-sm-1" style="width: 10px">
+				<span>-</span>
+			</div>
+			<div class="col-sm-3">
+				<input type="text" name="end_date" th:value="${policy.end_date}" autocomplete="off"
+					   onfocus="WdatePicker({startDate: '%y%M01' , minDate:'#F{$dp.$D(\'datemin\')}', dateFmt:'yyyyMMdd', alwaysUseStartDate:true })"
+					   id="datemax" class="form-control" >
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>未激活扣款金额：</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="number" name="policy_amount" th:value="${policy.policy_amount}" id="policy_amount" required  />
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>是否开启：</label>
+			<div class="col-sm-8">
+				<div class="radio-box" th:each="dict : ${@dict.getType('user_pos_info_activity_status')}">
+					<input type="radio" th:id="${dict.dictCode}" name="isuse" th:value="${dict.dictValue}" th:checked="${policy.isuse == dict.dictValue}" required>
+					<label th:for="${dict.dictCode}" th:text="${dict.dictLabel}" ></label>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-3 control-label ">备注：</label>
+			<div class="col-sm-8">
+				<textarea rows="" cols="" name="remark" id="remark" th:value="${policy.remark}" class="form-control" ></textarea>
+			</div>
+		</div>
+
+	</form>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: wdatePicker-js" />
+<th:block th:include="include :: bootstrap-fileinput-js" />
+<script type="text/javascript">
+
+	//时间校验
+	jQuery.validator.addMethod("isValidEndDate", function(value, element) {
+		var nowTime = getNowFormatDate();
+		return value>=nowTime;
+	}, "结束日期必须大于等于当前日期");
+
+	//js获取当前日期格式
+	function getNowFormatDate(){
+		var day = new Date();
+		var Year = 0;
+		var Month = 0;
+		var Day = 0;
+		var CurrentDate = "";
+		Year= day.getFullYear();//支持IE和火狐浏览器.
+		Month= day.getMonth()+1;
+		Day = day.getDate();
+		CurrentDate += Year;
+		if (Month >= 10 ){
+			CurrentDate += Month;
+		}else{
+			CurrentDate += "0" + Month;
+		}
+		if (Day >= 10 ){
+			CurrentDate += Day ;
+		}else{
+			CurrentDate += "0" + Day ;
+		}
+		return CurrentDate;
+	}
+
+	//前缀路径
+	var prefix = "/deveagent/sysPosPolicy";
+
+	$("#form-sysPolicyInfo-edit1").validate({
+		onkeyup: false,
+		rules:{
+			policy_name: {
+				required: true
+			},
+			begin_date: {
+				required: true
+			},
+			end_date: {
+				required: true
+			},
+			policy_amount: {
+				required: true
+			}
+		},
+		messages: {
+			policy_name: {
+				required: "请输入考核名称"
+			},
+			begin_date: {
+				required: "请输入考核开始时间"
+			},
+			end_date: {
+				required: "请选输入考核结束时间"
+			},
+			policy_amount: {
+				required: "请输入未激活扣款金额"
+			}
+		},
+		focusCleanup: true
+	});
+
+	function submitHandler() {
+		if ($.validate.form()) {
+			$.operate.save(prefix + "/edit", $('#form-sysPolicyInfo-edit1').serialize());
+		}
+	}
+</script>
+</body>
+</html>

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('平台用户取现记录列表')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+<body class="gray-bg">
+	
+	<!-- 系统参数列表 -->
+	<div class="container-div ui-layout-center">
+		<div class="row">
+			
+			<!-- 最上面的搜索框 -->
+			<div class="col-sm-12 search-collapse">
+				<form id="user-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								订单号：<input type="text" name="order_id" id="order_id" />
+							</li>
+							<li>
+								批次号：<input type="text" name="batch_no" id="batch_no" />
+							</li>
+							<li>
+								手机号：<input type="text" name="user_tel" id="user_tel" />
+							</li>
+							<li>
+								结算账号：<input type="text" name="account" id="account" />
+							</li>
+							<li>
+								结算账户名：<input type="text" name="account_name" id="account_name" />
+							</li>
+							<li>
+								银行代码：<input type="text" name="bank_code" id="bank_code" />
+							</li>
+							<li>
+								银行名称：<input type="text" name="bank_name" id="bank_name" />
+							</li>
+							<li>
+								取现状态：
+								<select name="status" id="status" th:with="type=${@dict.getType('user_cash_record_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								账户类型：
+								<select name="account_type" id="account_type" th:with="type=${@dict.getType('user_cash_record_account_type')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li class="select-time">
+								<label>创建时间： </label>
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="beginTime"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="searchTable()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+			
+			<!-- 上面的各项增删改查导入导出操作 -->
+	        <div class="btn-group-sm" id="toolbar" role="group">
+		        <!-- 表格：导出数据 -->
+	            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="deveagent:userCashRecord:export">
+		            <i class="fa fa-download"></i> 导出
+		        </a>
+		        <!-- 表格：导出待处理的数据 -->
+	            <a class="btn btn-danger" onclick="$.table.exportDealExcel()" shiro:hasPermission="deveagent:userCashRecord:export">
+		            <i class="fa fa-download"></i> 导出待处理记录
+		        </a>
+		        <!-- 表格：导出数据 -->
+	            <a class="btn btn-success" onclick="batchSysAuditSuccess();" shiro:hasPermission="deveagent:userCashRecord:sysAudit">
+		            <i class="fa fa-download"></i> 批量提现成功
+		        </a>
+		        <!-- 表格：导出数据 -->
+	            <a class="btn btn-primary" onclick="batchSysAuditFaile();" shiro:hasPermission="deveagent:userCashRecord:sysAudit">
+		            <i class="fa fa-download"></i> 批量提现失败
+		        </a>
+		        <a class="btn btn-info" onclick="detailList()" shiro:hasPermission="deveagent:userCashRecord:detail">
+		            <i class="fa fa-list"></i> 取现过程
+		        </a>
+	        </div>
+
+	        
+	        <!-- bootstrap表格数据部分 -->
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+			
+		</div>
+	</div>
+	
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		//详情
+		var detailFlag = [[${@permission.hasPermi('deveagent:userCashRecord:detail')}]];
+		//审核
+		var sysAuditFlag = [[${@permission.hasPermi('deveagent:userCashRecord:sysAudit')}]];
+	
+		var datas_status = [[${@dict.getType('user_cash_record_status')}]];
+		var datas_account_type = [[${@dict.getType('user_cash_record_account_type')}]];
+	
+		//前缀路径
+		var prefix = "/deveagent/userCashRecord";
+		
+		//初始化方法
+		$(function() {
+			//初始化时间范围
+			intiTime();
+		   	//查询用户取现记录列表
+		    queryAgentUserCashRecordList();
+		  	//汇总数据
+		    setTimeout("summaryAgentUserCashRecordList()","1000"); 
+		});
+		
+		//查询用户取现记录列表
+		function queryAgentUserCashRecordList() {
+		    var options = {
+		        url: prefix + "/list",//URL列表路径
+		        detailUrl: prefix + "/detail/{id}",//详情路径
+		        exportUrl: prefix + "/export",//导出路径
+		        exportDealUrl: prefix + "/exportDeal",//导出路径
+		        modalName: "用户取现记录信息",//模块名称：用户
+		        showFooter: true,
+		        showExport: true,
+		        sortName: 'id',
+	          	sortOrder: 'desc',
+		        //列信息
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+					field : 'id', 
+					title : '编号',
+					sortable: true,
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detail(\'' + row.id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+		            title: '操作',
+		            align: 'center',
+		            formatter: function(value, row, index) {
+		            	//事件数组
+		                var actions = [];
+		            	//编辑按钮：修改信息，以tab页展现
+		            	if(row.status=='02'){
+		            		actions.push('<a class="btn btn-success btn-xs ' + sysAuditFlag + '" href="#" onclick="sysAuditSuccess(\'' + row.id + '\')"><i class="fa fa-key"></i>提现成功</a> ');
+		            		actions.push('<a class="btn btn-danger btn-xs ' + sysAuditFlag + '" href="#" onclick="sysAuditFaile(\'' + row.id + '\')"><i class="fa fa-key"></i>提现失败</a> ');
+		            	}
+		            	actions.push('<a class="btn btn-info btn-xs ' + detailFlag + '" href="#" onclick="detailListInfo(\'' + row.id + '\')"><i class="fa fa-list"></i>提现过程</a> ');
+		                return actions.join('');
+		            }
+		        },
+		        {
+					field : 'order_id', 
+					title : '订单号'
+				},
+		        {
+					field : 'manager_id', 
+					title : '代理编号'
+				},
+				{
+					field : 'user_id', 
+					title : '用户编号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailUser(\'' + row.user_id + '\')">'+value+'</a>';
+		            }
+				},
+				{
+					field : 'user_tel', 
+					title : '手机号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailUser(\'' + row.user_id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'real_name', 
+					title : '姓名'
+				},
+				{
+					field : 'account', 
+					title : '卡账号'
+				},
+				/* {
+					field : 'id_card', 
+					title : '身份证号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailUser(\'' + row.id + '\')">' + value +  '</a>';
+		            }
+				}, */
+				{
+					field : 'account_name', 
+					title : '卡账户名'
+				},
+				{
+					field : 'bank_code', 
+					title : '银行代码'
+				},
+				/* {
+					field : 'bank_name', 
+					title : '银行名称',
+					align: 'center',
+				  	formatter: function(value, row, index) {
+				      	return $.table.tooltip(value);
+				  	}
+				}, */
+				{
+					field : 'cash_money', 
+					title : '取现总额',
+					sortable: true,
+					footerFormatter:function (value) {
+				        return "<span id='sum_cash_money'>取现总额：0.00<span>";
+				    }
+				},
+				{
+					field : 'cash_actual_money', 
+					title : '实际到账金额',
+					sortable: true,
+					footerFormatter:function (value) {
+				        return "<span id='sum_cash_actual_money'>实际到账总额：0.00<span>";
+				    }
+				},
+				{
+					field : 'feet_rate', 
+					title : '所得税比例',
+					sortable: true
+				},
+				{
+					field : 'rate_feet_money', 
+					title : '比例手续费',
+					sortable: true,
+					footerFormatter:function (value) {
+				        return "<span id='sum_rate_feet_money'>比例手续费总额：0.00<span>";
+				    }
+				},
+				{
+					field : 'single_feet_money', 
+					title : '单笔手续费',
+					sortable: true,
+					footerFormatter:function (value) {
+				        return "<span id='sum_single_feet_money'>单笔手续费总额：0.00<span>";
+				    }
+				},
+				{
+					field : 'deduct_money', 
+					title : '未达标扣除',
+					sortable: true,
+					footerFormatter:function (value) {
+				        return "<span id='sum_deduct_money'>未达标扣除总额：0.00<span>";
+				    }
+				},
+				{
+					field : 'status', 
+					title : '取现状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_status, value);
+		            }
+				},
+				{
+					field : 'account_type', 
+					title : '账户类型',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_account_type, value);
+		            }
+				},
+				{
+					field : 'remark', 
+					title : '操作备注',
+					align: 'center',
+				  	formatter: function(value, row, index) {
+				      	return $.table.tooltip(value);
+				  	}
+				},
+				{
+					field : 'cre_date', 
+					title : '创建时间',
+					sortable: true
+				},
+				{
+					field : 'up_date', 
+					title : '更新时间',
+					sortable: true
+				},
+				{
+					field : 'update_by', 
+					title : '更新人'
+				}]
+		    };
+		    //表格初始化
+		    $.table.init(options);
+		}
+		
+		//自定义搜索事件
+		function searchTable(){
+			$.table.search();
+			//汇总数据
+		    setTimeout("summaryAgentUserCashRecordList()","1000"); 
+		}
+
+		
+		//汇总数据统计
+		function summaryAgentUserCashRecordList(){
+			$.ajax({
+				url:"/deveagent/userCashRecord/summaryAgentUserCashRecordList",
+				type:"post",
+				dataType:"json",
+				data:{
+					'order_id' : $("#order_id").val(),
+					'batch_no' : $("#batch_no").val(),
+					'user_tel' : $("#user_tel").val(),
+					'account' : $("#account").val(),
+					'account_name' : $("#account_name").val(),
+					'bank_code' : $("#bank_code").val(),
+					'bank_name' : $("#bank_name").val(),
+					'status' : $("#status").val(),
+					'account_type' : $("#account_type").val(),
+					'beginTime' : $("#startTime").val(),
+					'endTime' : $("#endTime").val()
+				},
+				success:function(data){
+					$("#sum_cash_money").html("取现总额："+data.sum_cash_money);
+					$("#sum_cash_actual_money").html("实际到账总额："+data.sum_cash_actual_money);
+					$("#sum_single_feet_money").html("单笔手续费总额："+data.sum_single_feet_money);
+					$("#sum_rate_feet_money").html("比例手续费总额："+data.sum_rate_feet_money);
+					$("#sum_deduct_money").html("未达标扣除总额："+data.sum_deduct_money);
+				},
+				error:function(){
+					alert("error");
+				}
+			});
+		}
+		
+		
+		/* 查询用户详情 */
+		function detailUser(id){
+			var url = '/deveagent/userInfo/detail/'+id;
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		   	$.modal.openTab("编号"+id+"用户详情", url);
+		}
+
+		
+		/* 查看取现过程详情 */
+		function detailList() {
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+    		if (rows.length != 1) {
+    			$.modal.alertWarning("请选择一条记录查看");
+    			return;
+    		}
+			var url = prefix + '/detailList/' + rows[0].id;
+		    $.modal.openTab("编号"+rows[0].id+"取现过程", url);
+		}
+		
+		
+		/* 查看提现详情 */
+		function detailListInfo(id) {
+			var url = prefix + '/detailList/' + id;
+		    $.modal.openTab("编号"+id+"取现过程", url);
+		}
+		
+		
+		//提现成功
+		function sysAuditSuccess(id){
+			var url = prefix + '/sysAudit/' + id+"?operParam=09";
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		    $.modal.open("提现成功", url, '800', '450');
+		}
+		
+		
+		//提现失败
+		function sysAuditFaile(id) {
+		    var url = prefix + '/sysAudit/' + id+"?operParam=08";
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		    $.modal.open("提现失败", url, '800', '450');
+		}
+		
+
+		//批量提现成功
+		function batchSysAuditSuccess(){
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+    		if (rows.length == 0) {
+    			$.modal.alertWarning("请至少选择一条记录");
+    			return;
+    		}
+    		for(var i=0;i<rows.length;i++){
+    			if(rows[i].status!='02'){
+    				$.modal.alertWarning("只能选择处理中的提现记录");
+    				return;
+    			}
+    		}
+    		$.modal.confirm("确认要处理选中的" + rows.length + "条记录吗?", function() {
+    			var cash_ids = "";
+    			// 遍历所有选择的行数据，取每条数据对应的ID
+    			$.each(rows, function(i, row) {
+    				if(i<rows.length-1){
+    					cash_ids=cash_ids+row['id']+",";
+    				}else{
+    					cash_ids=cash_ids+row['id'];
+    				}
+    			});
+    			var url = prefix + '/sysAudit/' + cash_ids+"?operParam=09";
+    			$.modal.open("批量提现成功", url, '800', '450');
+    		});
+		}
+		
+		
+		//批量兑币失败
+		function batchSysAuditFaile(){
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+    		if (rows.length == 0) {
+    			$.modal.alertWarning("请至少选择一条记录");
+    			return;
+    		}
+    		for(var i=0;i<rows.length;i++){
+    			if(rows[i].status!='02'){
+    				$.modal.alertWarning("只能选择处理中的提现记录");
+    				return;
+    			}
+    		}
+    		$.modal.confirm("确认要处理选中的" + rows.length + "条记录吗?", function() {
+    			var cash_ids = "";
+    			// 遍历所有选择的行数据，取每条数据对应的ID
+    			$.each(rows, function(i, row) {
+    				if(i<rows.length-1){
+    					cash_ids=cash_ids+row['id']+",";
+    				}else{
+    					cash_ids=cash_ids+row['id'];
+    				}
+    			});
+    			var url = prefix + '/sysAudit/' + cash_ids+"?operParam=08";
+    			$.modal.open("批量提现失败", url, '800', '450');
+    		});
+		}
+		
+		
+	</script>
+</body>
+</html>
