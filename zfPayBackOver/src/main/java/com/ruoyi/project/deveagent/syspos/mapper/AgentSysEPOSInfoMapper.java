@@ -58,13 +58,6 @@ public interface AgentSysEPOSInfoMapper {
 
 
     /**
-     * 根据设备号（机器编号）查询POS机详情
-     * @param sn
-     * @return
-     */
-    String getAgentSysTraditionalPosMer_nameInfoBySn(@Param("sn") String sn);
-
-    /**
      * 根据编号查询传统POS机详情
      * @param id
      * @return
