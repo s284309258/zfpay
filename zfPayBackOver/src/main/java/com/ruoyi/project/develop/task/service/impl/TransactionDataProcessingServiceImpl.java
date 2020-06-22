@@ -341,13 +341,6 @@ public class TransactionDataProcessingServiceImpl implements TransactionDataProc
 			return;
 		}
 		String mer_name = StringUtil.getMapValue(map,"mer_name");
-		if(!mer_name.isEmpty()&& mer_name!=null){
-			System.out.println("第一次查询到的商户名:" + mer_name);
-		}else {
-			mer_name = agentSysTraditionalPosInfoMapper.getAgentSysTraditionalPosMer_nameInfoBySn(sn);
-			System.out.println("第二次查询到的商户名:" + mer_name);
-		}
-		System.out.println("写入的商户名: " + mer_name);
 		String pos_type = agentSysTraditionalPosInfoMapper.getAgentSysEposInfoBySn(StringUtil.getMapValue(trade, "sn"));
 		if("epos".equals(pos_type)){
 			edit_user.put("pos_type", BenefitParamConstants.pos_type_03);
@@ -394,17 +387,8 @@ public class TransactionDataProcessingServiceImpl implements TransactionDataProc
 		if("epos".equals(pos_type)){
 			record.put("pos_type",BenefitParamConstants.pos_type_03);
 		}
-//		if(null!=mer_name && !"".equals(mer_name)){
-//			record.put("mer_name",mer_name);
-//		}
-//		else {
-//			record.put("mer_name", StringUtil.getMapValue(map,"sn"));
-//		}
 		if(!mer_name.isEmpty() && mer_name!=null){
 			record.put("mer_name",mer_name);
-		}else {
-			record.put("mer_name",StringUtil.getMapValue(trapos,"mer_name"));
-			System.out.println(mer_name);
 		}
 		//写入正式表
 		num = transactionDataProcessingMapper.insertUserTraposShareBenefitRecord(record);
