@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.usertrapos.mapper.AgentUserEposMachineActiveRecordMapper">
+
+	<select id="getAgentUserTraposRecordList" parameterType="java.util.Map" resultType="java.util.Map" >
+		select t.id , t.manager_id , t.sn , t.mer_id , t.mer_name , t.name , t.tel ,
+		(case when t.cash_back_type='0' then '设置' when t.cash_back_type='1' then '中付' end) as cash_back_type , cash_back_money ,
+		t.cash_back_status , t.real_cash_back_money , t.act_status ,
+		t.credit_card_rate , t.cloud_flash_rate ,
+		t.act_date,ttt.real_name from t_sys_traditional_pos_info t inner join t_user_traditional_pos_info tt on t.sn=tt.sn and tt.state_status=1 inner join t_user_info ttt on tt.user_id=ttt.id
+		<where>
+			tt.user_id in(select id from t_user_info where (t_user_info.id=#{map.uid} or t_user_info.parent_chain like concat(#{map.chain},'%')))
+			and t.pos_type='epos'
+			and t.act_status=1
+			<if test="map.sn != null and map.sn != ''">
+				AND t.sn = #{map.sn}
+			</if>
+			<if test="map.mer_name != null and map.mer_name != ''">
+				AND t.mer_name like concat('%',#{map.mer_name},'%')
+			</if>
+			<if test="map.name != null and map.name != ''">
+				AND t.name = #{map.name}
+			</if>
+			<if test="map.tel != null and map.tel != ''">
+				AND t.tel = #{map.tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND ttt.real_name = #{map.real_name}
+			</if>
+			<if test="map.cash_back_status != null and map.cash_back_status != ''">
+				AND t.cash_back_status = #{map.cash_back_status}
+			</if>
+			<if test="map.act_status != null and map.act_status != ''">
+				AND t.act_status = #{map.act_status}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.act_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.act_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<select id="selectAgentUserTraposRecordList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.usermpos.domain.AgentUserMposMachineActiveRecord" >
+		select t.id , t.manager_id , t.sn , t.mer_id , t.mer_name , t.name , t.tel ,
+		(case when t.cash_back_type='0' then '设置' when t.cash_back_type='1' then '中付' end) as cash_back_type , cash_back_money ,
+		t.cash_back_status , t.real_cash_back_money , t.act_status ,
+		t.credit_card_rate , t.cloud_flash_rate ,
+		t.act_date,ttt.real_name from t_sys_traditional_pos_info t inner join t_user_traditional_pos_info tt on t.sn=tt.sn and tt.state_status=1 inner join t_user_info ttt on tt.user_id=ttt.id
+		<where>
+			tt.user_id in(select id from t_user_info where (t_user_info.id=#{map.uid} or t_user_info.parent_chain like concat(#{map.chain},'%')))
+			and t.pos_type='epos'
+			and t.act_status=1
+			<if test="map.sn != null and map.sn != ''">
+				AND t.sn = #{map.sn}
+			</if>
+			<if test="map.mer_name != null and map.mer_name != ''">
+				AND t.mer_name like concat('%',#{map.mer_name},'%')
+			</if>
+			<if test="map.name != null and map.name != ''">
+				AND t.name = #{map.name}
+			</if>
+			<if test="map.tel != null and map.tel != ''">
+				AND t.tel = #{map.tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND ttt.real_name = #{map.real_name}
+			</if>
+			<if test="map.cash_back_status != null and map.cash_back_status != ''">
+				AND t.cash_back_status = #{map.cash_back_status}
+			</if>
+			<if test="map.act_status != null and map.act_status != ''">
+				AND t.act_status = #{map.act_status}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.act_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.act_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+</mapper>

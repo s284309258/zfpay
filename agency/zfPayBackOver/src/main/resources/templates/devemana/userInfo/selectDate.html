@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('获取中付返现数据，插入到待处理表中')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+<body class="white-bg">
+	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+		
+		<form class="form-horizontal m" id="form-userInfo-selectDate">
+		
+			<div class="form-group">
+				<label class="col-sm-3 control-label">选择时间：</label>
+				<div class="col-sm-8">
+					<input type="text" name="date" value=""  placeholder="请选择时间" autocomplete="off"
+						onfocus="WdatePicker({ startDate: '%y%M01' , dateFmt:'yyyy-MM-dd', alwaysUseStartDate:true })" 
+						id="datemin" class="form-control" >
+				</div>
+			</div>
+			
+		</form>
+	</div>
+	
+	
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: wdatePicker-js" />
+	<script type="text/javascript">
+	
+		//前缀路径
+		var prefix = "/devemana/userInfo";
+	
+		$("#form-userInfo-selectDate").validate({
+			onkeyup: false,
+			rules:{
+				date: {
+			        required: true
+		      	}
+			},
+			messages: {
+				date: {
+		            required: "请选择时间"
+		        }
+		 	},
+		    focusCleanup: true
+		});
+		
+		function submitHandler() {
+	        if ($.validate.form()) {
+	        	$.operate.save(prefix + "/getDataMachineCashbackRecordDeal", $('#form-userInfo-selectDate').serialize());
+	        }
+	    }
+	</script>
+</body>
+</html>

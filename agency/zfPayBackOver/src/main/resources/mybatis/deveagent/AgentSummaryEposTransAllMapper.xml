@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.summary.mapper.AgentSummaryEposTransAllMapper">
+	<select id="summaryTraditionalPosTransAllList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+		IFNULL(SUM(t.merchant_performance),0.00) AS sum_performance,
+		IFNULL(SUM(t.merchant_num),0.00) AS sum_num
+		FROM
+		t_summary_traditional_pos_trans_all t
+		INNER JOIN t_user_info t1 ON t.user_id = t1.id
+		INNER JOIN t_user_traditional_pos_info t2 on t.sn=t2.sn and t1.id=t2.user_id
+		<where>
+			(t1.id=#{map.uid} or t1.parent_chain like concat(#{map.chain},'%'))
+			AND t.pos_type='epos'
+			AND t2.pos_type='epos'
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.sn != null and map.sn != ''">
+				AND t.sn = #{map.sn}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t1.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.state_status!=null and map.state_status!=''">
+				AND t2.state_status = #{map.state_status}
+			</if>
+			<if test="map.trade_status!=null and map.trade_status!=''">
+				AND t2.trade_status = #{map.trade_status}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.up_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.up_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+
+	<!-- 查询传统POS商户数据汇总列表-->
+	<select id="getAgentSummaryTraditionalPosTransAllList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			t.id,
+			t.sn,
+			t.user_id,
+			t.performance,
+			t.num,
+			t.merchant_performance,
+			t.merchant_num,
+			t.agency_performance,
+			t.agency_num,
+			t.benefit,
+			t.share_benefit,
+			t.single_benefit,
+			t.return_benefit,
+			t.activity_benefit,
+			t.merchant_benefit,
+			t.merchant_share_benefit,
+			t.merchant_single_benefit,
+			t.merchant_return_benefit,
+			t.merchant_activity_benefit,
+			t.agency_benefit,
+			t.agency_share_benefit,
+			t.agency_single_benefit,
+			t.agency_return_benefit,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t1.manager_id,
+			t1.user_tel,
+			t1.real_name,
+			t2.state_status,
+			t2.trade_status
+		FROM
+			t_summary_traditional_pos_trans_all t
+		INNER JOIN t_user_info t1 ON t.user_id = t1.id
+		INNER JOIN t_user_traditional_pos_info t2 on t.sn=t2.sn and t1.id=t2.user_id
+		<where>
+			(t1.id=#{map.uid} or t1.parent_chain like concat(#{map.chain},'%'))
+			AND t.pos_type='epos'
+			AND t2.pos_type='epos'
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.sn != null and map.sn != ''">
+				AND t.sn = #{map.sn}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t1.real_name = #{map.real_name}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t1.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.state_status!=null and map.state_status!=''">
+				AND t2.state_status = #{map.state_status}
+			</if>
+			<if test="map.trade_status!=null and map.trade_status!=''">
+				AND t2.trade_status = #{map.trade_status}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.up_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.up_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 导出传统POS商户数据汇总列表 -->
+	<select id="selectAgentSummaryTraditionalPosTransAllList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.summary.domain.AgentSummaryTraditionalPosTransAll" >
+		SELECT
+			t.id,
+			t.sn,
+			t.user_id,
+			t.performance,
+			t.num,
+			t.merchant_performance,
+			t.merchant_num,
+			t.agency_performance,
+			t.agency_num,
+			t.benefit,
+			t.share_benefit,
+			t.single_benefit,
+			t.return_benefit,
+			t.activity_benefit,
+			t.merchant_benefit,
+			t.merchant_share_benefit,
+			t.merchant_single_benefit,
+			t.merchant_return_benefit,
+			t.merchant_activity_benefit,
+			t.agency_benefit,
+			t.agency_share_benefit,
+			t.agency_single_benefit,
+			t.agency_return_benefit,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t1.manager_id,
+			t1.user_tel,
+			t1.real_name,
+			t2.state_status,
+			t2.trade_status
+		FROM
+			t_summary_traditional_pos_trans_all t
+		INNER JOIN t_user_info t1 ON t.user_id = t1.id
+		INNER JOIN t_user_traditional_pos_info t2 on t.sn=t2.sn and t1.id=t2.user_id
+		<where>
+			(t1.id=#{map.uid} or t1.parent_chain like concat(#{map.chain},'%'))
+			AND t.pos_type='epos'
+			AND t2.pos_type='epos'
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.sn != null and map.sn != ''">
+				AND t.sn = #{map.sn}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t1.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t1.real_name = #{map.real_name}
+			</if>
+			<if test="map.state_status!=null and map.state_status!=''">
+				AND t2.state_status = #{map.state_status}
+			</if>
+			<if test="map.trade_status!=null and map.trade_status!=''">
+				AND t2.trade_status = #{map.trade_status}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.up_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.up_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+</mapper>

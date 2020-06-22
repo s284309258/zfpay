@@ -9,12 +9,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ruoyi.common.constant.VerifyConstant;
@@ -107,6 +102,25 @@ public class AgentUserMposInfoController extends BaseController
     		mmap.put("id", id);
             return prefix + "/selectUser";
     	}
+    }
+
+    /**
+     * 跳转到新增页面=====》选择用户
+     * @param mmap
+     * @return
+     */
+    @GetMapping("/selectOneAgentPos/{uid}")
+    public String selectOneAgentPos(@PathVariable("uid") String uid, String operParam, ModelMap mmap)
+    {
+        if(!ShiroUtils.getSysUser().isAuth()) {
+            mmap.put("id",uid);
+//            mmap.addAttribute("user_id",uid);
+            return "redirect:/system/user/profile/toIsAuth?id="+uid+"&operParam="+operParam+"&bus_type="+VerifyConstant.AuthVerfiy_SelectOneAgentPos;
+        }else {
+            mmap.put("id", uid);
+//            mmap.addAttribute("user_id",uid);
+            return prefix + "/selectOneAgentPos";
+        }
     }
 
     /**
@@ -205,6 +219,12 @@ public class AgentUserMposInfoController extends BaseController
     	List<AgentSelectUserMposInfo> list = agentUserMposInfoService.selectAgentNoDisSysMposInfoList(params);
         ExcelUtil<AgentSelectUserMposInfo> util = new ExcelUtil<AgentSelectUserMposInfo>(AgentSelectUserMposInfo.class);
         return util.exportExcel(list, "可分配的MPOS导入模板");
+    }
+
+    @PostMapping("/batchUpdate")
+    @ResponseBody
+    public R batchUpdate(@RequestParam Map<String,Object> params){
+	    return agentUserMposInfoService.batchUpdate(params);
     }
 	
 	

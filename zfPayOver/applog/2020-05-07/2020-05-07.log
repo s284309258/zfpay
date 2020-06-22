@@ -1,0 +1,810 @@
+2020-05-07 09:48:07 -Starting LongEcologicalApplication on PC-201905161910 with PID 20308 (D:\javaSVN\zf2_qh\zfPayOver\target\classes started by Administrator in D:\javaSVN\zf2_qh\zfPayOver)
+2020-05-07 09:48:07 -Running with Spring Boot v2.1.1.RELEASE, Spring v5.1.3.RELEASE
+2020-05-07 09:48:07 -No active profile set, falling back to default profiles: default
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'onlineActivityMapper' and 'com.example.longecological.mapper.activity.OnlineActivityMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'benefitCentreMapper' and 'com.example.longecological.mapper.benefitcentre.BenefitCentreMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'sysParamMapper' and 'com.example.longecological.mapper.common.SysParamMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'sysParamRateMapper' and 'com.example.longecological.mapper.common.SysParamRateMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'verifyRecordMapper' and 'com.example.longecological.mapper.common.VerifyRecordMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'machinesManageMapper' and 'com.example.longecological.mapper.machines.MachinesManageMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'merchantManageMapper' and 'com.example.longecological.mapper.merchant.MerchantManageMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'messageMapper' and 'com.example.longecological.mapper.message.MessageMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'moneyLockerCollegeMapper' and 'com.example.longecological.mapper.moneylocker.MoneyLockerCollegeMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'mposMapper' and 'com.example.longecological.mapper.mpos.MposMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'scheduleJobMapper' and 'com.example.longecological.mapper.quartz.ScheduleJobMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'creditCardRatesApplyMapper' and 'com.example.longecological.mapper.ratesmanage.CreditCardRatesApplyMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'reportFormsMapper' and 'com.example.longecological.mapper.reportforms.ReportFormsMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'sysAppImgMapper' and 'com.example.longecological.mapper.system.SysAppImgMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'sysBankInfoMapper' and 'com.example.longecological.mapper.system.SysBankInfoMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'sysExchangeUrlMapper' and 'com.example.longecological.mapper.system.SysExchangeUrlMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'sysNewsMapper' and 'com.example.longecological.mapper.system.SysNewsMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'sysNoticeMapper' and 'com.example.longecological.mapper.system.SysNoticeMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'sysVersionMapper' and 'com.example.longecological.mapper.system.SysVersionMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'test' and 'com.example.longecological.mapper.test.Test' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'traditionalPosMapper' and 'com.example.longecological.mapper.traditionalpos.TraditionalPosMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'userCardInfoMapper' and 'com.example.longecological.mapper.user.UserCardInfoMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'userCashRecordMapper' and 'com.example.longecological.mapper.user.UserCashRecordMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'userFeedBackMapper' and 'com.example.longecological.mapper.user.UserFeedBackMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'userInfoMapper' and 'com.example.longecological.mapper.user.UserInfoMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Skipping MapperFactoryBean with name 'zhongFuBackMapper' and 'com.example.longecological.mapper.zfback.ZhongFuBackMapper' mapperInterface. Bean already defined with the same name!
+2020-05-07 09:48:08 -Multiple Spring Data modules found, entering strict repository configuration mode!
+2020-05-07 09:48:08 -Bootstrapping Spring Data repositories in DEFAULT mode.
+2020-05-07 09:48:08 -Finished Spring Data repository scanning in 43ms. Found 0 repository interfaces.
+2020-05-07 09:48:09 -Multiple Spring Data modules found, entering strict repository configuration mode!
+2020-05-07 09:48:09 -Bootstrapping Spring Data repositories in DEFAULT mode.
+2020-05-07 09:48:09 -Finished Spring Data repository scanning in 33ms. Found 0 repository interfaces.
+2020-05-07 09:48:09 -Bean 'taskExecutorConfig' of type [com.example.longecological.config.thread.TaskExecutorConfig$$EnhancerBySpringCGLIB$$4b4b85ec] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2020-05-07 09:48:09 -Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$45cf6a8c] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2020-05-07 09:48:10 -Tomcat initialized with port(s): 8080 (http)
+2020-05-07 09:48:10 -Initializing ProtocolHandler ["http-nio-8080"]
+2020-05-07 09:48:10 -Starting service [Tomcat]
+2020-05-07 09:48:10 -Starting Servlet Engine: Apache Tomcat/9.0.13
+2020-05-07 09:48:10 -The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: [C:\Program Files\Java\jdk1.8.0_181\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:\Program Files (x86)\NetSarang\Xshell 6\;C:\Python27\;C:\Python27\Scripts;C:\Program Files (x86)\NetSarang\Xftp 6\;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\MySQL\MySQL Utilities 1.6\;C:\Program Files\TortoiseSVN\bin;C:\Program Files\Git\cmd;C:\ProgramData\chocolatey\bin;C:\Program Files\Geth;D:\360Downloads\web3j-3.6.0\bin;C:\Program Files\nodejs\;C:\Program Files\Microsoft SQL Server\120\DTS\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\110\Tools\Binn\;C:\Program Files (x86)\Microsoft SQL Server\120\Tools\Binn\;C:\Program Files\Microsoft SQL Server\120\Tools\Binn\;C:\Program Files (x86)\Microsoft SQL Server\120\Tools\Binn\ManagementStudio\;C:\Program Files (x86)\Microsoft SQL Server\120\DTS\Binn\;C:\Program Files\Redis\;C:\Users\Administrator\AppData\Local\Microsoft\WindowsApps;C:\Program Files\Microsoft VS Code\bin;D:\360Downloads\web3j-3.6.0\bin;C:\Users\Administrator\AppData\Roaming\npm;C:\Program Files\Java\jdk1.8.0_181;;.]
+2020-05-07 09:48:10 -Initializing Spring embedded WebApplicationContext
+2020-05-07 09:48:10 -Root WebApplicationContext: initialization completed in 2912 ms
+2020-05-07 09:48:10 -Filter xssFilter was not registered (disabled)
+2020-05-07 09:48:11 -HikariPool-1 - Starting...
+2020-05-07 09:48:11 -HikariPool-1 - Start completed.
+2020-05-07 09:48:11 -HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2020-05-07 09:48:11 -HHH000412: Hibernate Core {5.3.7.Final}
+2020-05-07 09:48:11 -HHH000206: hibernate.properties not found
+2020-05-07 09:48:11 -HCANN000001: Hibernate Commons Annotations {5.0.4.Final}
+2020-05-07 09:48:12 -HHH000400: Using dialect: org.hibernate.dialect.MySQL5Dialect
+2020-05-07 09:48:12 -Initialized JPA EntityManagerFactory for persistence unit 'default'
+2020-05-07 09:48:12 -Using default implementation for ThreadExecutor
+2020-05-07 09:48:12 -Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2020-05-07 09:48:12 -Quartz Scheduler v.2.3.0 created.
+2020-05-07 09:48:12 -RAMJobStore initialized.
+2020-05-07 09:48:12 -Scheduler meta-data: Quartz Scheduler (v2.3.0) 'schedulerFactoryBean' with instanceId 'NON_CLUSTERED'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 10 threads.
+  Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
+
+2020-05-07 09:48:12 -Quartz scheduler 'schedulerFactoryBean' initialized from an externally provided properties instance.
+2020-05-07 09:48:12 -Quartz scheduler version: 2.3.0
+2020-05-07 09:48:12 -JobFactory set to: org.springframework.scheduling.quartz.AdaptableJobFactory@11e17893
+2020-05-07 09:48:13 -STAET TaskExecutorConfig
+2020-05-07 09:48:13 -Initializing ExecutorService
+2020-05-07 09:48:13 -Initializing ExecutorService 'getAsyncExecutor'
+2020-05-07 09:48:14 -spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2020-05-07 09:48:14 -Cannot find template location: classpath:/templates/ (please add some templates or check your Thymeleaf configuration)
+2020-05-07 09:48:14 -Initializing ExecutorService 'taskScheduler'
+2020-05-07 09:48:15 -Starting Quartz Scheduler now
+2020-05-07 09:48:15 -Scheduler schedulerFactoryBean_$_NON_CLUSTERED started.
+2020-05-07 09:48:15 -Starting ProtocolHandler ["http-nio-8080"]
+2020-05-07 09:48:15 -Using a shared selector for servlet write/read
+2020-05-07 09:48:15 -Tomcat started on port(s): 8080 (http) with context path ''
+2020-05-07 09:48:15 -Started LongEcologicalApplication in 8.468 seconds (JVM running for 10.102)
+2020-05-07 09:48:27 -Initializing Spring DispatcherServlet 'dispatcherServlet'
+2020-05-07 09:48:27 -Initializing Servlet 'dispatcherServlet'
+2020-05-07 09:48:27 -Completed initialization in 24 ms
+2020-05-07 09:48:27 -此处进行解密+验签+身份验证
+2020-05-07 09:48:27 -此处进行解密+验签+身份验证
+2020-05-07 09:48:27 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_70
+2020-05-07 09:48:27 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_70
+2020-05-07 09:48:28 -Starting without optional epoll library
+2020-05-07 09:48:28 -Starting without optional kqueue library
+2020-05-07 09:48:28 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_70 , return
+2020-05-07 09:48:28 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_70 , return
+2020-05-07 09:48:29 -请求地址 : http://192.168.191.1:8080/api/user/info/getUserAuthStatus
+2020-05-07 09:48:29 -请求地址 : http://192.168.191.1:8080/api/sys/reportforms/getHomePageInfo
+2020-05-07 09:48:29 -==>  Preparing: select auth_status,id_card, card_photo, real_name, auth_remark from t_user_info where id = ? 
+2020-05-07 09:48:29 -==>  Preparing: SELECT cast(IFNULL(truncate((t1.performance/t.trade_num),2),0) as char) as pos_avg, cast(t.trade_num as char) as pos_num, cast(IFNULL(t1.performance,0.00) as char) as performance, cast(IFNULL(t1.merchant_trade_num+t1.agency_trade_num,0) as char) as act_num FROM (select * from t_summary_user_traditional_pos_benefit_all t where t.pos_type is null ) t LEFT JOIN (select * from t_summary_user_traditional_pos_benefit_month t where t.pos_type is null) t1 ON t.user_id = t1.user_id AND t1.cre_month = ? WHERE t.user_id = ? 
+2020-05-07 09:48:29 -==> Parameters: 70(String)
+2020-05-07 09:48:29 -==> Parameters: 202005(String), 70(String)
+2020-05-07 09:48:29 -<==      Total: 1
+2020-05-07 09:48:29 -<==      Total: 1
+2020-05-07 09:48:29 -==>  Preparing: select IFNULL(cast(merchant_trade_num+agency_trade_num as char),'0') as act_num_day from t_summary_user_traditional_pos_benefit_everyday where user_id=? and pos_type is null and cre_date=CURRENT_DATE 
+2020-05-07 09:48:29 -==>  Preparing: select IFNULL(cast(sum(amount) as char),'0') as amount from ( select sum(performance) as amount from t_summary_traditional_pos_trans_everyday where user_id=? and cre_date=CURRENT_DATE union select sum(performance) as amount from t_summary_mpos_trans_everyday where user_id=? and cre_date=CURRENT_DATE ) t 
+2020-05-07 09:48:29 -==> Parameters: 70(String)
+2020-05-07 09:48:29 -==> Parameters: 70(String), 70(String)
+2020-05-07 09:48:29 -<==      Total: 0
+2020-05-07 09:48:29 -==>  Preparing: SELECT cast(IFNULL(truncate((t1.performance/t.trade_num),2),0) as char) as pos_avg, cast(t.trade_num as char) as pos_num, cast(IFNULL(t1.performance,0.00) as char) as performance, cast(IFNULL(t1.merchant_trade_num+t1.agency_trade_num,0) as char) as act_num FROM t_summary_user_mpos_benefit_all t LEFT JOIN t_summary_user_mpos_benefit_month t1 ON t.user_id = t1.user_id AND t1.cre_month = ? WHERE t.user_id = ? 
+2020-05-07 09:48:29 -==> Parameters: 202005(String), 70(String)
+2020-05-07 09:48:29 -<==      Total: 1
+2020-05-07 09:48:29 -==>  Preparing: select IFNULL(cast(merchant_trade_num+agency_trade_num as char),'0') as act_num_day from t_summary_user_mpos_benefit_everyday where user_id=? and cre_date=CURRENT_DATE 
+2020-05-07 09:48:29 -==> Parameters: 70(String)
+2020-05-07 09:48:29 -<==      Total: 0
+2020-05-07 09:48:29 -==>  Preparing: SELECT cast(IFNULL(truncate((t1.performance/t.trade_num),2),0) as char) as pos_avg, cast(t.trade_num as char) as pos_num, cast(IFNULL(t1.performance,0.00) as char) as performance, cast(IFNULL(t1.merchant_trade_num+t1.agency_trade_num,0) as char) as act_num FROM (select * from t_summary_user_traditional_pos_benefit_all t where t.pos_type='epos' ) t LEFT JOIN (select * from t_summary_user_traditional_pos_benefit_month t where t.pos_type='epos') t1 ON t.user_id = t1.user_id AND t1.cre_month = ? WHERE t.user_id = ? 
+2020-05-07 09:48:29 -==> Parameters: 202005(String), 70(String)
+2020-05-07 09:48:29 -<==      Total: 1
+2020-05-07 09:48:29 -==>  Preparing: select IFNULL(cast(merchant_trade_num+agency_trade_num as char),'0') as act_num_day from t_summary_user_traditional_pos_benefit_everyday where user_id=? and pos_type='epos' and cre_date=CURRENT_DATE 
+2020-05-07 09:48:29 -==> Parameters: 70(String)
+2020-05-07 09:48:29 -<==      Total: 0
+2020-05-07 09:48:29 -耗时 : 200
+2020-05-07 09:48:32 -<==      Total: 1
+2020-05-07 09:48:32 -==>  Preparing: select IFNULL(cast(sum(amount) as char),'0') as amount from ( select sum(performance) as amount from t_summary_traditional_pos_trans_all where user_id=? union select sum(performance) as amount from t_summary_mpos_trans_all where user_id=? ) t 
+2020-05-07 09:48:32 -==> Parameters: 70(String), 70(String)
+2020-05-07 09:48:33 -<==      Total: 1
+2020-05-07 09:48:33 -耗时 : 4231
+2020-05-07 09:48:41 -此处进行解密+验签+身份验证
+2020-05-07 09:48:41 -请求地址 : http://192.168.191.1:8080/api/user/login/userLogOut
+2020-05-07 09:48:41 -token值=======70|4WSATJLGL56LL6XBHLH838W4Z8RI54IQ
+2020-05-07 09:48:41 -==>  Preparing: update t_user_info set device_token=? where id=? 
+2020-05-07 09:48:41 -==> Parameters: null, 70(String)
+2020-05-07 09:48:41 -<==    Updates: 1
+2020-05-07 09:48:41 -耗时 : 277
+2020-05-07 09:48:55 -此处进行解密+验签+身份验证
+2020-05-07 09:48:56 -解密：{"version_no":"","login_password":"8A6F2805B4515AC12058E79E66539BE9","login_type":"account","sign":"4A002E600C8562D72CF66528D9C36723","device_no":"1.1.7","device_type":"android","sys_user_account":"13322990711"}
+2020-05-07 09:48:56 -请求地址 : http://192.168.191.1:8080/api/user/login/userLogin
+2020-05-07 09:48:56 -==>  Preparing: SELECT id, manager_id, user_tel, real_name, id_card, card_photo, real_name, auth_status, money, settle_money, deduct_money, login_password, pay_password, head_photo, referer_id, status, algebra, parent_chain, cre_date, cre_time FROM t_user_info where user_tel=? 
+2020-05-07 09:48:56 -==> Parameters: 13322990711(String)
+2020-05-07 09:48:56 -<==      Total: 1
+2020-05-07 09:48:56 -耗时 : 285
+2020-05-07 09:49:05 -此处进行解密+验签+身份验证
+2020-05-07 09:49:05 -解密：{"version_no":"","login_password":"F5B4166AFD7EA843A09FEE4AFD9979F4","login_type":"account","sign":"1CD57555E0DD5A6F58230E2777AD0726","device_no":"1.1.7","device_type":"android","sys_user_account":"13322990711"}
+2020-05-07 09:49:05 -请求地址 : http://192.168.191.1:8080/api/user/login/userLogin
+2020-05-07 09:49:05 -==>  Preparing: SELECT id, manager_id, user_tel, real_name, id_card, card_photo, real_name, auth_status, money, settle_money, deduct_money, login_password, pay_password, head_photo, referer_id, status, algebra, parent_chain, cre_date, cre_time FROM t_user_info where user_tel=? 
+2020-05-07 09:49:05 -==> Parameters: 13322990711(String)
+2020-05-07 09:49:05 -<==      Total: 1
+2020-05-07 09:49:05 -==>  Preparing: update t_user_info set device_type=?,device_no=?,version_no=?,device_token=?, last_login_ip=?,last_login_date=?,last_login_time=? where id=? 
+2020-05-07 09:49:05 -==> Parameters: android(String), 1.1.7(String), (String), null, 192.168.191.1(String), 20200507(String), 094905(String), 181(Integer)
+2020-05-07 09:49:05 -<==    Updates: 1
+2020-05-07 09:49:05 -==>  Preparing: SELECT user_id AS manager_id, auth_isaudit, card_isaudit, app_id FROM sys_user WHERE user_id = ? AND del_flag='0' AND status='0' 
+2020-05-07 09:49:05 -==> Parameters: 26(String)
+2020-05-07 09:49:05 -<==      Total: 1
+2020-05-07 09:49:05 -String com.example.longecological.service.common.impl.SysParamServiceImpl.getParamByCode(String) enable cache service,cacheKey:zfpay_sys_param_openThreeTierDistribution
+2020-05-07 09:49:05 -String com.example.longecological.service.common.impl.SysParamServiceImpl.getParamByCode(String) enable cache service,has cacheKey:zfpay_sys_param_openThreeTierDistribution , return
+2020-05-07 09:49:05 -String com.example.longecological.service.common.impl.SysParamServiceImpl.getParamByCode(String) enable cache service,cacheKey:zfpay_sys_param_openThreeTierDistribution
+2020-05-07 09:49:05 -String com.example.longecological.service.common.impl.SysParamServiceImpl.getParamByCode(String) enable cache service,has cacheKey:zfpay_sys_param_openThreeTierDistribution , return
+2020-05-07 09:49:05 -String com.example.longecological.service.common.impl.SysParamServiceImpl.getParamByCode(String) enable cache service,cacheKey:zfpay_sys_param_openThreeTierDistribution
+2020-05-07 09:49:05 -String com.example.longecological.service.common.impl.SysParamServiceImpl.getParamByCode(String) enable cache service,has cacheKey:zfpay_sys_param_openThreeTierDistribution , return
+2020-05-07 09:49:05 -耗时 : 93
+2020-05-07 09:49:05 -此处进行解密+验签+身份验证
+2020-05-07 09:49:05 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:49:05 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:49:05 -请求地址 : http://192.168.191.1:8080/api/user/info/getUserNewInfo
+2020-05-07 09:49:05 -==>  Preparing: SELECT money, settle_money, deduct_money, today_benefit, total_benefit, settle_single_feet_money, single_rate_feet_money FROM t_user_info WHERE id = ? 
+2020-05-07 09:49:05 -==> Parameters: 181(String)
+2020-05-07 09:49:05 -此处进行解密+验签+身份验证
+2020-05-07 09:49:05 -解密：
+2020-05-07 09:49:05 -请求地址 : http://192.168.191.1:8080/api/sys/appImg/getAppImgList
+2020-05-07 09:49:05 -==>  Preparing: SELECT id, img_type, (case when ?='04' then concat('http://cdn.szbypos.com/',img_url) else img_url end) as img_url FROM t_sys_app_img where img_type=? ORDER BY order_num desc 
+2020-05-07 09:49:05 -==> Parameters: 01(String), 01(String)
+2020-05-07 09:49:05 -此处进行解密+验签+身份验证
+2020-05-07 09:49:05 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:49:05 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:49:05 -请求地址 : http://192.168.191.1:8080/api/sys/news/getNewNews
+2020-05-07 09:49:05 -此处进行解密+验签+身份验证
+2020-05-07 09:49:05 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:49:05 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:49:05 -==>  Preparing: SELECT cast(id as char) as news_id, news_title, news_cover, cast(browse_num as char) as browse_num, DATE_FORMAT( STR_TO_DATE( CONCAT(cre_date, cre_time), '%Y%m%d%H%i%s' ), '%Y-%m-%d %H:%i:%s' ) AS cre_date FROM t_sys_news_info where status=0 order by id desc limit 0,3 
+2020-05-07 09:49:05 -==> Parameters: 
+2020-05-07 09:49:05 -请求地址 : http://192.168.191.1:8080/api/user/info/getUserNewInfo
+2020-05-07 09:49:05 -==>  Preparing: SELECT money, settle_money, deduct_money, today_benefit, total_benefit, settle_single_feet_money, single_rate_feet_money FROM t_user_info WHERE id = ? 
+2020-05-07 09:49:05 -此处进行解密+验签+身份验证
+2020-05-07 09:49:05 -==> Parameters: 181(String)
+2020-05-07 09:49:05 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:49:05 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:49:05 -请求地址 : http://192.168.191.1:8080/api/sys/notice/getNewNotice
+2020-05-07 09:49:05 -==>  Preparing: SELECT cast(t.id as char) as notice_id, t.notice_title, cast((select count(*) from t_user_read_notice_info where user_id = ? and notice_id = t.id) as char) as is_read, DATE_FORMAT( STR_TO_DATE( CONCAT(t.cre_date, t.cre_time), '%Y%m%d%H%i%s' ), '%Y-%m-%d %H:%i:%s' ) AS cre_date FROM t_sys_notice_info t where t.status=0 order by t.id desc limit 0,2 
+2020-05-07 09:49:05 -==> Parameters: 181(String)
+2020-05-07 09:49:05 -此处进行解密+验签+身份验证
+2020-05-07 09:49:05 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:49:05 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:49:05 -请求地址 : http://192.168.191.1:8080/api/sys/notice/getUnReadNews
+2020-05-07 09:49:05 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserInfoCacheById(String) enable cache service,cacheKey:zfpay_user_info_id_181
+2020-05-07 09:49:05 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserInfoCacheById(String) enable cache service,has cacheKey:zfpay_user_info_id_181 , return
+2020-05-07 09:49:05 -==>  Preparing: select sum(cnt) from (select count(*) as cnt from t_user_apply_cardrate_trapos_record_info where user_id = ? and status in('08','09') union select count(*) as cnt from t_user_apply_cardrate_mpos_record_info where user_id = ? and status in('08','09')) t 
+2020-05-07 09:49:05 -==> Parameters: 181(String), 181(String)
+2020-05-07 09:49:05 -<==      Total: 1
+2020-05-07 09:49:05 -耗时 : 136
+2020-05-07 09:49:05 -此处进行解密+验签+身份验证
+2020-05-07 09:49:05 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:49:05 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:49:05 -请求地址 : http://192.168.191.1:8080/api/sys/notice/getUnReadNews
+2020-05-07 09:49:05 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserInfoCacheById(String) enable cache service,cacheKey:zfpay_user_info_id_181
+2020-05-07 09:49:05 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserInfoCacheById(String) enable cache service,has cacheKey:zfpay_user_info_id_181 , return
+2020-05-07 09:49:05 -==>  Preparing: select sum(cnt) from (select count(*) as cnt from t_user_apply_cardrate_trapos_record_info where user_id = ? and status in('08','09') union select count(*) as cnt from t_user_apply_cardrate_mpos_record_info where user_id = ? and status in('08','09')) t 
+2020-05-07 09:49:05 -==> Parameters: 181(String), 181(String)
+2020-05-07 09:49:05 -<==      Total: 1
+2020-05-07 09:49:06 -耗时 : 243
+2020-05-07 09:49:06 -<==      Total: 2
+2020-05-07 09:49:06 -耗时 : 243
+2020-05-07 09:49:06 -<==      Total: 3
+2020-05-07 09:49:06 -<==      Total: 4
+2020-05-07 09:49:06 -耗时 : 485
+2020-05-07 09:49:06 -耗时 : 445
+2020-05-07 09:49:06 -<==      Total: 1
+2020-05-07 09:49:06 -<==      Total: 1
+2020-05-07 09:49:06 -==>  Preparing: select * from t_news_read_state where news_type=? and user_id=? 
+2020-05-07 09:49:06 -==> Parameters: applyRateFlag(String), 181(String)
+2020-05-07 09:49:06 -==>  Preparing: select * from t_news_read_state where news_type=? and user_id=? 
+2020-05-07 09:49:06 -==> Parameters: applyRateFlag(String), 181(String)
+2020-05-07 09:49:06 -<==      Total: 2
+2020-05-07 09:49:06 -<==      Total: 2
+2020-05-07 09:49:06 -==>  Preparing: update t_news_read_state set pre_unread_num=?,unread_num=? where user_id=? and news_type=? 
+2020-05-07 09:49:06 -==>  Preparing: update t_news_read_state set pre_unread_num=?,unread_num=? where user_id=? and news_type=? 
+2020-05-07 09:49:06 -==> Parameters: 7(Integer), 7(Integer), 181(String), applyRateFlag(String)
+2020-05-07 09:49:06 -==> Parameters: 7(Integer), 7(Integer), 181(String), applyRateFlag(String)
+2020-05-07 09:49:06 -<==    Updates: 2
+2020-05-07 09:49:06 -==>  Preparing: select sum(cnt) from (SELECT count(*) as cnt FROM t_user_trapos_recall_record_info WHERE acce_user_id = ? AND status = '00' union SELECT count(*) as cnt FROM t_user_mpos_recall_record_info WHERE acce_user_id = ? AND status = '00') t 
+2020-05-07 09:49:06 -==> Parameters: 181(String), 181(String)
+2020-05-07 09:49:06 -<==    Updates: 2
+2020-05-07 09:49:06 -==>  Preparing: select sum(cnt) from (SELECT count(*) as cnt FROM t_user_trapos_recall_record_info WHERE acce_user_id = ? AND status = '00' union SELECT count(*) as cnt FROM t_user_mpos_recall_record_info WHERE acce_user_id = ? AND status = '00') t 
+2020-05-07 09:49:06 -==> Parameters: 181(String), 181(String)
+2020-05-07 09:49:06 -<==      Total: 1
+2020-05-07 09:49:06 -==>  Preparing: select * from t_news_read_state where news_type=? and user_id=? 
+2020-05-07 09:49:06 -==> Parameters: recallFlag(String), 181(String)
+2020-05-07 09:49:06 -<==      Total: 1
+2020-05-07 09:49:06 -==>  Preparing: select * from t_news_read_state where news_type=? and user_id=? 
+2020-05-07 09:49:06 -==> Parameters: recallFlag(String), 181(String)
+2020-05-07 09:49:06 -<==      Total: 1
+2020-05-07 09:49:06 -==>  Preparing: update t_news_read_state set pre_unread_num=?,unread_num=? where user_id=? and news_type=? 
+2020-05-07 09:49:06 -==> Parameters: 0(Integer), 0(Integer), 181(String), recallFlag(String)
+2020-05-07 09:49:06 -<==      Total: 1
+2020-05-07 09:49:06 -==>  Preparing: update t_news_read_state set pre_unread_num=?,unread_num=? where user_id=? and news_type=? 
+2020-05-07 09:49:06 -==> Parameters: 0(Integer), 0(Integer), 181(String), recallFlag(String)
+2020-05-07 09:49:06 -<==    Updates: 1
+2020-05-07 09:49:06 -==>  Preparing: select count(*) as cnt from t_sys_money_locker_college_info 
+2020-05-07 09:49:06 -==> Parameters: 
+2020-05-07 09:49:06 -<==      Total: 1
+2020-05-07 09:49:06 -==>  Preparing: select * from t_news_read_state where news_type=? and user_id=? 
+2020-05-07 09:49:06 -==> Parameters: collegeFlag(String), 181(String)
+2020-05-07 09:49:06 -<==      Total: 1
+2020-05-07 09:49:06 -==>  Preparing: update t_news_read_state set pre_unread_num=?,unread_num=? where user_id=? and news_type=? 
+2020-05-07 09:49:06 -==> Parameters: 25(Integer), 25(Integer), 181(String), collegeFlag(String)
+2020-05-07 09:49:06 -<==    Updates: 1
+2020-05-07 09:49:06 -==>  Preparing: select count(*) as cnt from t_sys_money_locker_college_info 
+2020-05-07 09:49:06 -==> Parameters: 
+2020-05-07 09:49:06 -<==      Total: 1
+2020-05-07 09:49:06 -==>  Preparing: select * from t_news_read_state where news_type=? and user_id=? 
+2020-05-07 09:49:06 -==> Parameters: collegeFlag(String), 181(String)
+2020-05-07 09:49:06 -<==      Total: 1
+2020-05-07 09:49:06 -==>  Preparing: update t_news_read_state set pre_unread_num=?,unread_num=? where user_id=? and news_type=? 
+2020-05-07 09:49:06 -==> Parameters: 25(Integer), 25(Integer), 181(String), collegeFlag(String)
+2020-05-07 09:49:06 -<==    Updates: 1
+2020-05-07 09:49:06 -==>  Preparing: select sum(cnt) from (select count(*) as cnt from t_user_apply_cardrate_trapos_record_info where user_id = ? and status in('08','09') union select count(*) as cnt from t_user_apply_cardrate_mpos_record_info where user_id = ? and status in('08','09')) t 
+2020-05-07 09:49:06 -==> Parameters: 181(String), 181(String)
+2020-05-07 09:49:06 -<==      Total: 1
+2020-05-07 09:49:06 -==>  Preparing: select * from t_news_read_state where news_type=? and user_id=? 
+2020-05-07 09:49:06 -==> Parameters: cardFlag(String), 181(String)
+2020-05-07 09:49:06 -<==      Total: 1
+2020-05-07 09:49:06 -==>  Preparing: update t_news_read_state set pre_unread_num=?,unread_num=? where user_id=? and news_type=? 
+2020-05-07 09:49:06 -==> Parameters: 7(Integer), 7(Integer), 181(String), cardFlag(String)
+2020-05-07 09:49:06 -<==    Updates: 1
+2020-05-07 09:49:06 -==>  Preparing: select sum(cnt) from (select count(*) as cnt from t_user_apply_cardrate_trapos_record_info where user_id = ? and status in('08','09') union select count(*) as cnt from t_user_apply_cardrate_mpos_record_info where user_id = ? and status in('08','09')) t 
+2020-05-07 09:49:06 -==> Parameters: 181(String), 181(String)
+2020-05-07 09:49:06 -<==      Total: 1
+2020-05-07 09:49:06 -==>  Preparing: select * from t_news_read_state where news_type=? and user_id=? 
+2020-05-07 09:49:06 -==> Parameters: cardFlag(String), 181(String)
+2020-05-07 09:49:06 -<==      Total: 1
+2020-05-07 09:49:06 -==>  Preparing: update t_news_read_state set pre_unread_num=?,unread_num=? where user_id=? and news_type=? 
+2020-05-07 09:49:06 -==> Parameters: 7(Integer), 7(Integer), 181(String), cardFlag(String)
+2020-05-07 09:49:06 -<==    Updates: 1
+2020-05-07 09:49:06 -==>  Preparing: select * from t_news_read_state where news_type=? and user_id=? 
+2020-05-07 09:49:06 -==> Parameters: appImgFlag(String), 181(String)
+2020-05-07 09:49:06 -<==      Total: 1
+2020-05-07 09:49:06 -耗时 : 712
+2020-05-07 09:49:06 -<==    Updates: 1
+2020-05-07 09:49:06 -==>  Preparing: select * from t_news_read_state where news_type=? and user_id=? 
+2020-05-07 09:49:06 -==> Parameters: appImgFlag(String), 181(String)
+2020-05-07 09:49:06 -<==      Total: 1
+2020-05-07 09:49:06 -耗时 : 794
+2020-05-07 09:49:10 -此处进行解密+验签+身份验证
+2020-05-07 09:49:10 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:49:10 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:49:10 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getHeaderInformation
+2020-05-07 09:49:10 -==>  Preparing: SELECT cast(today_benefit as char) as today_benefit, cast(money as char) AS withdraw_money, cast(settle_money as char) as settle_money, cast(total_benefit as char) as total_benefit FROM t_user_info WHERE id = ? 
+2020-05-07 09:49:10 -==> Parameters: 181(String)
+2020-05-07 09:49:10 -<==      Total: 1
+2020-05-07 09:49:10 -耗时 : 24
+2020-05-07 09:49:10 -此处进行解密+验签+身份验证
+2020-05-07 09:49:10 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:49:10 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:49:10 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreTraditionalPosDetail
+2020-05-07 09:49:10 -此处进行解密+验签+身份验证
+2020-05-07 09:49:10 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:49:10 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:49:10 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreMposDetail
+2020-05-07 09:49:10 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_mpos_benefit_month WHERE user_id = ? and cre_month = ? 
+2020-05-07 09:49:10 -==> Parameters: 181(String), 202005(String)
+2020-05-07 09:49:10 -<==      Total: 0
+2020-05-07 09:49:10 -耗时 : 5
+2020-05-07 09:49:10 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_traditional_pos_benefit_month WHERE user_id = ? and cre_month = ? and pos_type is null 
+2020-05-07 09:49:10 -==> Parameters: 181(String), 202005(String)
+2020-05-07 09:49:10 -<==      Total: 1
+2020-05-07 09:49:10 -耗时 : 26
+2020-05-07 09:49:10 -此处进行解密+验签+身份验证
+2020-05-07 09:49:10 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:49:10 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:49:10 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreTraditionalPosDetail
+2020-05-07 09:49:10 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_traditional_pos_benefit_month WHERE user_id = ? and cre_month = ? and pos_type='epos' 
+2020-05-07 09:49:10 -==> Parameters: 181(String), 202005(String)
+2020-05-07 09:49:10 -<==      Total: 0
+2020-05-07 09:49:10 -耗时 : 3
+2020-05-07 09:50:36 -此处进行解密+验签+身份验证
+2020-05-07 09:50:36 -请求地址 : http://192.168.191.1:8080/api/user/login/userLogOut
+2020-05-07 09:50:36 -token值=======181|LJSETFHKC2A7WKO4OMMTPLY9YEC26DKG
+2020-05-07 09:50:36 -==>  Preparing: update t_user_info set device_token=? where id=? 
+2020-05-07 09:50:36 -==> Parameters: null, 181(String)
+2020-05-07 09:50:36 -<==    Updates: 1
+2020-05-07 09:50:36 -耗时 : 11
+2020-05-07 09:50:47 -此处进行解密+验签+身份验证
+2020-05-07 09:50:47 -解密：{"version_no":"","login_password":"F5B4166AFD7EA843A09FEE4AFD9979F4","login_type":"account","sign":"1CD57555E0DD5A6F58230E2777AD0726","device_no":"1.1.7","device_type":"android","sys_user_account":"13322990711"}
+2020-05-07 09:50:47 -请求地址 : http://192.168.191.1:8080/api/user/login/userLogin
+2020-05-07 09:50:47 -==>  Preparing: SELECT id, manager_id, user_tel, real_name, id_card, card_photo, real_name, auth_status, money, settle_money, deduct_money, login_password, pay_password, head_photo, referer_id, status, algebra, parent_chain, cre_date, cre_time FROM t_user_info where user_tel=? 
+2020-05-07 09:50:47 -==> Parameters: 13322990711(String)
+2020-05-07 09:50:48 -<==      Total: 1
+2020-05-07 09:50:48 -==>  Preparing: update t_user_info set device_type=?,device_no=?,version_no=?,device_token=?, last_login_ip=?,last_login_date=?,last_login_time=? where id=? 
+2020-05-07 09:50:48 -==> Parameters: android(String), 1.1.7(String), (String), null, 192.168.191.1(String), 20200507(String), 095048(String), 181(Integer)
+2020-05-07 09:50:48 -<==    Updates: 1
+2020-05-07 09:50:48 -==>  Preparing: SELECT user_id AS manager_id, auth_isaudit, card_isaudit, app_id FROM sys_user WHERE user_id = ? AND del_flag='0' AND status='0' 
+2020-05-07 09:50:48 -==> Parameters: 26(String)
+2020-05-07 09:50:48 -<==      Total: 1
+2020-05-07 09:50:48 -String com.example.longecological.service.common.impl.SysParamServiceImpl.getParamByCode(String) enable cache service,cacheKey:zfpay_sys_param_openThreeTierDistribution
+2020-05-07 09:50:48 -String com.example.longecological.service.common.impl.SysParamServiceImpl.getParamByCode(String) enable cache service,has cacheKey:zfpay_sys_param_openThreeTierDistribution , return
+2020-05-07 09:50:48 -String com.example.longecological.service.common.impl.SysParamServiceImpl.getParamByCode(String) enable cache service,cacheKey:zfpay_sys_param_openThreeTierDistribution
+2020-05-07 09:50:48 -String com.example.longecological.service.common.impl.SysParamServiceImpl.getParamByCode(String) enable cache service,has cacheKey:zfpay_sys_param_openThreeTierDistribution , return
+2020-05-07 09:50:48 -String com.example.longecological.service.common.impl.SysParamServiceImpl.getParamByCode(String) enable cache service,cacheKey:zfpay_sys_param_openThreeTierDistribution
+2020-05-07 09:50:48 -String com.example.longecological.service.common.impl.SysParamServiceImpl.getParamByCode(String) enable cache service,has cacheKey:zfpay_sys_param_openThreeTierDistribution , return
+2020-05-07 09:50:48 -耗时 : 222
+2020-05-07 09:50:48 -此处进行解密+验签+身份验证
+2020-05-07 09:50:48 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:50:48 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:50:48 -请求地址 : http://192.168.191.1:8080/api/user/info/getUserNewInfo
+2020-05-07 09:50:48 -==>  Preparing: SELECT money, settle_money, deduct_money, today_benefit, total_benefit, settle_single_feet_money, single_rate_feet_money FROM t_user_info WHERE id = ? 
+2020-05-07 09:50:48 -==> Parameters: 181(String)
+2020-05-07 09:50:48 -<==      Total: 1
+2020-05-07 09:50:48 -耗时 : 3
+2020-05-07 09:50:48 -此处进行解密+验签+身份验证
+2020-05-07 09:50:48 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:50:48 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:50:48 -请求地址 : http://192.168.191.1:8080/api/sys/notice/getUnReadNews
+2020-05-07 09:50:48 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserInfoCacheById(String) enable cache service,cacheKey:zfpay_user_info_id_181
+2020-05-07 09:50:48 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserInfoCacheById(String) enable cache service,has cacheKey:zfpay_user_info_id_181 , return
+2020-05-07 09:50:48 -==>  Preparing: select sum(cnt) from (select count(*) as cnt from t_user_apply_cardrate_trapos_record_info where user_id = ? and status in('08','09') union select count(*) as cnt from t_user_apply_cardrate_mpos_record_info where user_id = ? and status in('08','09')) t 
+2020-05-07 09:50:48 -==> Parameters: 181(String), 181(String)
+2020-05-07 09:50:48 -此处进行解密+验签+身份验证
+2020-05-07 09:50:48 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:50:48 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:50:48 -请求地址 : http://192.168.191.1:8080/api/sys/notice/getUnReadNews
+2020-05-07 09:50:48 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserInfoCacheById(String) enable cache service,cacheKey:zfpay_user_info_id_181
+2020-05-07 09:50:48 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserInfoCacheById(String) enable cache service,has cacheKey:zfpay_user_info_id_181 , return
+2020-05-07 09:50:48 -==>  Preparing: select sum(cnt) from (select count(*) as cnt from t_user_apply_cardrate_trapos_record_info where user_id = ? and status in('08','09') union select count(*) as cnt from t_user_apply_cardrate_mpos_record_info where user_id = ? and status in('08','09')) t 
+2020-05-07 09:50:48 -==> Parameters: 181(String), 181(String)
+2020-05-07 09:50:48 -<==      Total: 1
+2020-05-07 09:50:48 -==>  Preparing: select * from t_news_read_state where news_type=? and user_id=? 
+2020-05-07 09:50:48 -==> Parameters: applyRateFlag(String), 181(String)
+2020-05-07 09:50:48 -<==      Total: 1
+2020-05-07 09:50:48 -==>  Preparing: select * from t_news_read_state where news_type=? and user_id=? 
+2020-05-07 09:50:48 -==> Parameters: applyRateFlag(String), 181(String)
+2020-05-07 09:50:48 -此处进行解密+验签+身份验证
+2020-05-07 09:50:48 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:50:48 -此处进行解密+验签+身份验证
+2020-05-07 09:50:48 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:50:48 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:50:48 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:50:48 -请求地址 : http://192.168.191.1:8080/api/user/info/getUserNewInfo
+2020-05-07 09:50:48 -==>  Preparing: SELECT money, settle_money, deduct_money, today_benefit, total_benefit, settle_single_feet_money, single_rate_feet_money FROM t_user_info WHERE id = ? 
+2020-05-07 09:50:48 -==> Parameters: 181(String)
+2020-05-07 09:50:48 -<==      Total: 1
+2020-05-07 09:50:48 -耗时 : 9
+2020-05-07 09:50:48 -<==      Total: 2
+2020-05-07 09:50:48 -==>  Preparing: update t_news_read_state set pre_unread_num=?,unread_num=? where user_id=? and news_type=? 
+2020-05-07 09:50:48 -==> Parameters: 7(Integer), 7(Integer), 181(String), applyRateFlag(String)
+2020-05-07 09:50:48 -此处进行解密+验签+身份验证
+2020-05-07 09:50:48 -解密：
+2020-05-07 09:50:48 -请求地址 : http://192.168.191.1:8080/api/sys/notice/getNewNotice
+2020-05-07 09:50:48 -请求地址 : http://192.168.191.1:8080/api/sys/appImg/getAppImgList
+2020-05-07 09:50:48 -==>  Preparing: SELECT id, img_type, (case when ?='04' then concat('http://cdn.szbypos.com/',img_url) else img_url end) as img_url FROM t_sys_app_img where img_type=? ORDER BY order_num desc 
+2020-05-07 09:50:48 -==> Parameters: 01(String), 01(String)
+2020-05-07 09:50:48 -==>  Preparing: SELECT cast(t.id as char) as notice_id, t.notice_title, cast((select count(*) from t_user_read_notice_info where user_id = ? and notice_id = t.id) as char) as is_read, DATE_FORMAT( STR_TO_DATE( CONCAT(t.cre_date, t.cre_time), '%Y%m%d%H%i%s' ), '%Y-%m-%d %H:%i:%s' ) AS cre_date FROM t_sys_notice_info t where t.status=0 order by t.id desc limit 0,2 
+2020-05-07 09:50:48 -==> Parameters: 181(String)
+2020-05-07 09:50:48 -<==      Total: 4
+2020-05-07 09:50:48 -耗时 : 6
+2020-05-07 09:50:48 -<==      Total: 2
+2020-05-07 09:50:48 -==>  Preparing: update t_news_read_state set pre_unread_num=?,unread_num=? where user_id=? and news_type=? 
+2020-05-07 09:50:48 -==> Parameters: 7(Integer), 7(Integer), 181(String), applyRateFlag(String)
+2020-05-07 09:50:48 -<==    Updates: 2
+2020-05-07 09:50:48 -==>  Preparing: select sum(cnt) from (SELECT count(*) as cnt FROM t_user_trapos_recall_record_info WHERE acce_user_id = ? AND status = '00' union SELECT count(*) as cnt FROM t_user_mpos_recall_record_info WHERE acce_user_id = ? AND status = '00') t 
+2020-05-07 09:50:48 -==> Parameters: 181(String), 181(String)
+2020-05-07 09:50:48 -<==      Total: 2
+2020-05-07 09:50:48 -耗时 : 23
+2020-05-07 09:50:48 -此处进行解密+验签+身份验证
+2020-05-07 09:50:48 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:50:48 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:50:48 -请求地址 : http://192.168.191.1:8080/api/sys/news/getNewNews
+2020-05-07 09:50:48 -==>  Preparing: SELECT cast(id as char) as news_id, news_title, news_cover, cast(browse_num as char) as browse_num, DATE_FORMAT( STR_TO_DATE( CONCAT(cre_date, cre_time), '%Y%m%d%H%i%s' ), '%Y-%m-%d %H:%i:%s' ) AS cre_date FROM t_sys_news_info where status=0 order by id desc limit 0,3 
+2020-05-07 09:50:48 -==> Parameters: 
+2020-05-07 09:50:48 -<==    Updates: 2
+2020-05-07 09:50:48 -==>  Preparing: select sum(cnt) from (SELECT count(*) as cnt FROM t_user_trapos_recall_record_info WHERE acce_user_id = ? AND status = '00' union SELECT count(*) as cnt FROM t_user_mpos_recall_record_info WHERE acce_user_id = ? AND status = '00') t 
+2020-05-07 09:50:48 -==> Parameters: 181(String), 181(String)
+2020-05-07 09:50:48 -<==      Total: 3
+2020-05-07 09:50:48 -耗时 : 17
+2020-05-07 09:50:48 -<==      Total: 1
+2020-05-07 09:50:48 -<==      Total: 1
+2020-05-07 09:50:48 -==>  Preparing: select * from t_news_read_state where news_type=? and user_id=? 
+2020-05-07 09:50:48 -==>  Preparing: select * from t_news_read_state where news_type=? and user_id=? 
+2020-05-07 09:50:48 -==> Parameters: recallFlag(String), 181(String)
+2020-05-07 09:50:48 -==> Parameters: recallFlag(String), 181(String)
+2020-05-07 09:50:48 -<==      Total: 1
+2020-05-07 09:50:48 -==>  Preparing: update t_news_read_state set pre_unread_num=?,unread_num=? where user_id=? and news_type=? 
+2020-05-07 09:50:48 -==> Parameters: 0(Integer), 0(Integer), 181(String), recallFlag(String)
+2020-05-07 09:50:48 -<==      Total: 1
+2020-05-07 09:50:48 -==>  Preparing: update t_news_read_state set pre_unread_num=?,unread_num=? where user_id=? and news_type=? 
+2020-05-07 09:50:48 -==> Parameters: 0(Integer), 0(Integer), 181(String), recallFlag(String)
+2020-05-07 09:50:48 -<==    Updates: 1
+2020-05-07 09:50:48 -==>  Preparing: select count(*) as cnt from t_sys_money_locker_college_info 
+2020-05-07 09:50:48 -==> Parameters: 
+2020-05-07 09:50:48 -<==      Total: 1
+2020-05-07 09:50:48 -==>  Preparing: select * from t_news_read_state where news_type=? and user_id=? 
+2020-05-07 09:50:48 -==> Parameters: collegeFlag(String), 181(String)
+2020-05-07 09:50:48 -<==      Total: 1
+2020-05-07 09:50:48 -==>  Preparing: update t_news_read_state set pre_unread_num=?,unread_num=? where user_id=? and news_type=? 
+2020-05-07 09:50:48 -==> Parameters: 25(Integer), 25(Integer), 181(String), collegeFlag(String)
+2020-05-07 09:50:48 -<==    Updates: 1
+2020-05-07 09:50:48 -==>  Preparing: select count(*) as cnt from t_sys_money_locker_college_info 
+2020-05-07 09:50:48 -==> Parameters: 
+2020-05-07 09:50:48 -<==      Total: 1
+2020-05-07 09:50:48 -==>  Preparing: select * from t_news_read_state where news_type=? and user_id=? 
+2020-05-07 09:50:48 -==> Parameters: collegeFlag(String), 181(String)
+2020-05-07 09:50:48 -<==      Total: 1
+2020-05-07 09:50:48 -==>  Preparing: update t_news_read_state set pre_unread_num=?,unread_num=? where user_id=? and news_type=? 
+2020-05-07 09:50:48 -==> Parameters: 25(Integer), 25(Integer), 181(String), collegeFlag(String)
+2020-05-07 09:50:48 -<==    Updates: 1
+2020-05-07 09:50:48 -==>  Preparing: select sum(cnt) from (select count(*) as cnt from t_user_apply_cardrate_trapos_record_info where user_id = ? and status in('08','09') union select count(*) as cnt from t_user_apply_cardrate_mpos_record_info where user_id = ? and status in('08','09')) t 
+2020-05-07 09:50:48 -==> Parameters: 181(String), 181(String)
+2020-05-07 09:50:48 -<==      Total: 1
+2020-05-07 09:50:48 -==>  Preparing: select * from t_news_read_state where news_type=? and user_id=? 
+2020-05-07 09:50:48 -==> Parameters: cardFlag(String), 181(String)
+2020-05-07 09:50:48 -<==      Total: 1
+2020-05-07 09:50:48 -==>  Preparing: update t_news_read_state set pre_unread_num=?,unread_num=? where user_id=? and news_type=? 
+2020-05-07 09:50:48 -==> Parameters: 7(Integer), 7(Integer), 181(String), cardFlag(String)
+2020-05-07 09:50:48 -<==    Updates: 1
+2020-05-07 09:50:48 -==>  Preparing: select sum(cnt) from (select count(*) as cnt from t_user_apply_cardrate_trapos_record_info where user_id = ? and status in('08','09') union select count(*) as cnt from t_user_apply_cardrate_mpos_record_info where user_id = ? and status in('08','09')) t 
+2020-05-07 09:50:48 -==> Parameters: 181(String), 181(String)
+2020-05-07 09:50:48 -<==      Total: 1
+2020-05-07 09:50:48 -==>  Preparing: select * from t_news_read_state where news_type=? and user_id=? 
+2020-05-07 09:50:48 -==> Parameters: cardFlag(String), 181(String)
+2020-05-07 09:50:48 -<==      Total: 1
+2020-05-07 09:50:48 -==>  Preparing: update t_news_read_state set pre_unread_num=?,unread_num=? where user_id=? and news_type=? 
+2020-05-07 09:50:48 -==> Parameters: 7(Integer), 7(Integer), 181(String), cardFlag(String)
+2020-05-07 09:50:48 -<==    Updates: 1
+2020-05-07 09:50:48 -==>  Preparing: select * from t_news_read_state where news_type=? and user_id=? 
+2020-05-07 09:50:48 -==> Parameters: appImgFlag(String), 181(String)
+2020-05-07 09:50:48 -<==      Total: 1
+2020-05-07 09:50:48 -耗时 : 235
+2020-05-07 09:50:48 -<==    Updates: 1
+2020-05-07 09:50:48 -==>  Preparing: select * from t_news_read_state where news_type=? and user_id=? 
+2020-05-07 09:50:48 -==> Parameters: appImgFlag(String), 181(String)
+2020-05-07 09:50:48 -<==      Total: 1
+2020-05-07 09:50:48 -耗时 : 228
+2020-05-07 09:50:50 -此处进行解密+验签+身份验证
+2020-05-07 09:50:50 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:50:50 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:50:50 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getHeaderInformation
+2020-05-07 09:50:50 -==>  Preparing: SELECT cast(today_benefit as char) as today_benefit, cast(money as char) AS withdraw_money, cast(settle_money as char) as settle_money, cast(total_benefit as char) as total_benefit FROM t_user_info WHERE id = ? 
+2020-05-07 09:50:50 -==> Parameters: 181(String)
+2020-05-07 09:50:50 -<==      Total: 1
+2020-05-07 09:50:50 -耗时 : 2
+2020-05-07 09:50:50 -此处进行解密+验签+身份验证
+2020-05-07 09:50:50 -此处进行解密+验签+身份验证
+2020-05-07 09:50:50 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:50:50 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:50:50 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:50:50 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreTraditionalPosDetail
+2020-05-07 09:50:50 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_traditional_pos_benefit_month WHERE user_id = ? and cre_month = ? and pos_type='epos' 
+2020-05-07 09:50:50 -==> Parameters: 181(String), 202005(String)
+2020-05-07 09:50:50 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:50:50 -此处进行解密+验签+身份验证
+2020-05-07 09:50:50 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:50:50 -<==      Total: 0
+2020-05-07 09:50:50 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:50:50 -耗时 : 3
+2020-05-07 09:50:50 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreMposDetail
+2020-05-07 09:50:50 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_mpos_benefit_month WHERE user_id = ? and cre_month = ? 
+2020-05-07 09:50:50 -==> Parameters: 181(String), 202005(String)
+2020-05-07 09:50:50 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreTraditionalPosDetail
+2020-05-07 09:50:50 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_traditional_pos_benefit_month WHERE user_id = ? and cre_month = ? and pos_type is null 
+2020-05-07 09:50:50 -==> Parameters: 181(String), 202005(String)
+2020-05-07 09:50:50 -<==      Total: 1
+2020-05-07 09:50:50 -耗时 : 4
+2020-05-07 09:50:50 -<==      Total: 1
+2020-05-07 09:50:50 -耗时 : 3
+2020-05-07 09:51:23 -此处进行解密+验签+身份验证
+2020-05-07 09:51:23 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:51:23 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:51:23 -请求地址 : http://192.168.191.1:8080/api/user/info/getUserAuthStatus
+2020-05-07 09:51:23 -==>  Preparing: select auth_status,id_card, card_photo, real_name, auth_remark from t_user_info where id = ? 
+2020-05-07 09:51:23 -==> Parameters: 181(String)
+2020-05-07 09:51:23 -<==      Total: 1
+2020-05-07 09:51:23 -==>  Preparing: select IFNULL(cast(sum(amount) as char),'0') as amount from ( select sum(performance) as amount from t_summary_traditional_pos_trans_everyday where user_id=? and cre_date=CURRENT_DATE union select sum(performance) as amount from t_summary_mpos_trans_everyday where user_id=? and cre_date=CURRENT_DATE ) t 
+2020-05-07 09:51:23 -==> Parameters: 181(String), 181(String)
+2020-05-07 09:51:23 -此处进行解密+验签+身份验证
+2020-05-07 09:51:23 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:51:23 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:51:23 -请求地址 : http://192.168.191.1:8080/api/sys/reportforms/getHomePageInfo
+2020-05-07 09:51:23 -==>  Preparing: SELECT cast(IFNULL(truncate((t1.performance/t.trade_num),2),0) as char) as pos_avg, cast(t.trade_num as char) as pos_num, cast(IFNULL(t1.performance,0.00) as char) as performance, cast(IFNULL(t1.merchant_trade_num+t1.agency_trade_num,0) as char) as act_num FROM (select * from t_summary_user_traditional_pos_benefit_all t where t.pos_type is null ) t LEFT JOIN (select * from t_summary_user_traditional_pos_benefit_month t where t.pos_type is null) t1 ON t.user_id = t1.user_id AND t1.cre_month = ? WHERE t.user_id = ? 
+2020-05-07 09:51:23 -==> Parameters: 202005(String), 181(String)
+2020-05-07 09:51:23 -<==      Total: 1
+2020-05-07 09:51:23 -==>  Preparing: select IFNULL(cast(merchant_trade_num+agency_trade_num as char),'0') as act_num_day from t_summary_user_traditional_pos_benefit_everyday where user_id=? and pos_type is null and cre_date=CURRENT_DATE 
+2020-05-07 09:51:23 -==> Parameters: 181(String)
+2020-05-07 09:51:23 -<==      Total: 1
+2020-05-07 09:51:23 -==>  Preparing: SELECT cast(IFNULL(truncate((t1.performance/t.trade_num),2),0) as char) as pos_avg, cast(t.trade_num as char) as pos_num, cast(IFNULL(t1.performance,0.00) as char) as performance, cast(IFNULL(t1.merchant_trade_num+t1.agency_trade_num,0) as char) as act_num FROM t_summary_user_mpos_benefit_all t LEFT JOIN t_summary_user_mpos_benefit_month t1 ON t.user_id = t1.user_id AND t1.cre_month = ? WHERE t.user_id = ? 
+2020-05-07 09:51:23 -==> Parameters: 202005(String), 181(String)
+2020-05-07 09:51:23 -<==      Total: 1
+2020-05-07 09:51:23 -==>  Preparing: select IFNULL(cast(merchant_trade_num+agency_trade_num as char),'0') as act_num_day from t_summary_user_mpos_benefit_everyday where user_id=? and cre_date=CURRENT_DATE 
+2020-05-07 09:51:23 -==> Parameters: 181(String)
+2020-05-07 09:51:23 -<==      Total: 1
+2020-05-07 09:51:23 -==>  Preparing: SELECT cast(IFNULL(truncate((t1.performance/t.trade_num),2),0) as char) as pos_avg, cast(t.trade_num as char) as pos_num, cast(IFNULL(t1.performance,0.00) as char) as performance, cast(IFNULL(t1.merchant_trade_num+t1.agency_trade_num,0) as char) as act_num FROM (select * from t_summary_user_traditional_pos_benefit_all t where t.pos_type='epos' ) t LEFT JOIN (select * from t_summary_user_traditional_pos_benefit_month t where t.pos_type='epos') t1 ON t.user_id = t1.user_id AND t1.cre_month = ? WHERE t.user_id = ? 
+2020-05-07 09:51:23 -==> Parameters: 202005(String), 181(String)
+2020-05-07 09:51:23 -<==      Total: 1
+2020-05-07 09:51:23 -==>  Preparing: select IFNULL(cast(merchant_trade_num+agency_trade_num as char),'0') as act_num_day from t_summary_user_traditional_pos_benefit_everyday where user_id=? and pos_type='epos' and cre_date=CURRENT_DATE 
+2020-05-07 09:51:23 -==> Parameters: 181(String)
+2020-05-07 09:51:23 -<==      Total: 0
+2020-05-07 09:51:23 -耗时 : 40
+2020-05-07 09:51:25 -<==      Total: 1
+2020-05-07 09:51:25 -==>  Preparing: select IFNULL(cast(sum(amount) as char),'0') as amount from ( select sum(performance) as amount from t_summary_traditional_pos_trans_all where user_id=? union select sum(performance) as amount from t_summary_mpos_trans_all where user_id=? ) t 
+2020-05-07 09:51:25 -==> Parameters: 181(String), 181(String)
+2020-05-07 09:51:26 -<==      Total: 1
+2020-05-07 09:51:26 -耗时 : 3136
+2020-05-07 09:51:52 -此处进行解密+验签+身份验证
+2020-05-07 09:51:52 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:51:52 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:51:52 -此处进行解密+验签+身份验证
+2020-05-07 09:51:52 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:51:52 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:51:52 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getHeaderInformation
+2020-05-07 09:51:52 -==>  Preparing: SELECT cast(today_benefit as char) as today_benefit, cast(money as char) AS withdraw_money, cast(settle_money as char) as settle_money, cast(total_benefit as char) as total_benefit FROM t_user_info WHERE id = ? 
+2020-05-07 09:51:52 -==> Parameters: 181(String)
+2020-05-07 09:51:52 -<==      Total: 1
+2020-05-07 09:51:52 -耗时 : 6
+2020-05-07 09:51:52 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreTraditionalPosDetail
+2020-05-07 09:51:52 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_traditional_pos_benefit_month WHERE user_id = ? and cre_month = ? and pos_type='epos' 
+2020-05-07 09:51:52 -==> Parameters: 181(String), 202005(String)
+2020-05-07 09:51:52 -<==      Total: 0
+2020-05-07 09:51:52 -耗时 : 3
+2020-05-07 09:51:52 -此处进行解密+验签+身份验证
+2020-05-07 09:51:52 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:51:52 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:51:52 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreMposDetail
+2020-05-07 09:51:52 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_mpos_benefit_month WHERE user_id = ? and cre_month = ? 
+2020-05-07 09:51:52 -==> Parameters: 181(String), 202005(String)
+2020-05-07 09:51:52 -此处进行解密+验签+身份验证
+2020-05-07 09:51:52 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:51:52 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:51:52 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreTraditionalPosDetail
+2020-05-07 09:51:52 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_traditional_pos_benefit_month WHERE user_id = ? and cre_month = ? and pos_type is null 
+2020-05-07 09:51:52 -==> Parameters: 181(String), 202005(String)
+2020-05-07 09:51:52 -<==      Total: 1
+2020-05-07 09:51:52 -耗时 : 18
+2020-05-07 09:51:52 -<==      Total: 1
+2020-05-07 09:51:52 -耗时 : 38
+2020-05-07 09:51:55 -此处进行解密+验签+身份验证
+2020-05-07 09:51:55 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:51:55 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:51:55 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getHeaderInformation
+2020-05-07 09:51:55 -==>  Preparing: SELECT cast(today_benefit as char) as today_benefit, cast(money as char) AS withdraw_money, cast(settle_money as char) as settle_money, cast(total_benefit as char) as total_benefit FROM t_user_info WHERE id = ? 
+2020-05-07 09:51:55 -==> Parameters: 181(String)
+2020-05-07 09:51:55 -<==      Total: 1
+2020-05-07 09:51:55 -耗时 : 9
+2020-05-07 09:51:55 -此处进行解密+验签+身份验证
+2020-05-07 09:51:55 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:51:55 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:51:55 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreMposDetail
+2020-05-07 09:51:55 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_mpos_benefit_month WHERE user_id = ? and cre_month = ? 
+2020-05-07 09:51:55 -==> Parameters: 181(String), 202005(String)
+2020-05-07 09:51:55 -此处进行解密+验签+身份验证
+2020-05-07 09:51:55 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:51:55 -<==      Total: 1
+2020-05-07 09:51:55 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:51:55 -耗时 : 3
+2020-05-07 09:51:55 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreTraditionalPosDetail
+2020-05-07 09:51:55 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_traditional_pos_benefit_month WHERE user_id = ? and cre_month = ? and pos_type is null 
+2020-05-07 09:51:55 -==> Parameters: 181(String), 202005(String)
+2020-05-07 09:51:55 -<==      Total: 1
+2020-05-07 09:51:55 -耗时 : 5
+2020-05-07 09:51:55 -此处进行解密+验签+身份验证
+2020-05-07 09:51:55 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:51:55 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:51:55 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreTraditionalPosDetail
+2020-05-07 09:51:55 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_traditional_pos_benefit_month WHERE user_id = ? and cre_month = ? and pos_type='epos' 
+2020-05-07 09:51:55 -==> Parameters: 181(String), 202005(String)
+2020-05-07 09:51:55 -<==      Total: 0
+2020-05-07 09:51:55 -耗时 : 3
+2020-05-07 09:53:07 -此处进行解密+验签+身份验证
+2020-05-07 09:53:07 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:53:07 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:53:07 -此处进行解密+验签+身份验证
+2020-05-07 09:53:07 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:53:07 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreMposDetail
+2020-05-07 09:53:07 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_mpos_benefit_month WHERE user_id = ? and cre_month = ? 
+2020-05-07 09:53:07 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:53:07 -==> Parameters: 181(String), 202005(String)
+2020-05-07 09:53:07 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreTraditionalPosDetail
+2020-05-07 09:53:07 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_traditional_pos_benefit_month WHERE user_id = ? and cre_month = ? and pos_type='epos' 
+2020-05-07 09:53:07 -==> Parameters: 181(String), 202005(String)
+2020-05-07 09:53:07 -<==      Total: 1
+2020-05-07 09:53:07 -耗时 : 4
+2020-05-07 09:53:07 -<==      Total: 0
+2020-05-07 09:53:07 -耗时 : 4
+2020-05-07 09:53:07 -此处进行解密+验签+身份验证
+2020-05-07 09:53:07 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:53:07 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:53:07 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreTraditionalPosDetail
+2020-05-07 09:53:07 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_traditional_pos_benefit_month WHERE user_id = ? and cre_month = ? and pos_type is null 
+2020-05-07 09:53:07 -==> Parameters: 181(String), 202005(String)
+2020-05-07 09:53:07 -此处进行解密+验签+身份验证
+2020-05-07 09:53:07 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:53:07 -<==      Total: 1
+2020-05-07 09:53:07 -耗时 : 2
+2020-05-07 09:53:07 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:53:07 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getHeaderInformation
+2020-05-07 09:53:07 -==>  Preparing: SELECT cast(today_benefit as char) as today_benefit, cast(money as char) AS withdraw_money, cast(settle_money as char) as settle_money, cast(total_benefit as char) as total_benefit FROM t_user_info WHERE id = ? 
+2020-05-07 09:53:07 -==> Parameters: 181(String)
+2020-05-07 09:53:07 -<==      Total: 1
+2020-05-07 09:53:07 -耗时 : 6
+2020-05-07 09:53:09 -此处进行解密+验签+身份验证
+2020-05-07 09:53:09 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:53:09 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:53:09 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getHeaderInformation
+2020-05-07 09:53:09 -==>  Preparing: SELECT cast(today_benefit as char) as today_benefit, cast(money as char) AS withdraw_money, cast(settle_money as char) as settle_money, cast(total_benefit as char) as total_benefit FROM t_user_info WHERE id = ? 
+2020-05-07 09:53:09 -==> Parameters: 181(String)
+2020-05-07 09:53:09 -<==      Total: 1
+2020-05-07 09:53:09 -耗时 : 2
+2020-05-07 09:53:09 -此处进行解密+验签+身份验证
+2020-05-07 09:53:09 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:53:09 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:53:09 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreTraditionalPosDetail
+2020-05-07 09:53:09 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_traditional_pos_benefit_month WHERE user_id = ? and cre_month = ? and pos_type='epos' 
+2020-05-07 09:53:09 -==> Parameters: 181(String), 202005(String)
+2020-05-07 09:53:09 -<==      Total: 0
+2020-05-07 09:53:09 -耗时 : 3
+2020-05-07 09:53:09 -此处进行解密+验签+身份验证
+2020-05-07 09:53:09 -此处进行解密+验签+身份验证
+2020-05-07 09:53:09 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:53:09 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:53:09 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:53:09 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:53:09 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreTraditionalPosDetail
+2020-05-07 09:53:09 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreMposDetail
+2020-05-07 09:53:09 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_mpos_benefit_month WHERE user_id = ? and cre_month = ? 
+2020-05-07 09:53:09 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_traditional_pos_benefit_month WHERE user_id = ? and cre_month = ? and pos_type is null 
+2020-05-07 09:53:09 -==> Parameters: 181(String), 202005(String)
+2020-05-07 09:53:09 -==> Parameters: 181(String), 202005(String)
+2020-05-07 09:53:09 -<==      Total: 1
+2020-05-07 09:53:09 -<==      Total: 1
+2020-05-07 09:53:09 -耗时 : 3
+2020-05-07 09:53:09 -耗时 : 3
+2020-05-07 09:55:49 -此处进行解密+验签+身份验证
+2020-05-07 09:55:49 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:55:49 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:55:49 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getHeaderInformation
+2020-05-07 09:55:49 -==>  Preparing: SELECT cast(today_benefit as char) as today_benefit, cast(money as char) AS withdraw_money, cast(settle_money as char) as settle_money, cast(total_benefit as char) as total_benefit FROM t_user_info WHERE id = ? 
+2020-05-07 09:55:49 -==> Parameters: 181(String)
+2020-05-07 09:55:49 -此处进行解密+验签+身份验证
+2020-05-07 09:55:49 -此处进行解密+验签+身份验证
+2020-05-07 09:55:49 -此处进行解密+验签+身份验证
+2020-05-07 09:55:49 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:55:49 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:55:49 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreMposDetail
+2020-05-07 09:55:49 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:55:49 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_mpos_benefit_month WHERE user_id = ? and cre_month = ? 
+2020-05-07 09:55:49 -==> Parameters: 181(String), 202005(String)
+2020-05-07 09:55:49 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:55:49 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 09:55:49 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 09:55:49 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreTraditionalPosDetail
+2020-05-07 09:55:49 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_traditional_pos_benefit_month WHERE user_id = ? and cre_month = ? and pos_type='epos' 
+2020-05-07 09:55:49 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreTraditionalPosDetail
+2020-05-07 09:55:49 -==> Parameters: 181(String), 202005(String)
+2020-05-07 09:55:49 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_traditional_pos_benefit_month WHERE user_id = ? and cre_month = ? and pos_type is null 
+2020-05-07 09:55:49 -==> Parameters: 181(String), 202005(String)
+2020-05-07 09:55:49 -<==      Total: 1
+2020-05-07 09:55:49 -耗时 : 157
+2020-05-07 09:55:49 -<==      Total: 1
+2020-05-07 09:55:49 -耗时 : 87
+2020-05-07 09:55:49 -<==      Total: 1
+2020-05-07 09:55:49 -耗时 : 86
+2020-05-07 09:55:49 -<==      Total: 0
+2020-05-07 09:55:49 -耗时 : 90
+2020-05-07 10:01:57 -此处进行解密+验签+身份验证
+2020-05-07 10:01:57 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 10:01:57 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 10:01:57 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getHeaderInformation
+2020-05-07 10:01:57 -==>  Preparing: SELECT cast(today_benefit as char) as today_benefit, cast(money as char) AS withdraw_money, cast(settle_money as char) as settle_money, cast(total_benefit as char) as total_benefit FROM t_user_info WHERE id = ? 
+2020-05-07 10:01:57 -==> Parameters: 181(String)
+2020-05-07 10:01:57 -<==      Total: 1
+2020-05-07 10:01:57 -耗时 : 3
+2020-05-07 10:01:57 -此处进行解密+验签+身份验证
+2020-05-07 10:01:57 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 10:01:57 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 10:01:57 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreTraditionalPosDetail
+2020-05-07 10:01:57 -此处进行解密+验签+身份验证
+2020-05-07 10:01:57 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_traditional_pos_benefit_month WHERE user_id = ? and cre_month = ? and pos_type='epos' 
+2020-05-07 10:01:57 -==> Parameters: 181(String), 202005(String)
+2020-05-07 10:01:57 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 10:01:57 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 10:01:57 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreMposDetail
+2020-05-07 10:01:57 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_mpos_benefit_month WHERE user_id = ? and cre_month = ? 
+2020-05-07 10:01:57 -==> Parameters: 181(String), 202005(String)
+2020-05-07 10:01:57 -<==      Total: 0
+2020-05-07 10:01:57 -耗时 : 5
+2020-05-07 10:01:57 -<==      Total: 1
+2020-05-07 10:01:57 -耗时 : 4
+2020-05-07 10:01:57 -此处进行解密+验签+身份验证
+2020-05-07 10:01:57 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 10:01:57 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 10:01:57 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreTraditionalPosDetail
+2020-05-07 10:01:57 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_traditional_pos_benefit_month WHERE user_id = ? and cre_month = ? and pos_type is null 
+2020-05-07 10:01:57 -==> Parameters: 181(String), 202005(String)
+2020-05-07 10:01:57 -<==      Total: 1
+2020-05-07 10:01:57 -耗时 : 4
+2020-05-07 10:02:01 -此处进行解密+验签+身份验证
+2020-05-07 10:02:01 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 10:02:01 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 10:02:01 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getHeaderInformation
+2020-05-07 10:02:01 -==>  Preparing: SELECT cast(today_benefit as char) as today_benefit, cast(money as char) AS withdraw_money, cast(settle_money as char) as settle_money, cast(total_benefit as char) as total_benefit FROM t_user_info WHERE id = ? 
+2020-05-07 10:02:01 -==> Parameters: 181(String)
+2020-05-07 10:02:01 -<==      Total: 1
+2020-05-07 10:02:01 -耗时 : 2
+2020-05-07 10:02:01 -此处进行解密+验签+身份验证
+2020-05-07 10:02:01 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 10:02:01 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 10:02:01 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreMposDetail
+2020-05-07 10:02:01 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_mpos_benefit_month WHERE user_id = ? and cre_month = ? 
+2020-05-07 10:02:01 -==> Parameters: 181(String), 202005(String)
+2020-05-07 10:02:01 -<==      Total: 1
+2020-05-07 10:02:01 -耗时 : 2
+2020-05-07 10:02:01 -此处进行解密+验签+身份验证
+2020-05-07 10:02:01 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 10:02:01 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 10:02:01 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreTraditionalPosDetail
+2020-05-07 10:02:01 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_traditional_pos_benefit_month WHERE user_id = ? and cre_month = ? and pos_type='epos' 
+2020-05-07 10:02:01 -==> Parameters: 181(String), 202005(String)
+2020-05-07 10:02:01 -<==      Total: 0
+2020-05-07 10:02:01 -耗时 : 4
+2020-05-07 10:02:01 -此处进行解密+验签+身份验证
+2020-05-07 10:02:01 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 10:02:01 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 10:02:01 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreTraditionalPosDetail
+2020-05-07 10:02:01 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_traditional_pos_benefit_month WHERE user_id = ? and cre_month = ? and pos_type is null 
+2020-05-07 10:02:01 -==> Parameters: 181(String), 202005(String)
+2020-05-07 10:02:01 -<==      Total: 1
+2020-05-07 10:02:01 -耗时 : 3
+2020-05-07 10:02:19 -此处进行解密+验签+身份验证
+2020-05-07 10:02:19 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 10:02:19 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 10:02:19 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getHeaderInformation
+2020-05-07 10:02:19 -==>  Preparing: SELECT cast(today_benefit as char) as today_benefit, cast(money as char) AS withdraw_money, cast(settle_money as char) as settle_money, cast(total_benefit as char) as total_benefit FROM t_user_info WHERE id = ? 
+2020-05-07 10:02:19 -==> Parameters: 181(String)
+2020-05-07 10:02:19 -<==      Total: 1
+2020-05-07 10:02:19 -耗时 : 1
+2020-05-07 10:02:19 -此处进行解密+验签+身份验证
+2020-05-07 10:02:19 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 10:02:19 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 10:02:19 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreTraditionalPosDetail
+2020-05-07 10:02:19 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_traditional_pos_benefit_month WHERE user_id = ? and cre_month = ? and pos_type is null 
+2020-05-07 10:02:19 -==> Parameters: 181(String), 202005(String)
+2020-05-07 10:02:19 -此处进行解密+验签+身份验证
+2020-05-07 10:02:19 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 10:02:19 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 10:02:19 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreTraditionalPosDetail
+2020-05-07 10:02:19 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_traditional_pos_benefit_month WHERE user_id = ? and cre_month = ? and pos_type='epos' 
+2020-05-07 10:02:19 -==> Parameters: 181(String), 202005(String)
+2020-05-07 10:02:19 -此处进行解密+验签+身份验证
+2020-05-07 10:02:19 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 10:02:19 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 10:02:19 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getBenefitCentreMposDetail
+2020-05-07 10:02:19 -==>  Preparing: SELECT cast(benefit as char) benefit, cast(merchant_benefit as char) as merchant_benefit, cast(agency_benefit as char) as agency_benefit, cast(( share_benefit + single_benefit ) as char) AS share_benefit, cast(return_benefit as char) as return_benefit, cast(activity_benefit as char) as activity_benefit, cast(deduct_money as char) as deduct_money FROM t_summary_user_mpos_benefit_month WHERE user_id = ? and cre_month = ? 
+2020-05-07 10:02:19 -==> Parameters: 181(String), 202005(String)
+2020-05-07 10:02:19 -<==      Total: 1
+2020-05-07 10:02:19 -耗时 : 150
+2020-05-07 10:02:19 -<==      Total: 0
+2020-05-07 10:02:19 -耗时 : 167
+2020-05-07 10:02:19 -<==      Total: 1
+2020-05-07 10:02:19 -耗时 : 187
+2020-05-07 10:07:10 -此处进行解密+验签+身份验证
+2020-05-07 10:07:10 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,cacheKey:zfpay_user_freeze_181
+2020-05-07 10:07:10 -Map com.example.longecological.service.user.impl.UserInfoCacheServiceImpl.getUserFreezeCacheById(String) enable cache service,has cacheKey:zfpay_user_freeze_181 , return
+2020-05-07 10:07:10 -请求地址 : http://192.168.191.1:8080/api/sys/benefitcentre/getActivityRewardEposList
+2020-05-07 10:07:10 -==>  Preparing: select * from ( select cast(@rownum:=@rownum+1 as char) AS record_id,tt.* from ( SELECT t.order_id, t.money, t.sn, (select mer_name from t_sys_traditional_pos_info where t_sys_traditional_pos_info.sn=t.sn) as mer_name, t1.activity_name, t1.start_date, t1.end_date, DATE_FORMAT(STR_TO_DATE(CONCAT(t.cre_date, t.cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime FROM t_user_trapos_activity_reward_record t LEFT JOIN t_sys_trapos_activity_info t1 on t.activity_id = t1.id WHERE t.user_id = ? and t1.pos_type='epos' and t.activity_id is not null and t.cre_date between ? and ? union select t.order_id, t.money, t.sn, (select mer_name from t_sys_traditional_pos_info where t_sys_traditional_pos_info.sn=t.sn) as mer_name, t1.policy_name, t.begin_date, t.end_date, DATE_FORMAT(STR_TO_DATE(CONCAT(t.cre_date, t.cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime from t_user_trapos_activity_reward_record t INNER JOIN t_sys_pos_policy_define t1 on t.policy_id=t1.id WHERE t.user_id = ? and t.pos_type='03' and t.cre_date between ? and ? )tt,(SELECT @rownum:=0) r ORDER BY tt.cre_datetime desc)t limit 0,10 
+2020-05-07 10:07:10 -==> Parameters: 181(String), 20200501(String), 20200531(String), 181(String), 20200501(String), 20200531(String)
+2020-05-07 10:07:10 -<==      Total: 0
+2020-05-07 10:07:10 -耗时 : 64

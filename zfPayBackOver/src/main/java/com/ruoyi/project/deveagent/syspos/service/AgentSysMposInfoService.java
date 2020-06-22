@@ -22,6 +22,14 @@ public interface AgentSysMposInfoService {
 	List<Map<String, Object>> getAgentSysMposInfoList(Map<String, Object> params);
 
 
+	/***
+	 * 得到代理名下所有Mpos add byqh202006
+	 * @param params
+	 * @return
+	 */
+	List<Map<String, Object>> getOneAgentPosList(Map<String, Object> params);
+
+
 	/**
 	 * 查询系统一级代理MPOS信息列表byqh
 	 * @param params

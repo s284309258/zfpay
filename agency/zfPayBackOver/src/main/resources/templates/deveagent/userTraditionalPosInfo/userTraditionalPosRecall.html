@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('代理用户传统POS列表')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+<body class="gray-bg">
+	
+	<!-- 系统参数列表 -->
+	<div class="container-div ui-layout-center">
+		<div class="row">
+			
+			<!-- 最上面的搜索框 -->
+			<div class="col-sm-12 search-collapse">
+				<form id="user-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								设备号（机器编号）：<input type="text" name="sn" id="sn" />
+							</li>
+							<li>
+								代理姓名 ：<input type="text" name="real_name" id="real_name" />
+							</li>
+<!--							<li>-->
+<!--								删除状态：-->
+<!--								<select name="del" id="del" th:with="type=${@dict.getType('sys_all_table_del')}">-->
+<!--									<option value="">所有</option>-->
+<!--									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>-->
+<!--								</select>-->
+<!--							</li>-->
+<!--							<li>-->
+<!--								是否有交易：-->
+<!--								<select name="trade_status" id="trade_status" th:with="type=${@dict.getType('user_pos_info_trade_status')}">-->
+<!--									<option value="">所有</option>-->
+<!--									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>-->
+<!--								</select>-->
+<!--							</li>-->
+							<li class="select-time">
+								<label>创建时间： </label>
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="beginTime"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+			
+			<!-- 上面的各项增删改查导入导出操作 -->
+	        <div class="btn-group-sm" id="toolbar" role="group">
+	        	<!-- 操作封装：添加信息 全屏 -->
+		        <a class="btn btn-success" onclick="recallUserPos()" shiro:hasPermission="deveagent:userTraditionalPosInfo:view">
+		            <i class="fa fa-plus"></i> 召回传统POS
+		        </a>
+		        <!-- 表格：导出数据 -->
+<!--	            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="deveagent:userMposInfo:export">-->
+<!--		            <i class="fa fa-download"></i> 导出-->
+<!--		        </a>-->
+	        </div>
+
+	        
+	        <!-- bootstrap表格数据部分 -->
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+			
+		</div>
+	</div>
+	
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		//详情
+		var detailFlag = [[${@permission.hasPermi('deveagent:userMposInfo:detail')}]];
+		//编辑
+		var editFlag = [[${@permission.hasPermi('deveagent:userMposInfo:edit')}]];
+		
+		var datas_state_status = [[${@dict.getType('user_pos_info_state_status')}]];
+		var datas_activity_status = [[${@dict.getType('user_pos_info_activity_status')}]];
+		var datas_del = [[${@dict.getType('sys_activity_info_del')}]];
+		var datas_trade_status = [[${@dict.getType('user_pos_info_trade_status')}]];
+		var datas_cash_back_type = [[${@dict.getType('sys_pos_info_cash_back_type')}]];
+		var datas_cash_back_status = [[${@dict.getType('sys_pos_info_cash_back_status')}]];
+		var datas_act_status = [[${@dict.getType('sys_pos_info_act_status')}]];
+	
+		//前缀路径
+		var prefix = "/deveagent/userTraditionalPosRecall";
+		
+		//初始化方法
+		$(function() {
+			//初始化时间范围
+			intiTime();
+		   	//查询用户MPOS机列表
+		    queryAgentUserMposInfoList();
+		});
+		
+		//查询用户MPOS机列表
+		function queryAgentUserMposInfoList() {
+		    var options = {
+		        url: prefix + "/list",//URL列表路径
+		        updateUrl: prefix + "/edit/{id}",//编辑路径
+		        detailUrl: prefix + "/detail/{id}",//详情路径
+		        exportUrl: prefix + "/export",//导出路径
+		        modalName: "用户MPOS信息",//模块名称：用户
+		        showExport: true,
+		        sortName: 'id',
+	          	sortOrder: 'desc',
+		        //列信息
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+					field : 'id', 
+					title : '编号'
+				},
+				{
+					field : 'user_id', 
+					title : '代理编号',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailUser(\'' + row.user_id + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'real_name',
+					title : '代理姓名'
+				},
+				{
+					field : 'sn', 
+					title : '设备号（机器编号）',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailTrapos(\'' + row.sn + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'card_settle_price', 
+					title : '刷卡结算底价（%）'
+				},
+				{
+					field : 'card_settle_price_vip',
+					title : 'VIP秒到(商圈)刷卡结算底价（%）'
+				},
+				{
+					field : 'cloud_settle_price', 
+					title : '云闪付结算底价（%）'
+				},
+				{
+					field : 'single_profit_rate', 
+					title : '单笔分润比例（%）'
+				},
+				{
+					field : 'cash_back_rate', 
+					title : '返现比例（%）'
+				},
+				{
+					field : 'remark',
+					title : '备注'
+				},
+				{
+					field : 'cre_date', 
+					title : '创建时间',
+					sortable: true
+				}]
+		    };
+		    //表格初始化
+		    $.table.init(options);
+		}
+		
+		
+		/* 查询用户详情 */
+		function detailUser(id){
+			var url = '/deveagent/userInfo/detail/'+id;
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		   	$.modal.openTab("编号"+id+"用户详情", url);
+		}
+
+
+		/* 查询传统POS详情 */
+		function detailTrapos(id){
+			var url = '/deveagent/sysTraditionalPosInfo/detail/'+id;
+			//打开新的弹出层，对应弹出层名称，URL，长宽大小
+			$.modal.openTab("编号"+id+"传统POS详情", url);
+		}
+
+		function recallUserPos(){
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+			$.modal.confirm("确认要选中这" + rows.length + "条数据吗?", function() {
+				var sns = "";
+				// 遍历所有选择的行数据，取每条数据对应的ID
+				$.each(rows, function(i, row) {
+					if(i<rows.length-1){
+						sns=sns+row['sn']+",";
+					}else{
+						sns=sns+row['sn'];
+					}
+				});
+
+				var config = {
+					url: "/deveagent/userTraditionalPosRecall/recallUserPos",
+					type: "post",
+					data: {"sns":sns},
+					success: function(result) {
+						if(result=="success"){
+							// layer.msg("操作成功",{icon:1,time : 1000,end:function(){
+							// 		location.href=local+'deveagent/userEposRecall';
+							// 	}});
+							layer.msg('操作成功',{
+								icon:1,
+								time: 1000 //1秒关闭（如果不配置，默认是3秒）
+							},function(){
+								location.reload();
+							});
+						}else{
+							layer.msg("只能召回直属代理POS",{icon:5,time : 1000});
+						}
+					}
+				};
+				$.ajax(config);
+
+			});
+		}
+		
+	</script>
+</body>
+</html>

@@ -6,7 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 
 import com.ruoyi.project.deveagent.usermpos.domain.AgentUserMposInfo;
-
+import org.apache.ibatis.annotations.Select;
 
 
 /**
@@ -16,6 +16,8 @@ import com.ruoyi.project.deveagent.usermpos.domain.AgentUserMposInfo;
  */
 public interface AgentUserMposInfoMapper {
 
+	@Select("select t.*,tt.real_name from t_user_mpos_info t,t_user_info tt where t.user_id=tt.id and (tt.parent_chain like concat(#{parent_chain},'%') or t.user_id=#{user_id}) order by card_settle_price asc")
+	List<Map<String, Object>> getAgentAllUserMpos(@Param("parent_chain") String parent_chain,@Param("user_id") String user_id);
 
 	/**
 	 * 查询用户MPOS信息列表

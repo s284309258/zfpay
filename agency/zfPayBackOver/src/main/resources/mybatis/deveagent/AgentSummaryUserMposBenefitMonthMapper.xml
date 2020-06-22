@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.summary.mapper.AgentSummaryUserMposBenefitMonthMapper">
+
+	<!-- 查询MPOS代理数据汇总（每月）列表 -->
+	<select id="getAgentSummaryUserMposBenefitMonthList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			t.id,
+			t.user_id,
+			t.performance,
+			t.num,
+			t.merchant_performance,
+			t.merchant_num,
+			t.agency_performance,
+			t.agency_num,
+			t.benefit,
+			t.share_benefit,
+			t.single_benefit,
+			t.return_benefit,
+			t.activity_benefit,
+			t.merchant_benefit,
+			t.merchant_share_benefit,
+			t.merchant_single_benefit,
+			t.merchant_return_benefit,
+			t.merchant_activity_benefit,
+			t.agency_benefit,
+			t.under_num,
+			t.refer_num,
+			t.pos_num,
+			t.merchant_pos_num,
+			t.agency_pos_num,
+			t.act_num,
+			t.merchant_act_num,
+			t.agency_act_num,
+			t.deduct_money,
+			t.trade_num,
+			t.merchant_trade_num,
+			t.agency_trade_num,
+			t.cre_month, 
+			t1.manager_id,
+			t1.user_tel,
+			t1.real_name
+		FROM
+			t_summary_user_mpos_benefit_month t
+		INNER JOIN t_user_info t1 ON t.user_id = t1.id
+		<where>
+			(t1.id=#{map.uid} or t1.parent_chain like concat(#{map.chain},'%'))
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t1.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t1.real_name = #{map.real_name}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_month &gt;= #{map.beginTime}
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_month &lt;= #{map.endTime}
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 导出MPOS代理数据汇总（每月）列表 -->
+	<select id="selectAgentSummaryUserMposBenefitMonthList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.summary.domain.AgentSummaryUserMposBenefitMonth" >
+		SELECT
+			t.id,
+			t.user_id,
+			t.performance,
+			t.num,
+			t.merchant_performance,
+			t.merchant_num,
+			t.agency_performance,
+			t.agency_num,
+			t.benefit,
+			t.share_benefit,
+			t.single_benefit,
+			t.return_benefit,
+			t.activity_benefit,
+			t.merchant_benefit,
+			t.merchant_share_benefit,
+			t.merchant_single_benefit,
+			t.merchant_return_benefit,
+			t.merchant_activity_benefit,
+			t.agency_benefit,
+			t.under_num,
+			t.refer_num,
+			t.pos_num,
+			t.merchant_pos_num,
+			t.agency_pos_num,
+			t.act_num,
+			t.merchant_act_num,
+			t.agency_act_num,
+			t.deduct_money,
+			t.trade_num,
+			t.merchant_trade_num,
+			t.agency_trade_num,
+			t.cre_month, 
+			t1.manager_id,
+			t1.user_tel,
+			t1.real_name
+		FROM
+			t_summary_user_mpos_benefit_month t
+		INNER JOIN t_user_info t1 ON t.user_id = t1.id
+		<where>
+			(t1.id=#{map.uid} or t1.parent_chain like concat(#{map.chain},'%'))
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t1.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t1.real_name = #{map.real_name}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_month &gt;= #{map.beginTime}
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_month &lt;= #{map.endTime}
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+</mapper>

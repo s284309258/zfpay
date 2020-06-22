@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.devemana.user.mapper.ManaUserCardMapper">
+
+	<!-- 查询用户结算卡信息列表 -->
+	<select id="getManaUserCardList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			t.id,
+			t.user_id,
+			t.account,
+			t.account_name,
+			t.id_card,
+			t.bank_code,
+			t.bank_name,
+			t.card_photo,
+			t.status,
+			t.is_default,
+			t.remark,
+			t.update_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t1.manager_id,
+			t1.user_tel,
+			t1.real_name,
+			t2.login_name AS manager_login_name,
+			t2.user_name AS manager_user_name
+		FROM
+			t_user_card_info t
+		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
+		LEFT JOIN sys_user t2 ON t1.manager_id = t2.user_id
+		<where>
+			<if test="map.id != null and map.id != ''">
+				t.id = #{map.id}
+			</if>
+			<if test="map.account != null and map.account != ''">
+				AND t.account = #{map.account}
+			</if>
+			<if test="map.bank_code != null and map.bank_code != ''">
+				AND t.bank_code = #{map.bank_code}
+			</if>
+			<if test="map.account_name != null and map.account_name != ''">
+				AND t.account_name like concat('%', #{map.account_name}, '%')
+			</if>
+			<if test="map.bank_name != null and map.bank_name != ''">
+				AND t.bank_name like concat('%', #{map.bank_name}, '%')
+			</if>
+			<if test="map.status != null and map.status != ''">
+				AND t.status = #{map.status}
+			</if>
+			<if test="map.is_default != null and map.is_default != ''">
+				AND t.is_default = #{map.is_default}
+			</if>
+			<if test="map.manager_id != null and map.manager_id != ''">
+				AND t1.manager_id = #{map.manager_id}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t1.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.manager_login_name != null and map.manager_login_name != ''">
+				AND t2.login_name like concat('%', #{map.manager_login_name}, '%')
+			</if>
+			<if test="map.manager_user_name != null and map.manager_user_name != ''">
+				AND t2.user_name like concat('%', #{map.manager_user_name}, '%')
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 导出用户信息 -->
+	<select id="selectManaUserInfoList" parameterType="java.util.Map" resultType="com.ruoyi.project.devemana.user.domain.ManaUserCard" >
+		SELECT
+			t.id,
+			t.user_id,
+			t.account,
+			t.account_name,
+			REPLACE (
+				t.id_card,
+				SUBSTR(t.id_card, 4, 13),
+				'****'
+			) AS id_card,
+			t.bank_code,
+			t.bank_name,
+			t.card_photo,
+			t.status,
+			t.is_default,
+			t.remark,
+			t.update_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t1.manager_id,
+			REPLACE (
+				t1.user_tel,
+				SUBSTR(t1.user_tel, 4, 4),
+				'****'
+			) AS user_tel,
+			t2.login_name AS manager_login_name,
+			t2.user_name AS manager_user_name
+		FROM
+			t_user_card_info t
+		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
+		LEFT JOIN sys_user t2 ON t1.manager_id = t2.user_id
+		<where>
+			<if test="map.id != null and map.id != ''">
+				t.id = #{map.id}
+			</if>
+			<if test="map.account != null and map.account != ''">
+				AND t.account = #{map.account}
+			</if>
+			<if test="map.bank_code != null and map.bank_code != ''">
+				AND t.bank_code = #{map.bank_code}
+			</if>
+			<if test="map.account_name != null and map.account_name != ''">
+				AND t.account_name like concat('%', #{map.account_name}, '%')
+			</if>
+			<if test="map.bank_name != null and map.bank_name != ''">
+				AND t.bank_name like concat('%', #{map.bank_name}, '%')
+			</if>
+			<if test="map.status != null and map.status != ''">
+				AND t.status = #{map.status}
+			</if>
+			<if test="map.is_default != null and map.is_default != ''">
+				AND t.is_default = #{map.is_default}
+			</if>
+			<if test="map.manager_id != null and map.manager_id != ''">
+				AND t1.manager_id = #{map.manager_id}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t1.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.manager_login_name != null and map.manager_login_name != ''">
+				AND t2.login_name like concat('%', #{map.manager_login_name}, '%')
+			</if>
+			<if test="map.manager_user_name != null and map.manager_user_name != ''">
+				AND t2.user_name like concat('%', #{map.manager_user_name}, '%')
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 根据用户id查询用户详情 -->
+	<select id="getManaUserCardById" parameterType="java.lang.String" resultType="com.ruoyi.project.devemana.user.domain.ManaUserCard" >
+		SELECT
+			t.id,
+			t.user_id,
+			t.account,
+			t.account_name,
+			REPLACE (
+				t.id_card,
+				SUBSTR(t.id_card, 4, 13),
+				'****'
+			) AS id_card,
+			t.bank_code,
+			t.bank_name,
+			t.card_photo,
+			t.status,
+			t.is_default,
+			t.remark,
+			t.update_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t1.manager_id,
+			REPLACE (
+				t1.user_tel,
+				SUBSTR(t1.user_tel, 4, 4),
+				'****'
+			) AS user_tel,
+			t2.login_name AS manager_login_name,
+			t2.user_name AS manager_user_name
+		FROM
+			t_user_card_info t
+		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
+		LEFT JOIN sys_user t2 ON t1.manager_id = t2.user_id
+		where t.id=#{card_id}
+	</select>
+	
+</mapper>

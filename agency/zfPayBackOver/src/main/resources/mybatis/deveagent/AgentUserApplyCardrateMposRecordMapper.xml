@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.usermpos.mapper.AgentUserApplyCardrateMposRecordMapper">
+
+	<!-- 查询用户费率申请记录(MPOS)列表 -->
+	<select id="getAgentUserApplyCardrateMposRecordList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			t.id,
+			t.user_id,
+			t.sn,
+			t.credit_card_rate_old,
+			t.credit_card_rate_new,
+			t.card_settle_price,
+			t.status,
+			t.remark,
+			t.update_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t1.manager_id,
+			t1.user_tel,
+			t1.real_name
+		FROM
+			t_user_apply_cardrate_mpos_record_info t
+		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
+		<where>
+			t1.manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.status != null and map.status != ''">
+				AND t.status = #{map.status}
+			</if>
+			<if test="map.sn != null and map.sn != ''">
+				AND t.sn = #{map.sn}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t1.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t1.real_name = #{map.real_name}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 导出用户费率申请记录(MPOS)列表 -->
+	<select id="selectAgentUserApplyCardrateMposRecordList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.usermpos.domain.AgentUserApplyCardrateMposRecord" >
+		SELECT
+			t.id,
+			t.user_id,
+			t.sn,
+			t.credit_card_rate_old,
+			t.credit_card_rate_new,
+			t.card_settle_price,
+			t.status,
+			t.remark,
+			t.update_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t1.manager_id,
+			t1.user_tel,
+			t1.real_name
+		FROM
+			t_user_apply_cardrate_mpos_record_info t
+		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
+		<where>
+			t1.manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.status != null and map.status != ''">
+				AND t.status = #{map.status}
+			</if>
+			<if test="map.sn != null and map.sn != ''">
+				AND t.sn = #{map.sn}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t1.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t1.real_name = #{map.real_name}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!--  更新刷卡费率申请状态 -->
+	<update id="updateAgentUserApplyCardrateMposRecordStatus" parameterType="java.util.Map"  >
+		update t_user_apply_cardrate_mpos_record_info 
+			set status=#{map.new_status},remark=#{map.remark},
+				up_date=#{map.up_date},up_time=#{map.up_time},update_by=#{map.update_by}
+		where id=#{map.apply_id} and status=#{map.old_status}
+	</update>
+	
+	
+	<!-- 根据id查询用户费率申请记录详情 -->
+	<select id="getAgentUserApplyCardrateMposRecordById" parameterType="java.lang.String" resultType="java.util.Map" >
+		select * from t_user_apply_cardrate_mpos_record_info where id=#{apply_id}
+	</select>
+	
+</mapper>

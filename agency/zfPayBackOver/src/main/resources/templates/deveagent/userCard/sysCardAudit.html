@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('代理审核用户结算卡信息')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+	<th:block th:include="include :: bootstrap-fileinput-css" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+	<form class="form-horizontal m" id="form-userCard-sysCardAudit">
+		
+		<h3>用户基本资料信息</h3>
+		<div class="form-group">
+			<label class="col-sm-1 control-label">用户编号：</label>
+			<div class="col-sm-3">
+				<input type="hidden" name="card_ids" id="card_ids" th:value="${id}">
+				<input class="form-control" type="text" id="user_id" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">用户手机号：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" id="user_tel" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">用户身份证号：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" id="id_card" readonly="readonly">
+			</div>
+		</div>	
+		
+		<hr><h3>结算卡基本资料信息</h3>
+		<div class="form-group">
+			<label class="col-sm-1 control-label">结算账号：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" id="account"  readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">结算账户名：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" id="account_name" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">银行代码：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" id="bank_code" readonly="readonly">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-1 control-label">银行名称：</label>
+			<div class="col-sm-3">
+				<textarea class="form-control" rows="" cols="" id="bank_name" readonly="readonly"></textarea>
+			</div>
+		</div>		
+		<div class="form-group"> 
+        	<label class="col-sm-1 control-label">卡照片：</label>  
+            <div class="col-sm-11">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="form-group">
+	                        <div class="file-loading">
+					            <input id="fileinput-demo-card_photo" name="file"  type="file"  >
+					        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+       	</div>
+       	
+       	<div class="form-group">
+			<label class="col-sm-1 control-label">审核结果：</label>
+			<div class="col-sm-11">
+			    <div class="radio-box">
+					<input type="radio" name="status" value="09" >
+					<label>审核通过</label>
+				</div>
+				<div class="radio-box">
+					<input type="radio" name="status" value="08" >
+					<label>审核不通过</label>
+				</div>
+			</div>
+		</div>
+		<br>
+		<div class="form-group">
+			<label class="col-sm-1 control-label">请输入操作备注：</label>
+			<div class="col-sm-11">
+				<textarea rows="5" cols="180" name="remark" id="remark" placeholder="请输入操作备注">
+				</textarea>
+			</div>
+		</div>
+		
+	</form>
+</div>
+
+<div class="row" style="margin-bottom: 100px">
+	<div class="col-sm-offset-5 col-sm-10">
+	    <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保 存</button>&nbsp;
+	    <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭 </button>
+	</div>
+</div>
+	
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: bootstrap-fileinput-js" />
+
+<script th:inline="javascript">
+var id = [[${id}]]; 
+
+$(document).ready(function () {
+	//查询参数基本信息
+	$.ajax({
+		url: "/deveagent/userCard/getAgentUserCardById",
+		type: 'post',
+		dataType:"json",
+		data:{
+			'id' : id,
+		},
+		success:function(data){
+			$("#user_id").val(data.user_id);
+			$("#user_tel").val(data.user_tel);
+			$("#id_card").val(data.id_card);
+			$("#account").val(data.account);
+			$("#account_name").val(data.account_name);
+			$("#bank_name").val(data.bank_name);
+			$("#bank_code").val(data.bank_code);
+			
+			//卡照片
+			var card_photo_data = [];
+			var card_photo=data.card_photo;
+			var card_photos = card_photo.split(",");
+			for(var i=0;i<card_photos.length;i++){
+				card_photo_data.push(qiniu_domain+card_photos[i]);
+			}
+			initFileInput2(card_photo_data,"card_photo");
+  		}
+	}); 
+	
+	function initFileInput2(initDataArray,inputId){
+	  	//初始化fileinput控件（第一次初始化）
+	    $("#fileinput-demo-"+inputId+"").fileinput({
+	        'theme': 'explorer-fas',
+	        allowedFileExtensions : ['jpg', 'png','gif'],//接收的文件后缀,
+	        uploadAsync:true,//采用同步上传
+	        maxFileCount: 10,//表示允许同时上传的最大文件个数
+	        validateInitialCount:true,
+	        overwriteInitial: false,
+	        initialPreviewAsData: true,
+	        showUpload: false, //是否显示上传按钮
+	        showRemove: false, //是否显示删除按钮
+	        showBrowse: false,//是否显示移除按钮
+	        showCaption:false,//是否显示标题
+	        initialPreview: initDataArray,
+	        layoutTemplates :{
+	            actionDelete:'', //去除上传预览的缩略图中的删除图标
+	            actionUpload:'',//去除上传预览缩略图中的上传图片；
+	            //actionZoom:''   //去除上传预览缩略图中的查看详情预览的缩略图标。
+	       }
+	    })
+	}
+});
+
+$("#form-userCard-sysCardAudit").validate({
+	rules:{
+		status: {
+	        required: true
+      	},
+		remark: {
+	        required: true
+      	}
+	},
+	messages: {
+		status: {
+            required: "请选择审核结果"
+        },
+        remark: {
+            required: "请输入操作备注"
+        }
+ 	},
+	focusCleanup: true
+});
+
+function submitHandler() {
+   if ($.validate.form()) {
+   		$.operate.saveTab("/deveagent/userCard/sysCardAudit", $('#form-userCard-sysCardAudit').serialize());
+   }
+}
+</script>
+	
+</body>
+
+</html>

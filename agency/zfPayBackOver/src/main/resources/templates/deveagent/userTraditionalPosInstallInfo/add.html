@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('新增进件信息')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+	
+	<form class="form-horizontal m" id="form-userTraditionalPosInstallInfo-add" >
+	
+		<div class="form-group" >
+			<label class="col-sm-3 control-label ">商户名称：</label>
+			<div class="col-sm-8">
+				<input type="hidden" name="user_id" id="user_id" th:value="${user_id}" >
+				<input name="merchant_name" id="merchant_name" class="form-control" placeholder="请输入商户名称" type="text" required >
+			</div>
+		</div>
+		
+		<div class="form-group" >
+			<label class="col-sm-3 control-label ">商户编号：</label>
+			<div class="col-sm-8">
+				<input name="mer_code" id="mer_code" class="form-control"  type="text" placeholder="请输入商户编号" >
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-3 control-label">代理账号：</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text" name="agent_id"  id="agent_id"  placeholder="请输入代理账号">
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-3 control-label">来源：</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text" name="source" id="source" placeholder="请输入来源"  >
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-3 control-label">对应SDK的other字段：</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text" name="sdk_push_key" id="sdk_push_key"  placeholder="请输入对应SDK的other字段" >
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-3 control-label">审核状态：</label>
+			<div class="col-sm-8">
+			    <div class="radio-box" th:each="dict : ${@dict.getType('user_traditional_pos_install_info_biz_code')}">
+					<input type="radio" th:id="${dict.dictCode}" name="biz_code" th:value="${dict.dictValue}" th:checked="${dict.isDefault == 'Y' ? true : false}">
+					<label th:for="${dict.dictCode}" th:text="${dict.dictLabel}"></label>
+				</div>
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-3 control-label">返回信息：</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text" name="biz_msg" id="biz_msg" placeholder="请输入返回消息" >
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-3 control-label">到账标识：</label>
+			<div class="col-sm-8">
+			    <div class="radio-box" th:each="dict : ${@dict.getType('user_traditional_pos_install_info_settle_flag')}">
+					<input type="radio" th:id="${dict.dictCode}" name="settle_flag" th:value="${dict.dictValue}" th:checked="${dict.isDefault == 'Y' ? true : false}">
+					<label th:for="${dict.dictCode}" th:text="${dict.dictLabel}"></label>
+				</div>
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-3 control-label">操作备注：</label>
+			<div class="col-sm-8">
+				<textarea id="remark" name="remark" class="form-control" placeholder="" ></textarea>
+			</div>
+		</div>
+	</form>
+</div>
+
+<th:block th:include="include :: footer" />
+<script type="text/javascript">
+
+//前缀路径
+var prefix = "/deveagent/userTraditionalPosInstallInfo";
+
+$("#form-userTraditionalPosInstallInfo-add").validate({
+	onkeyup: false,
+	rules:{
+		biz_code: {
+	        required: true
+      	},
+      	merchant_name: {
+	        required: true
+      	},
+      	remark:{
+			required:true
+      	}
+	},
+	messages: {
+		biz_code: {
+            required: "请选择审核状态"
+        },
+        merchant_name: {
+            required: "请输入商户名称"
+        },
+		remark: {
+            required: "请输入操作备注"
+        }
+    },
+    focusCleanup: true
+});
+
+function submitHandler() {
+	if ($.validate.form()) {
+  		$.operate.save(prefix + "/add", $('#form-userTraditionalPosInstallInfo-add').serialize());
+  	}
+}
+</script>
+</body>
+</html>

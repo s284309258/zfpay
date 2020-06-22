@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('平台用户结算卡详细资料')" />
+	<th:block th:include="include :: bootstrap-fileinput-css" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+	
+	<form class="form-horizontal m-t" id="signupForm" th:object="${userInfo}">
+		
+		<hr><h3>代理基本资料信息</h3>
+		<div class="form-group">
+			<label class="col-sm-1 control-label">代理编号：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userCard.manager_id}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">代理账号：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userCard.manager_login_name}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">代理用户名：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userCard.manager_user_name}" readonly="readonly">
+			</div>
+		</div>	
+		
+		<br><hr><h3>用户基本资料信息</h3>
+		<div class="form-group">
+			<label class="col-sm-1 control-label">用户编号：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userCard.user_id}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">用户手机号：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userCard.user_tel}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">用户身份证号：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userCard.id_card}" readonly="readonly">
+			</div>
+		</div>	
+		
+		
+		<hr><h3>结算卡基本资料信息</h3>
+		<div class="form-group">
+			<label class="col-sm-1 control-label">结算账号：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userCard.account}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">结算账户名：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userCard.account_name}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">银行代码：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userCard.bank_code}" readonly="readonly">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-1 control-label">银行名称：</label>
+			<div class="col-sm-3">
+				<textarea class="form-control" rows="" cols="" th:text="${userCard.bank_name}" readonly="readonly"></textarea>
+				<!-- <input class="form-control" type="text" th:value="${userCard.bank_name}" readonly="readonly"> -->
+			</div>
+			<label class="col-sm-1 control-label">卡状态：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${@dict.getLabel('user_card_status',userCard.status)}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">是否默认卡：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${@dict.getLabel('user_card_is_default)',userCard.is_default)}" readonly="readonly">
+			</div>
+		</div>		
+		<div class="form-group"> 
+        	<label class="col-sm-1 control-label">卡照片：</label>  
+            <div class="col-sm-11">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="form-group">
+	                        <div class="file-loading">
+	                        	<input type="hidden" name="card_photo" id="card_photo" th:value="${userCard.card_photo}" >
+					            <input id="fileinput-demo-card_photo" name="file"  type="file"  >
+					        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+       	</div>
+		
+		
+		<hr><h3>用户相关操作信息</h3>
+		<div class="form-group">
+			<label class="col-sm-1 control-label">创建时间：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userCard.cre_date}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">更新时间：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userCard.up_date}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">更新人：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userCard.update_by}" readonly="readonly">
+			</div>
+		</div>	
+		<div class="form-group">
+			<label class="col-sm-1 control-label">更新备注：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userCard.remark}" readonly="readonly">
+			</div>
+		</div>
+		<br>	
+		
+	</form>
+</div>
+
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: bootstrap-fileinput-js" />
+
+<script th:inline="javascript">
+$(document).ready(function () {
+	//银行卡照
+	var card_photo_data = [];
+	var card_photo=$("#card_photo").val();
+	var card_photos = card_photo.split(",");
+	for(var i=0;i<card_photos.length;i++){
+		card_photo_data.push(qiniu_domain+card_photos[i]);
+	}
+	initFileInput2(card_photo_data,"card_photo");
+	
+	function initFileInput2(initDataArray,inputId){
+		//初始化fileinput控件（第一次初始化）
+	    $("#fileinput-demo-"+inputId+"").fileinput({
+	        'theme': 'explorer-fas',
+	        allowedFileExtensions : ['jpg', 'png','gif'],//接收的文件后缀,
+	        uploadAsync:true,//采用同步上传
+	        maxFileCount: 10,//表示允许同时上传的最大文件个数
+	        validateInitialCount:true,
+	        overwriteInitial: false,
+	        initialPreviewAsData: true,
+	        showUpload: false, //是否显示上传按钮
+	        showRemove: false, //是否显示删除按钮
+	        showBrowse: false,//是否显示移除按钮
+	        showCaption:false,//是否显示标题
+	        initialPreview: initDataArray,
+	        layoutTemplates :{
+	            actionDelete:'', //去除上传预览的缩略图中的删除图标
+	            actionUpload:'',//去除上传预览缩略图中的上传图片；
+	            //actionZoom:''   //去除上传预览缩略图中的查看详情预览的缩略图标。
+	       }
+	    })
+	}
+});
+
+</script>
+
+</body>
+</html>

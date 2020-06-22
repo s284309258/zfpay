@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('代理用户详细资料')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<th:block th:include="include :: bootstrap-fileinput-css" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+	
+	<form class="form-horizontal m-t" id="signupForm" th:object="${userInfo}">
+		
+		<hr><h3>用户基本资料信息</h3>
+		<div class="form-group">
+			<label class="col-sm-1 control-label">用户编号：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userInfo.id}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">用户手机号：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userInfo.user_tel}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">直推人数：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userInfo.referer_num}" readonly="readonly">
+			</div>
+		</div>	
+		<div class="form-group">
+			<label class="col-sm-1 control-label">团队人数：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userInfo.under_num}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">状态：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${@dict.getLabel('user_info_status',userInfo.status)}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">认证状态：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${@dict.getLabel('user_info_auth_status',userInfo.auth_status)}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">报备状态：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${@dict.getLabel('user_info_report_status',userInfo.report_status)}" readonly="readonly">
+			</div>
+		</div>	
+		<div class="form-group"> 
+        	<label class="col-sm-1 control-label">用户头像：</label>  
+            <div class="col-sm-11">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="form-group">
+	                        <div class="file-loading">
+	                        	<input type="hidden" name="head_photo" id="head_photo" th:value="${userInfo.head_photo}" >
+					            <input id="fileinput-demo-head_photo" name="file"  type="file"  >
+					        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+       	</div>
+		
+		<br><hr><h3>用户数据统计基本信息</h3>
+		<div class="form-group">
+			<label class="col-sm-1 control-label">账户余额：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userInfo.money}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">到账金额：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userInfo.settle_money}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">扣除金额：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userInfo.deduct_money}" readonly="readonly">
+			</div>
+		</div>	
+		<div class="form-group">
+			<label class="col-sm-1 control-label">今日收益：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userInfo.today_benefit}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">累计收益：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userInfo.total_benefit}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">单笔手续费：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userInfo.settle_single_feet_money}" readonly="readonly">
+			</div>
+		</div>	
+		<div class="form-group">
+			<label class="col-sm-1 control-label">比例手续费：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userInfo.single_rate_feet_money}" readonly="readonly">
+			</div>
+		</div>	
+		
+		<br th:if="${userInfo.auth_status!='00'}"><hr th:if="${userInfo.auth_status!='00'}"><h3 th:if="${userInfo.auth_status!='00'}">用户实名认证资料信息</h3>
+		<div class="form-group" th:if="${userInfo.auth_status!='00'}">
+			<label class="col-sm-1 control-label">真实姓名：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userInfo.real_name}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">身份证号：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userInfo.id_card}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">认证状态：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${@dict.getLabel('user_info_auth_status',userInfo.auth_status)}" readonly="readonly">
+			</div>
+		</div>	
+		<div class="form-group" th:if="${userInfo.auth_status!='00'}"> 
+        	<label class="col-sm-1 control-label">认证证件照：</label>  
+            <div class="col-sm-11">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="form-group">
+	                        <div class="file-loading">
+	                        	<input type="hidden" name="card_photo" id="card_photo" th:value="${userInfo.card_photo}" >
+					            <input id="fileinput-demo-card_photo" name="file"  type="file"  >
+					        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+       	</div>
+		
+		
+		<br th:if="${userInfo.referer_id!=null}"><hr th:if="${userInfo.referer_id!=null}"><h3 th:if="${userInfo.referer_id!=null}">推荐人基本资料信息</h3>
+		<div class="form-group" th:if="${userInfo.referer_id!=null}">
+			<label class="col-sm-1 control-label">推荐人编号：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userInfo.referer_id}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">推荐人手机号：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userInfo.referer_user_tel}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">推荐人姓名：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userInfo.referer_real_name}" readonly="readonly">
+			</div>
+		</div>	
+		<div class="form-group" th:if="${userInfo.referer_id!=null}"> 
+        	<label class="col-sm-1 control-label">推荐人头像：</label>  
+            <div class="col-sm-11">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="form-group">
+	                        <div class="file-loading">
+	                        	<input type="hidden" name="referer_head_photo" id="referer_head_photo" th:value="${userInfo.referer_head_photo}" >
+					            <input id="fileinput-demo-referer_head_photo" name="file"  type="file"  >
+					        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+       	</div>
+		
+
+		<br><hr><h3>用户设备信息</h3>
+		<div class="form-group">
+			<label class="col-sm-1 control-label">版本号：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userInfo.version_no}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">设备号：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userInfo.device_no}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">设备类型：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userInfo.device_type}" readonly="readonly">
+			</div>
+		</div>	
+		
+		
+		<br><hr><h3>用户相关操作信息</h3>
+		<div class="form-group">
+			<label class="col-sm-1 control-label">注册时间：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userInfo.cre_date}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">更新时间：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userInfo.up_date}" readonly="readonly">
+			</div>
+			<label class="col-sm-1 control-label">最后登录时间：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userInfo.last_login_date}" readonly="readonly">
+			</div>
+		</div>	
+		<div class="form-group">
+			<label class="col-sm-1 control-label">最后登录ip：</label>
+			<div class="col-sm-3">
+				<input class="form-control" type="text" th:value="${userInfo.last_login_ip}" readonly="readonly">
+			</div>
+		</div>	
+		
+	</form>
+</div>
+
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: bootstrap-fileinput-js" />
+
+<script th:inline="javascript">
+$(document).ready(function () {
+	//用户头像
+	var head_photo_data = [];
+	head_photo_data.push(qiniu_domain+$("#head_photo").val());
+	initFileInput1(head_photo_data,"head_photo");
+	
+	//推荐人头像
+	var referer_head_photo_data = [];
+	referer_head_photo_data.push(qiniu_domain+$("#referer_head_photo").val());
+	initFileInput1(referer_head_photo_data,"referer_head_photo");
+	
+	//实名认证证件照
+	var card_photo_data = [];
+	var card_photo=$("#card_photo").val();
+	var card_photos = card_photo.split(",");
+	for(var i=0;i<card_photos.length;i++){
+		card_photo_data.push(qiniu_domain+card_photos[i]);
+	}
+	initFileInput2(card_photo_data,"card_photo");
+	
+	
+	function initFileInput1(initDataArray,inputId){
+		//初始化fileinput控件（第一次初始化）
+	    $("#fileinput-demo-"+inputId+"").fileinput({
+	        'theme': 'explorer-fas',
+	        allowedFileExtensions : ['jpg', 'png','gif'],//接收的文件后缀,
+	        uploadAsync:true,//采用同步上传
+	        validateInitialCount:true,
+	        overwriteInitial: false,
+	        initialPreviewAsData: true,
+	        showUpload: false, //是否显示上传按钮
+	        showRemove: false, //是否显示删除按钮
+	        showBrowse: false,//是否显示移除按钮
+	        showCaption:false,//是否显示标题
+	        initialPreview: initDataArray,
+	        layoutTemplates :{
+	            actionDelete:'', //去除上传预览的缩略图中的删除图标
+	            actionUpload:'',//去除上传预览缩略图中的上传图片；
+	            //actionZoom:''   //去除上传预览缩略图中的查看详情预览的缩略图标。
+	       }
+	    })
+	}   
+	
+	function initFileInput2(initDataArray,inputId){
+		//初始化fileinput控件（第一次初始化）
+	    $("#fileinput-demo-"+inputId+"").fileinput({
+	        'theme': 'explorer-fas',
+	        allowedFileExtensions : ['jpg', 'png','gif'],//接收的文件后缀,
+	        uploadAsync:true,//采用同步上传
+	        maxFileCount: 10,//表示允许同时上传的最大文件个数
+	        validateInitialCount:true,
+	        overwriteInitial: false,
+	        initialPreviewAsData: true,
+	        showUpload: false, //是否显示上传按钮
+	        showRemove: false, //是否显示删除按钮
+	        showBrowse: false,//是否显示移除按钮
+	        showCaption:false,//是否显示标题
+	        initialPreview: initDataArray,
+	        layoutTemplates :{
+	            actionDelete:'', //去除上传预览的缩略图中的删除图标
+	            actionUpload:'',//去除上传预览缩略图中的上传图片；
+	            //actionZoom:''   //去除上传预览缩略图中的查看详情预览的缩略图标。
+	       }
+	    })
+	}
+});
+
+</script>
+
+</body>
+</html>

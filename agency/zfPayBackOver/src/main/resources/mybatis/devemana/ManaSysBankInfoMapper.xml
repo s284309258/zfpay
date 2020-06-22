@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.devemana.param.mapper.ManaSysBankInfoMapper">
+
+
+	<!-- 查询银行基础信息列表 -->
+	<select id="getManaSysBankInfoList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			id,
+			bank_code,
+			bank_name,
+			status,
+			create_by,
+			update_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(up_date, up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date
+		FROM
+			t_sys_bank_info
+		<where>
+			<if test="map.bank_code != null and map.bank_code != ''">
+				bank_code = #{map.bank_code}
+			</if>
+			<if test="map.bank_name != null and map.bank_name != ''">
+				AND bank_name like concat('%', #{map.bank_name}, '%')
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	
+	<!-- 导出银行基础信息 -->
+	<select id="selectManaSysBankInfoList" parameterType="java.util.Map" resultType="com.ruoyi.project.devemana.param.domain.ManaSysBankInfo" >
+		SELECT
+			id,
+			bank_code,
+			bank_name,
+			status,
+			create_by,
+			update_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(up_date, up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date
+		FROM
+			t_sys_bank_info
+		<where>
+			<if test="map.bank_code != null and map.bank_code != ''">
+				bank_code = #{map.bank_code}
+			</if>
+			<if test="map.bank_name != null and map.bank_name != ''">
+				AND bank_name like concat('%', #{map.bank_name}, '%')
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 查询银行基础信息详情 -->
+	<select id="getManaSysBankInfoById" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT * FROM t_sys_bank_info where id=#{bank_id}
+	</select>
+	
+	
+	<!-- 更新银行基础信息 -->
+	<update id="updateManaSysBankInfo" parameterType="java.util.Map" >
+		update t_sys_bank_info
+ 		<set>
+ 			<if test="map.bank_code != null and map.bank_code != ''">bank_code = #{map.bank_code},</if>
+ 			<if test="map.bank_name != null and map.bank_name != ''">bank_name = #{map.bank_name},</if>
+ 			<if test="map.update_by != null and map.update_by != ''">update_by = #{map.update_by},</if>
+ 			<if test="map.up_date != null and map.up_date != ''">up_date = #{map.up_date},</if>
+ 			<if test="map.up_time != null and map.up_time != ''">up_time = #{map.up_time}</if>
+ 		</set>
+ 		where id = #{map.bank_id}
+	</update>
+	
+	
+	<!-- 新增银行基础信息 -->
+ 	<insert id="addManaSysBankInfo" parameterType="java.util.Map" >
+ 		insert into t_sys_bank_info(
+ 			<if test="map.bank_code != null and map.bank_code != ''">bank_code,</if>
+ 			<if test="map.bank_name != null and map.bank_name != ''">bank_name,</if>
+ 			<if test="map.create_by != null and map.create_by != ''">create_by,</if>
+ 			<if test="map.cre_date != null and map.cre_date != ''">cre_date,</if>
+ 			<if test="map.cre_time != null and map.cre_time != ''">cre_time</if>
+ 		)values(
+ 			<if test="map.bank_code != null and map.bank_code != ''">#{map.bank_code},</if>
+ 			<if test="map.bank_name != null and map.bank_name != ''">#{map.bank_name},</if>
+ 			<if test="map.create_by != null and map.create_by != ''">#{map.create_by},</if>
+ 			<if test="map.cre_date != null and map.cre_date != ''">#{map.cre_date},</if>
+ 			<if test="map.cre_time != null and map.cre_time != ''">#{map.cre_time}</if>
+ 		)
+	</insert>
+	
+	
+	<!-- 根据银行基础信息id删除 -->
+	<delete id="deleteManaSysBankInfo" parameterType="java.lang.String" >
+		delete from t_sys_bank_info where id=#{bank_id}
+	</delete>
+	
+</mapper>

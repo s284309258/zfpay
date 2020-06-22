@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('代理MPOS机具返现记录列表')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+<body class="gray-bg">
+	
+	<!-- 系统参数列表 -->
+	<div class="container-div ui-layout-center">
+		<div class="row">
+			
+			<!-- 最上面的搜索框 -->
+			<div class="col-sm-12 search-collapse">
+				<form id="user-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								设备号（机器编号）：<input type="text" name="sn" id="sn" />
+							</li>
+							<li>
+								商户号：<input type="text" name="mer_id" id="mer_id" />
+							</li>
+							<li>
+								政策编码：<input type="text" name="policy_code" id="policy_code" />
+							</li>
+							<li>
+								参考号：<input type="text" name="tran_ref_code" id="tran_ref_code" />
+							</li>
+							<li>
+								app_id：<input type="text" name="app_id" id="app_id" />
+							</li>
+							<li>
+								是否首次激活：
+								<select name="is_first_activate" id="is_first_activate" th:with="type=${@dict.getType('data_pos_machine_cash_back_record_is_first_activate')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li>
+								处理状态：
+								<select name="status" id="status" th:with="type=${@dict.getType('data_pos_machine_cash_back_record_status')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li class="select-time">
+								<label>创建时间： </label>
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="beginTime"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+			
+			<!-- 上面的各项增删改查导入导出操作 -->
+	        <div class="btn-group-sm" id="toolbar" role="group">
+		        <!-- 表格：导出数据 -->
+	            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="deveagent:dataTraposMachineCashBackRecord:export">
+		            <i class="fa fa-download"></i> 导出
+		        </a>
+	        </div>
+
+	        
+	        <!-- bootstrap表格数据部分 -->
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+			
+		</div>
+	</div>
+	
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		//前缀路径
+		var prefix = "/deveagent/dataEposMachineCashBackRecord";
+		
+		var datas_is_first_activate = [[${@dict.getType('data_pos_machine_cash_back_record_is_first_activate')}]];
+		var datas_status = [[${@dict.getType('data_pos_machine_cash_back_record_status')}]];
+		
+		//初始化方法
+		$(function() {
+			//初始化时间范围
+			intiTime();
+		   	//查询代理传统POS机具返现记录列表
+		    queryDataTraposMachineCashBackRecordList();
+		});
+		
+		//查询代理传统POS机具返现记录列表
+		function queryDataTraposMachineCashBackRecordList() {
+		    var options = {
+		        url: prefix + "/list",//URL列表路径
+		        exportUrl: prefix + "/export",//导出路径
+		        modalName: "代理传统POS机具返现记录信息",//模块名称：用户
+		        showExport: true,
+		        sortName: 'id',
+	          	sortOrder: 'desc',
+		        //列信息
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+					field : 'id', 
+					title : '编号',
+					sortable: true
+				},
+				{
+					field : 'manager_id', 
+					title : '代理编号'
+				},
+				{
+					field : 'account_id', 
+					title : '账号编号'
+				},
+				{
+					field : 'app_id', 
+					title : 'app_id'
+				},
+				{
+					field : 'sn', 
+					title : '设备号（机器编号）',
+					formatter: function(value, row, index) {
+						return '<a href="javascript:void(0)" onclick="detailMpos(\'' + row.sn + '\')">' + value + '</a>';
+		            }
+				},
+				{
+					field : 'mer_id', 
+					title : '商户号'
+				},
+				{
+					field : 'frozen_time', 
+					title : '冻结时间'
+				},
+				{
+					field : 'return_amt', 
+					title : '返现金额'
+				},
+				{
+					field : 'policy_name', 
+					title : '政策名称'
+				},
+				{
+					field : 'policy_code', 
+					title : '政策编码'
+				},
+				{
+					field : 'is_first_activate', 
+					title : '是否首次激活',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_is_first_activate, value);
+		            }
+				},
+				{
+					field : 'status', 
+					title : '处理状态',
+					align: 'center',
+		            formatter: function(value, row, index) {
+		            	// 回显数据字典
+		            	return $.table.selectDictLabel(datas_is_first_activate, value);
+		            }
+				},
+				{
+					field : 'tran_ref_code', 
+					title : '参考号'
+				},
+				{
+					field : 'cre_date', 
+					title : '创建时间',
+					sortable: true
+				}]
+		    };
+		    //表格初始化
+		    $.table.init(options);
+		}
+		
+		
+		/* 查询MPOS详情 */
+		function detailMpos(id){
+			var url = '/deveagent/sysMposInfo/detail/'+id;
+		    //打开新的弹出层，对应弹出层名称，URL，长宽大小
+		   	$.modal.openTab("编号"+id+"MPOS详情", url);
+		}
+	</script>
+</body>
+</html>

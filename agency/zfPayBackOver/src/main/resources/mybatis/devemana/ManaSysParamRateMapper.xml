@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.devemana.param.mapper.ManaSysParamRateMapper">
+
+
+	<!-- 查询系统费率参数列表 -->
+	<select id="getManaSysParamRateList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			id,
+			type,
+			rate,
+			remark,
+			create_by,
+			update_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(up_date, up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date
+		FROM
+			t_sys_param_rate
+		<where>
+			<if test="map.type != null and map.type != ''">
+				type = #{map.type}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 导出系统费率参数列表 -->
+	<select id="selectManaSysParamRateList" parameterType="java.util.Map" resultType="com.ruoyi.project.devemana.param.domain.ManaSysParamRate" >
+		SELECT
+			id,
+			type,
+			rate,
+			remark,
+			create_by,
+			update_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(up_date, up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date
+		FROM
+			t_sys_param_rate
+		<where>
+			<if test="map.type != null and map.type != ''">
+				type = #{map.type}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 查询详情 -->
+	<select id="getManaSysParamRateById" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			id,
+			type,
+			rate,
+			remark,
+			create_by,
+			update_by,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(cre_date, cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(up_date, up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date
+		FROM
+			t_sys_param_rate
+		where id=#{param_rate_id}
+	</select>
+	
+	
+	<!-- 更新保存系统费率参数 -->
+	<update id="updateManaSysParamRate" parameterType="java.util.Map" >
+		update t_sys_param_rate
+ 		<set>
+ 			<if test="map.rate != null and map.rate != ''">rate = #{map.rate},</if>
+ 			<if test="map.remark != null and map.remark != ''">remark = #{map.remark},</if>
+ 			<if test="map.update_by != null and map.update_by != ''">update_by = #{map.update_by},</if>
+ 			<if test="map.up_date != null and map.up_date != ''">up_date = #{map.up_date},</if>
+ 			<if test="map.up_time != null and map.up_time != ''">up_time = #{map.up_time}</if>
+ 		</set>
+ 		where id = #{map.param_rate_id}
+	</update>
+	
+	
+	<!-- 新增保存系统费率参数 -->
+ 	<insert id="addManaSysParamRate" parameterType="java.util.Map" >
+ 		insert into t_sys_param_rate(
+ 			<if test="map.type != null and map.type != ''">type,</if>
+ 			<if test="map.rate != null and map.rate != ''">rate,</if>
+ 			<if test="map.remark != null and map.remark != ''">remark,</if>
+ 			<if test="map.create_by != null and map.create_by != ''">create_by,</if>
+ 			<if test="map.cre_date != null and map.cre_date != ''">cre_date,</if>
+ 			<if test="map.cre_time != null and map.cre_time != ''">cre_time</if>
+ 		)values(
+ 			<if test="map.type != null and map.type != ''">#{map.type},</if>
+ 			<if test="map.rate != null and map.rate != ''">#{map.rate},</if>
+ 			<if test="map.remark != null and map.remark != ''">#{map.remark},</if>
+ 			<if test="map.create_by != null and map.create_by != ''">#{map.create_by},</if>
+ 			<if test="map.cre_date != null and map.cre_date != ''">#{map.cre_date},</if>
+ 			<if test="map.cre_time != null and map.cre_time != ''">#{map.cre_time}</if>
+ 		)
+	</insert>
+	
+	
+	<!-- 根据id删除系统费率参数 -->
+	<delete id="delManaSysParamRateById" parameterType="java.lang.String" >
+		delete from t_sys_param_rate where id=#{map.param_rate_id}
+	</delete>
+	
+	
+	<!-- 查询指定类型的费率是否存在 -->
+	<select id="getManaSysParamRateIsValid" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			*
+		FROM
+			t_sys_param_rate
+		where type=#{type} AND CAST(rate AS DECIMAL) = CAST(#{rate} AS DECIMAL)
+	</select>
+	
+	
+	<!-- 查询指定类型的费率是否存在 -->
+	<select id="getManaParamRateListByType" parameterType="java.lang.String" resultType="com.ruoyi.project.devemana.param.domain.ManaSysParamRate">
+		SELECT
+			id,type,rate
+		FROM
+			t_sys_param_rate
+		where type=#{type}
+		order by rate
+	</select>
+	
+</mapper>

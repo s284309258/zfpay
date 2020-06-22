@@ -89,6 +89,9 @@ public interface MachinesManageService {
 	 * @return
 	 */
 	R getTraditionalPosSysParamRateList(Map<String, Object> map);
+
+
+	R policy2OnOff(Map<String, Object> map);
 	
 	/**
 	 * 查询系统费率参数(MPOS)

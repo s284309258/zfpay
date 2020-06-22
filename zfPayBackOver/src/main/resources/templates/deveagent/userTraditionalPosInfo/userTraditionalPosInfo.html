@@ -120,6 +120,10 @@
 				<a class="btn btn-success" onclick="allotAgentPos()" shiro:hasPermission="deveagent:userTraditionalPosInfo:add">
 					<i class="fa fa-plus"></i> 分配一级代理名下传统POS(含已激活)
 				</a>
+				<!-- 一级代理名下的MPOS(含有交易的)分配给他名下二级代理 -->
+				<a class="btn btn-success" onclick="allotOneAgentPos()" shiro:hasPermission="deveagent:userTraditionalPosInfo:add">
+					<i class="fa fa-plus"></i> 批量调整结算价
+				</a>
 		         <!-- 操作封装：修改信息，全屏 -->
 		        <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="deveagent:userTraditionalPosInfo:edit">
 		            <i class="fa fa-edit"></i> 修改
@@ -459,6 +463,18 @@
 		function allotAgentPos() {
 			var url = prefix + '/selectAgentUser';
 			$.modal.openTab("分配一级代理传统POS机（选择一级代理）", url);
+		}
+
+
+		//批量修改结算价
+		function allotOneAgentPos() {
+			var rows = $('#bootstrap-table').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+			if (rows.length != 1) {
+				$.modal.alertWarning("请选择一个代理");
+				return;
+			}
+			var url = prefix + '/selectOneAgentPos/'+rows[0].user_id;
+			$.modal.openTab("批量修改代理POS结算底价", url);
 		}
 		
 	</script>

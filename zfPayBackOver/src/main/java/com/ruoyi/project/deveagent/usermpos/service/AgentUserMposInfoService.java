@@ -55,6 +55,13 @@ public interface AgentUserMposInfoService {
 	 */
 	R addAgentUserMposInfo(Map<String, Object> params);
 
+	/***
+	 * add byqh202006
+	 * @param params
+	 * @return
+	 */
+	R batchUpdate(Map<String,Object> params);
+
 
 	/**
 	 * 根据编号查询用户MPOS信息

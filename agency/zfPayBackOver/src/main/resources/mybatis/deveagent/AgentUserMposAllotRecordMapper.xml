@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.usermpos.mapper.AgentUserMposAllotRecordMapper">
+
+	<select id="getAgentUserMposAllotRecordList" parameterType="java.util.Map" resultType="java.util.Map" >
+		select id , batch_no , sn , user_id ,
+		(select real_name from t_user_info where t_user_info.id=tt.user_id) as real_name ,
+		(case when tt.pos_type='MPOS' then 'MPOS' when tt.pos_type='TraditionalPOS' then '传统POS' when tt.pos_type='epos' then '电签POS' end) as pos_type ,
+		(select real_name from t_user_info where t_user_info.id=tt.allocate_by) as allocate_by , allocate_date
+		from t_user_pos_batch_allocate tt
+		<where>
+			tt.pos_type='MPOS'
+			and allocate_by in(select id from t_user_info where t_user_info.id=#{map.uid})
+			<if test="map.sn != null and map.sn != ''">
+				AND tt.sn = #{map.sn}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND tt.allocate_date &gt;= date_format(#{map.beginTime},'%Y-%m-%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND tt.allocate_date &lt;= date_format(#{map.endTime},'%Y-%m-%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<select id="selectAgentUserMposAllotRecordList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.usermpos.domain.AgentUserMposAllotRecord" >
+		select id , batch_no , sn , user_id ,
+		(select real_name from t_user_info where t_user_info.id=tt.user_id) as real_name ,
+		(case when tt.pos_type='MPOS' then 'MPOS' when tt.pos_type='TraditionalPOS' then '传统POS' when tt.pos_type='epos' then '电签POS' end) as pos_type ,
+		(select real_name from t_user_info where t_user_info.id=tt.allocate_by) as allocate_by , allocate_date
+		from t_user_pos_batch_allocate tt
+		<where>
+			tt.pos_type='MPOS'
+			and allocate_by in(select id from t_user_info where t_user_info.id=#{map.uid})
+			<if test="map.sn != null and map.sn != ''">
+				AND tt.sn = #{map.sn}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND tt.allocate_date &gt;= date_format(#{map.beginTime},'%Y-%m-%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND tt.allocate_date &lt;= date_format(#{map.endTime},'%Y-%m-%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+</mapper>

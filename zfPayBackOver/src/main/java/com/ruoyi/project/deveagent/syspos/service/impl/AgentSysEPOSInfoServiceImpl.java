@@ -54,7 +54,6 @@ public class AgentSysEPOSInfoServiceImpl implements AgentSysEPOSInfoService {
         return agentSysEPOSInfoMapper.getAgentSysTraditionalPosInfoList(params);
     }
 
-
     /**
      * 导出系统传统POS信息列表
      */

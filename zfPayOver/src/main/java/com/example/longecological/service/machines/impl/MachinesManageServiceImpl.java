@@ -1086,6 +1086,13 @@ public class MachinesManageServiceImpl implements MachinesManageService {
 			}else{
 				Map<String, Object> traditionalPosSysParamRate = sysParamRateService.getSysParamRateByTraditionalPosAgent(map);
 				respondMap.put("traditionalPosSysParamRate", traditionalPosSysParamRate);
+
+				//增加交易达标，分期达标标识 add byqh202006
+				List<Map<String, Object>> policy2 = machinesManageMapper.getPolicy2BySN(String.valueOf(map.get("sn")));
+				respondMap.put("policy2",policy2);
+				List<Map<String, Object>> policy3 = machinesManageMapper.getPolicy3BySN(String.valueOf(map.get("sn")));
+				respondMap.put("policy3",policy3);
+				//增加交易达标，分期达标标识 add byqh202006
 			}
 
 			return R.ok(CommonCodeConstant.COMMON_CODE_999983, CommonCodeConstant.COMMON_MSG_999983, respondMap);
@@ -1094,7 +1101,20 @@ public class MachinesManageServiceImpl implements MachinesManageService {
 			return R.error(CommonCodeConstant.COMMON_CODE_999996, CommonCodeConstant.COMMON_MSG_999996);
 		}
 	}
-	
+
+	@Override
+	public R policy2OnOff(Map<String, Object> map) {
+		//验签成功与否验证
+		if(!TokenUtil.checkRSAdecrypt((Map<String, Object>)map.get("result"))) {
+			return (R) map.get("result");
+		}
+		int cnt = machinesManageMapper.policy2OnOff(map);
+		if(cnt>0){
+			return R.ok(CommonCodeConstant.COMMON_CODE_999999,CommonCodeConstant.COMMON_MSG_999999);
+		}
+		return R.error(CommonCodeConstant.COMMON_CODE_999997,CommonCodeConstant.COMMON_MSG_999997);
+	}
+
 	/**
 	 * 查询系统费率参数(MPOS)
 	 */
@@ -1113,6 +1133,13 @@ public class MachinesManageServiceImpl implements MachinesManageService {
 			}else{
 				Map<String, Object> mposSysParamRate = sysParamRateService.getSysParamRateByMposAgent(map);
 				respondMap.put("mposSysParamRate", mposSysParamRate);
+
+				//增加交易达标，分期达标标识 add byqh202006
+				List<Map<String, Object>> policy2 = machinesManageMapper.getPolicy2BySN(String.valueOf(map.get("sn")));
+				respondMap.put("policy2",policy2);
+				List<Map<String, Object>> policy3 = machinesManageMapper.getPolicy3BySN(String.valueOf(map.get("sn")));
+				respondMap.put("policy3",policy3);
+				//增加交易达标，分期达标标识 add byqh202006
 			}
 
 			return R.ok(CommonCodeConstant.COMMON_CODE_999983, CommonCodeConstant.COMMON_MSG_999983, respondMap);

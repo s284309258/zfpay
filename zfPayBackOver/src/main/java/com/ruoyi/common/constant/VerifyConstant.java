@@ -270,6 +270,13 @@ public class VerifyConstant {
 	 * 业务类型：修改用户MPOS
 	 */
 	public static final String AuthVerfiy_AgentEditUserMposInfo = "AuthVerfiy_AgentEditUserMposInfo";
+
+	//批量修改客户结算底价add byqh202006
+	public static final String AuthVerfiy_SelectOneAgentPos = "AuthVerfiy_SelectOneAgentPos";
+
+	public static final String AuthVerfiy_SelectOneAgentTrapos="AuthVerfiy_SelectOneAgentTrapos";
+
+	public static final String AuthVerfiy_SelectOneAgentEpos="AuthVerfiy_SelectOneAgentEpos";
 	
 	/**
 	 * 业务类型：新增用户传统POS

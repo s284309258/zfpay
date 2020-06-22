@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('代理系统MPOS列表')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+<body class="gray-bg">
+	
+	<!-- 系统参数列表 -->
+	<div class="container-div ui-layout-center">
+		<div class="row">
+			
+			<!-- 最上面的搜索框 -->
+			<div class="col-sm-12 search-collapse">
+				<form id="user-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								政策名称：<input type="text" name="policy_name" id="policy_name" />
+							</li>
+							<li>
+								政策类型：
+								<select name="policy_type" id="policy_type" th:with="type=${@dict.getType('sys_pos_policy_type')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+								</select>
+							</li>
+							<li class="select-time">
+								<label>创建时间： </label>
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="beginTime"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+			
+			<!-- 上面的各项增删改查导入导出操作 -->
+	        <div class="btn-group-sm" id="toolbar" role="group">
+		       	<!-- 操作封装：添加信息 全屏 -->
+		        <a class="btn btn-success" onclick="$.operate.add('1')">
+		            <i class="fa fa-plus"></i> 激活期考核
+		        </a>
+				<!-- 操作封装：添加信息 全屏 -->
+				<a class="btn btn-success" onclick="$.operate.add('2')">
+					<i class="fa fa-plus"></i> 分期达标考核
+				</a>
+				<!-- 操作封装：添加信息 全屏 -->
+				<a class="btn btn-success" onclick="$.operate.add('3')">
+					<i class="fa fa-plus"></i> 交易达标返现考核
+				</a>
+				<!-- 操作封装：添加信息 全屏 -->
+				<a class="btn btn-success" onclick="$.operate.add('4')">
+					<i class="fa fa-plus"></i> 伪激活扣款考核
+				</a>
+				<!-- 操作封装：添加信息 全屏 -->
+				<a class="btn btn-success" onclick="$.operate.add('5')">
+					<i class="fa fa-plus"></i> 拿货激活返现考核
+				</a>
+		        <!-- 操作封装：修改信息，全屏 -->
+<!--		        <a class="btn btn-primary single disabled" onclick="$.operate.edit()">-->
+<!--		            <i class="fa fa-edit"></i> 修改-->
+<!--		        </a>-->
+
+<!--	            <a class="btn btn-danger" onclick="$.operate.removeAll()">-->
+<!--		            <i class="fa fa-remove"></i> 批量删除-->
+<!--		        </a>-->
+	        </div>
+
+	        
+	        <!-- bootstrap表格数据部分 -->
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+			
+		</div>
+	</div>
+	
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		//详情
+		var detailFlag = [[${@permission.hasPermi('deveagent:sysMposInfo:detail')}]];
+		//编辑
+		var editFlag = [[${@permission.hasPermi('deveagent:sysMposInfo:edit')}]];
+		//删除
+		var removeFlag = [[${@permission.hasPermi('deveagent:sysMposInfo:remove')}]];
+	
+		var datas_activity_status = [[${@dict.getType('user_pos_info_activity_status')}]];
+		var datas_del = [[${@dict.getType('sys_activity_info_del')}]];
+		var datas_trade_status = [[${@dict.getType('user_pos_info_trade_status')}]];
+		var sys_pos_policy_type = [[${@dict.getType('sys_pos_policy_type')}]];
+		var datas_cash_back_status = [[${@dict.getType('sys_pos_info_cash_back_status')}]];
+		var datas_act_status = [[${@dict.getType('sys_pos_info_act_status')}]];
+		var benefit_record_money_pos_type = [[${@dict.getType('benefit_record_money_pos_type')}]];
+		var user_pos_info_activity_status = [[${@dict.getType('user_pos_info_activity_status')}]];
+	
+		//前缀路径
+		var prefix = "/deveagent/sysPosPolicy";
+		
+		//初始化方法
+		$(function() {
+			//初始化时间范围
+			intiTime();
+		   	//查询系统MPOS机列表
+		    queryAgentSysMposInfoList();
+		});
+		
+		//查询系统MPOS机列表
+		function queryAgentSysMposInfoList() {
+		    var options = {
+		        url: prefix + "/list",//URL列表路径
+		        createUrl: prefix + "/add/{id}",//新增路径
+		        updateUrl: prefix + "/edit/{id}",//编辑路径
+		        detailUrl: prefix + "/detail/{id}",//详情路径
+				removeUrl: prefix + "/del",//详情路径
+		        exportUrl: prefix + "/export",//导出路径
+		        importPosUrl: prefix + "/importData",//导入路径
+		        importTemplateUrl: prefix + "/importTemplate",//导入模板下载路径
+		        modalName: "考核政策",//模块名称：用户
+		        showExport: true,
+		        sortName: 'id',
+	          	sortOrder: 'desc',
+		        //列信息
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+					field : 'id',
+					sortable: true,
+					title : '编号'
+				},
+				{
+					title: '&#12288;&#12288;&#12288;操作&#12288;&#12288;&#12288;',
+					align: 'center',
+					formatter: function(value, row, index) {
+						//事件数组
+						var actions = [];
+						//编辑按钮：修改信息
+						actions.push('<a class="btn btn-primary btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑  </a> ');
+						return actions.join('');
+					}
+				},
+				{
+					field : 'policy_type',
+					sortable: true,
+					title : '政策考核类型',
+					formatter: function(value, row, index) {
+						// 回显数据字典
+						return $.table.selectDictLabel(sys_pos_policy_type, value);
+					}
+				},
+				{
+					field : 'policy_name',
+					sortable: true,
+					title : '政策考核名称'
+				},
+				{
+					field : 'policy_amount',
+					sortable: true,
+					title : '政策考核金额(奖励/罚款)'
+				},
+				{
+					field : 'begin_date',
+					sortable: true,
+					title : '政策考核开始时间'
+				},
+				{
+					field : 'end_date',
+					sortable: true,
+					title : '政策考核结束时间'
+				},
+				{
+					field : 'policy_end_day',
+					sortable: true,
+					title : '政策考核天数'
+				},
+				{
+					field : 'policy_quantity',
+					sortable: true,
+					title : '考核达到的交易量'
+				},
+				{
+					field : 'policy_income',
+					sortable: true,
+					title : '货量数量'
+				},
+				// {
+				// 	field : 'pos_type',
+				// 	sortable: true,
+				// 	title : 'POS类型',
+				// 	formatter: function(value, row, index) {
+				// 		// 回显数据字典
+				// 		if(value=='MPOS'){
+				// 			value='02';
+				// 		}else if(value=='TraditionalPOS'){
+				// 			value='01';
+				// 		}
+				// 		return $.table.selectDictLabel(benefit_record_money_pos_type, value);
+				// 	}
+				// },
+				{
+					field : 'isuse',
+					sortable: true,
+					title : '是否开启',
+					formatter: function(value, row, index) {
+						return $.table.selectDictLabel(user_pos_info_activity_status, value);
+					}
+				},
+				{
+					field : 'cre_date',
+					sortable: true,
+					title : '创建时间'
+				},
+				{
+					field : 'upd_date',
+					title : '更新时间',
+					sortable: true
+				},
+				{
+					field : 'upd_by',
+					title : '更新者'
+				}]
+		    };
+		    //表格初始化
+		    $.table.init(options);
+		}
+
+	</script>
+</body>
+
+</html>

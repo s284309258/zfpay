@@ -18,6 +18,8 @@ import org.apache.ibatis.annotations.Select;
 public interface AgentSysTraditionalPosInfoMapper {
 
 
+	List<Map<String,Object>> getOneAgentPosList(@Param("map") Map<String, Object> params);
+
 	/**
 	 * 查询系统传统POS信息列表
 	 * @param params

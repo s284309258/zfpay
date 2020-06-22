@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('新增系统MPOS')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+	
+	<form class="form-horizontal m" id="form-sysMposInfo-add" >
+	
+		<!-- 新增类型 -->
+		<div class="form-group">
+			<label class="col-sm-3 control-label"><span style="color: red; ">*</span>新增类型：</label>
+			<div class="col-sm-8">
+				<label class="radio-box"> <input type="radio" name="add_type" value="1" checked="checked" /> 批量 </label> 
+				<label class="radio-box"> <input type="radio" name="add_type" value="2" /> 自增 </label> 
+			</div>
+		</div>
+		
+		<!-- 代理中付账号 -->
+		<div class="form-group">
+			<label class="col-sm-3 control-label"><span style="color: red; ">*</span>代理中付账号：</label>
+			<div class="col-sm-8">
+				<select class="form-control" name="account_id" id="account_id" th:with="accountList=${@account.getUserAccount()}">
+					<option value="">请选择代理中付账号</option>
+					<option th:each="account : ${accountList}" th:text="${account.app_id}" th:value="${account.id}"></option>
+				</select>
+			</div>
+		</div>
+	
+		<div class="form-group">
+			<label class="col-sm-3 control-label ">商户号：</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text" name="mer_id" id="mer_id" placeholder="请输入商户号（可不填）" />
+			</div>
+		</div> 
+		
+		<div class="form-group">
+			<label class="col-sm-3 control-label ">商户名：</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text" name="mer_name" id="mer_name" placeholder="请输入商户名（可不填）" />
+			</div>
+		</div> 
+		
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>返现获取类型：</label>
+			<div class="col-sm-8">
+				<div class="radio-box" th:each="dict : ${@dict.getType('sys_pos_info_cash_back_type')}">
+                 	<input type="radio" th:id="${dict.dictCode}" name="cash_back_type" th:value="${dict.dictValue}"  required >
+					<label th:for="${dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                </div>
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>返现条件：</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text" name="cash_back_condition" id="cash_back_condition" placeholder="请输入返现条件" required  />
+			</div>
+		</div> 
+		
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>返现金额：</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text" name="cash_back_money" id="cash_back_money" placeholder="请输入返现金额" required  />
+			</div>
+		</div> 
+		
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>刷卡费率（%）：</label>
+			<div class="col-sm-8">
+				<select class="form-control" name="credit_card_rate" id="credit_card_rate" th:with="paramrateList=${@paramrate.getParamRate('1')}" required  >
+					<option value="">请选择刷卡费率（%）</option>
+					<option th:each="paramrate : ${paramrateList}" th:text="${paramrate.rate}" th:value="${paramrate.rate}"></option>
+				</select>
+			</div>
+		</div> 
+		
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>云闪付费率（%）：</label>
+			<div class="col-sm-8">
+				<select class="form-control" name="cloud_flash_rate" id="cloud_flash_rate" th:with="paramrateList=${@paramrate.getParamRate('4')}" required  >
+					<option value="">请选择云闪付费率（%）</option>
+					<option th:each="paramrate : ${paramrateList}" th:text="${paramrate.rate}" th:value="${paramrate.rate}"></option>
+				</select>
+			</div>
+		</div> 
+		
+		<div class="form-group" style="display: none" >
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>起始号：</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text" name="pos_start" id="pos_start" placeholder="请输入起始号" required  />
+			</div>
+		</div> 
+		
+		<div class="form-group" style="display: none" >
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>数量：</label>
+			<div class="col-sm-8">
+				<input class="form-control" type="text" name="pos_num" id="pos_num" placeholder="请输入数量" required  />
+			</div>
+		</div> 
+		
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>MPOS设备号（机器编号）：</label>
+			<div class="col-sm-8">
+				<textarea rows="" cols="" name="pos_sns" id="pos_sns" class="form-control" placeholder="请选输入MPOS设备号（机器编号），批量数据请用英文分号(;)隔离" required ></textarea>
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-3 control-label "><span style="color: red; ">*</span>操作备注：</label>
+			<div class="col-sm-8">
+				<textarea rows="" cols="" name="remark" id="remark" class="form-control" placeholder="请输入操作备注" required ></textarea>
+			</div>
+		</div> 
+		
+	</form>
+</div>
+
+<th:block th:include="include :: footer" />
+<script type="text/javascript">
+
+//初始化选择事件
+$(function(){
+	//radio按钮选中事件触发
+	$('input').on('ifChecked', function(event){  
+		//添加类型
+		var add_type = $(event.target).val();
+		//如果是批量
+		if (add_type == "1") {
+			$("#pos_start").parents(".form-group").hide();
+			$("#pos_num").parents(".form-group").hide();
+            $("#pos_sns").parents(".form-group").show();
+        } else if (add_type == "2") {
+        	//如果是自增
+        	$("#pos_sns").parents(".form-group").hide();
+            $("#pos_start").parents(".form-group").show();
+            $("#pos_num").parents(".form-group").show();
+        }
+	});  
+})
+
+//前缀路径
+var prefix = "/deveagent/sysMposInfo";
+
+$("#form-sysMposInfo-add").validate({
+	onkeyup: false,
+	rules:{
+		add_type: {
+	        required: true
+      	},
+      	account_id: {
+	        required: true
+      	},
+      	pos_sns: {
+	        required: true
+      	},
+      	pos_start: {
+	        required: true
+      	},
+      	pos_num: {
+	        required: true
+      	},
+      	cash_back_type: {
+	        required: true
+      	},
+      	cash_back_condition: {
+	        required: true
+      	},
+      	cash_back_money: {
+	        required: true
+      	},
+      	credit_card_rate: {
+	        required: true
+      	},
+      	cloud_flash_rate: {
+	        required: true
+      	},
+      	remark:{
+			required:true
+      	}
+	},
+	messages: {
+		add_type: {
+            required: "请选择新增类型"
+        },
+        account_id: {
+            required: "请选择代理中付账号"
+        },
+        pos_sns: {
+            required: "请选输入MPOS设备号（机器编号）"
+        },
+        pos_start: {
+            required: "请输入MPOS起始号"
+        },
+        pos_num: {
+            required: "请输入MPOS数量"
+        },
+        cash_back_type: {
+            required: "请选择返现获取类型"
+        },
+        cash_back_condition: {
+            required: "请输入返现条件"
+        },
+        cash_back_money: {
+            required: "请输入返现金额"
+        },
+        credit_card_rate: {
+            required: "请选择刷卡费率"
+        },
+        cloud_flash_rate: {
+            required: "请选择云闪付费率"
+        },
+		remark: {
+            required: "请输入操作备注"
+        }
+    },
+    focusCleanup: true
+});
+
+function submitHandler() {
+	if ($.validate.form()) {
+  		$.operate.save(prefix + "/add", $('#form-sysMposInfo-add').serialize());
+  	}
+}
+</script>
+</body>
+</html>

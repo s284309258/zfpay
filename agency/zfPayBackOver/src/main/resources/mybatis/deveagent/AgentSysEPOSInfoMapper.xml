@@ -1,0 +1,574 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.syspos.mapper.AgentSysEPOSInfoMapper">
+
+	<!-- 查询系统传统POS信息列表 update byqh 201912-->
+	<select id="getAgentSysTraditionalPosInfoList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			t.id,
+			t.manager_id,
+			t.sn,
+			t.mer_id,
+			t.mer_name,
+			t.name,
+			t.tel,
+			t.cash_back_type,
+			t.cash_back_condition,
+			t.cash_back_money,
+			t.real_cash_back_money,
+			t.cash_back_status,
+			t.credit_card_rate,
+			t.cloud_flash_rate,
+			t.weixin_rate,
+			t.zhifubao_rate,
+			t.credit_card_rate_vip,
+			t.cloud_flash_rate_vip,
+			t.weixin_rate_vip,
+			t.zhifubao_rate_vip,
+			t.scan_status,
+			t.act_status,
+			t.dis_status,
+			t.act_user_id,
+			t.remark,
+			t.create_by,
+			t.update_by,
+			t.account_id,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.act_date, t.act_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS act_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date
+		FROM
+			t_sys_traditional_pos_info t
+		INNER JOIN t_user_traditional_pos_info t1 ON t.sn = t1.sn and t1.state_status=1
+		<where>
+			t1.user_id=#{map.uid}
+			AND t.pos_type = 'epos'
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.sn != null and map.sn != ''">
+				AND t.sn = #{map.sn}
+			</if>
+			<if test="map.mer_id != null and map.mer_id != ''">
+				AND t.mer_id = #{map.mer_id}
+			</if>
+			<if test="map.mer_name != null and map.mer_name != ''">
+				AND t.mer_name = #{map.mer_name}
+			</if>
+			<if test="map.name != null and map.name != ''">
+				AND t.name = #{map.name}
+			</if>
+			<if test="map.tel != null and map.tel != ''">
+				AND t.tel = #{map.tel}
+			</if>
+			<if test="map.cash_back_type != null and map.cash_back_type != ''">
+				AND t.cash_back_type = #{map.cash_back_type}
+			</if>
+			<if test="map.cash_back_status != null and map.cash_back_status != ''">
+				AND t.cash_back_status = #{map.cash_back_status}
+			</if>
+			<if test="map.act_status != null and map.act_status != ''">
+				AND t.act_status = #{map.act_status}
+			</if>
+<!--			<if test="map.dis_status != null and map.dis_status != ''">-->
+<!--				AND t.dis_status = #{map.dis_status}-->
+<!--			</if>-->
+			<if test="map.scan_status != null and map.scan_status != ''">
+				AND t.scan_status = #{map.scan_status}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+
+
+	<!-- 查询系统一级代理MPOS信息列表byqh update byqh 201912 -->
+	<select id="getSubAgentSysTraditionalPosInfoList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+		t.id,
+		t.manager_id,
+		t.sn,
+		t.mer_id,
+		t.mer_name,
+		t.name,
+		t.tel,
+		t.cash_back_type,
+		t.cash_back_condition,
+		t.cash_back_money,
+		t.real_cash_back_money,
+		t.cash_back_status,
+		t.credit_card_rate,
+		t.cloud_flash_rate,
+		t.weixin_rate,
+		t.zhifubao_rate,
+		t.scan_status,
+		t.act_status,
+		t.dis_status,
+		t.act_user_id,
+		t.remark,
+		t.create_by,
+		t.update_by,
+		t.account_id,
+		DATE_FORMAT(
+		STR_TO_DATE(
+		CONCAT(t.act_date, t.act_time),
+		'%Y%m%d%H%i%s'
+		),
+		'%Y-%m-%d %H:%i:%s'
+		) AS act_date,
+		DATE_FORMAT(
+		STR_TO_DATE(
+		CONCAT(t.cre_date, t.cre_time),
+		'%Y%m%d%H%i%s'
+		),
+		'%Y-%m-%d %H:%i:%s'
+		) AS cre_date,
+		DATE_FORMAT(
+		STR_TO_DATE(
+		CONCAT(t.up_date, t.up_time),
+		'%Y%m%d%H%i%s'
+		),
+		'%Y-%m-%d %H:%i:%s'
+		) AS up_date,
+		t1.app_id,
+		t2.id AS user_pos_id,
+		t2.card_settle_price,
+		t2.cloud_settle_price,
+		t2.weixin_settle_price,
+		t2.zhifubao_settle_price,
+		t2.card_settle_price_vip,
+		t2.cloud_settle_price_vip,
+		t2.weixin_settle_price_vip,
+		t2.zhifubao_settle_price_vip,
+		t2.single_profit_rate,
+		t2.cash_back_rate,
+		t2.mer_cap_fee
+		FROM
+		(t_sys_traditional_pos_info t
+		LEFT JOIN sys_user_account t1 ON t.account_id = t1.id) INNER JOIN t_user_traditional_pos_info t2 ON t.sn=t2.sn
+		<where>
+			t.manager_id = #{map.manager_id}
+			and t.pos_type='epos'
+			and t2.user_id=#{map.user_id}
+			and t2.state_status=1
+			and t2.del=0
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.sn != null and map.sn != ''">
+				AND t.sn = #{map.sn}
+			</if>
+			<if test="map.mer_id != null and map.mer_id != ''">
+				AND t.mer_id = #{map.mer_id}
+			</if>
+			<if test="map.mer_name != null and map.mer_name != ''">
+				AND t.mer_name = #{map.mer_name}
+			</if>
+			<if test="map.name != null and map.name != ''">
+				AND t.name = #{map.name}
+			</if>
+			<if test="map.tel != null and map.tel != ''">
+				AND t.tel = #{map.tel}
+			</if>
+			<if test="map.cash_back_type != null and map.cash_back_type != ''">
+				AND t.cash_back_type = #{map.cash_back_type}
+			</if>
+			<if test="map.cash_back_status != null and map.cash_back_status != ''">
+				AND t.cash_back_status = #{map.cash_back_status}
+			</if>
+			<if test="map.act_status != null and map.act_status != ''">
+				AND t.act_status = #{map.act_status}
+			</if>
+			<if test="map.dis_status != null and map.dis_status != ''">
+				AND t.dis_status = #{map.dis_status}
+			</if>
+			<if test="map.scan_status != null and map.scan_status != ''">
+				AND t.scan_status = #{map.scan_status}
+			</if>
+			<if test="map.app_id != null and map.app_id != ''">
+				AND t1.app_id = #{map.app_id}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	<!-- 导出系统传统POS信息列表 update byqh 201912-->
+	<select id="selectAgentSysTraditionalPosInfoList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.syspos.domain.AgentSysTraditionalPosInfo" >
+		SELECT
+			t.id,
+			t.manager_id,
+			t.sn,
+			t.mer_id,
+			t.mer_name,
+			t.name,
+			t.tel,
+			t.cash_back_type,
+			t.cash_back_condition,
+			t.real_cash_back_money,
+			t.cash_back_status,
+			t.credit_card_rate,
+			t.cloud_flash_rate,
+			t.weixin_rate,
+			t.zhifubao_rate,
+			t.credit_card_rate_vip,
+			t.cloud_flash_rate_vip,
+			t.weixin_rate_vip,
+			t.zhifubao_rate_vip,
+			t.scan_status,
+			t.act_status,
+			t.dis_status,
+			t.act_user_id,
+			t.remark,
+			t.create_by,
+			t.update_by,
+			t.account_id,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.act_date, t.act_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS act_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t1.app_id
+		FROM
+			t_sys_traditional_pos_info t
+		LEFT JOIN sys_user_account t1 ON t.account_id = t1.id
+		<where>
+			t.manager_id = #{map.manager_id}
+			AND t.pos_type='epos'
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.sn != null and map.sn != ''">
+				AND t.sn = #{map.sn}
+			</if>
+			<if test="map.mer_id != null and map.mer_id != ''">
+				AND t.mer_id = #{map.mer_id}
+			</if>
+			<if test="map.mer_name != null and map.mer_name != ''">
+				AND t.mer_name = #{map.mer_name}
+			</if>
+			<if test="map.name != null and map.name != ''">
+				AND t.name = #{map.name}
+			</if>
+			<if test="map.tel != null and map.tel != ''">
+				AND t.tel = #{map.tel}
+			</if>
+			<if test="map.cash_back_type != null and map.cash_back_type != ''">
+				AND t.cash_back_type = #{map.cash_back_type}
+			</if>
+			<if test="map.cash_back_status != null and map.cash_back_status != ''">
+				AND t.cash_back_status = #{map.cash_back_status}
+			</if>
+			<if test="map.act_status != null and map.act_status != ''">
+				AND t.act_status = #{map.act_status}
+			</if>
+			<if test="map.dis_status != null and map.dis_status != ''">
+				AND t.dis_status = #{map.dis_status}
+			</if>
+			<if test="map.scan_status != null and map.scan_status != ''">
+				AND t.scan_status = #{map.scan_status}
+			</if>
+			<if test="map.app_id != null and map.app_id != ''">
+				AND t1.app_id = #{map.app_id}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 修改系统MPOS刷卡费率 -->
+	<update id="updateSysTraditionalPosInfoCreditCardRate" parameterType="java.util.Map" >
+		update t_sys_traditional_pos_info 
+			set credit_card_rate=#{map.credit_card_rate},up_date=#{map.up_date},
+				up_time=#{map.up_time},update_by=#{map.update_by}
+		where sn=#{map.sn}
+	</update>
+	
+	
+	<!-- 保存系统传统POS信息 -->
+	<insert id="addAgentTraditionalPosInfo" parameterType="com.ruoyi.project.deveagent.syspos.domain.AgentSysTraditionalPosInfo" >
+		insert into t_sys_traditional_pos_info (
+			manager_id, sn, account_id,
+			<if test="mer_id != null and mer_id != ''">
+				mer_id,
+			</if>
+			<if test="mer_name != null and mer_name != ''">
+				mer_name,
+			</if>
+			cash_back_type, 
+			cash_back_condition,cash_back_money,credit_card_rate, cloud_flash_rate, 
+			weixin_rate, zhifubao_rate, 
+			create_by, cre_date, cre_time,credit_card_rate_vip,cloud_flash_rate_vip,weixin_rate_vip,zhifubao_rate_vip,pos_type)
+		values (
+			#{manager_id}, #{sn}, #{account_id},
+			<if test="mer_id != null and mer_id != ''">
+				#{mer_id},
+			</if>
+			<if test="mer_name != null and mer_name != ''">
+				#{mer_name},
+			</if>
+			#{cash_back_type}, 
+			#{cash_back_condition},#{cash_back_money},#{credit_card_rate},#{cloud_flash_rate}, 
+			#{weixin_rate},#{zhifubao_rate}, 
+			#{create_by}, #{cre_date}, #{cre_time},#{credit_card_rate_vip},#{cloud_flash_rate_vip},#{weixin_rate_vip},#{zhifubao_rate_vip},'epos')
+	</insert>
+	
+	
+	<!-- 根据设备号（机器编号）查询系统传统POS信息 -->
+	<select id="getAgentSysTraditionalPosInfoBySn" parameterType="java.lang.String" resultType="java.util.Map" >
+		select * from t_sys_traditional_pos_info where sn=#{sn}
+	</select>
+
+	<!-- 根据设备号（机器编号）查询系统传统POS商户名 -->
+	<select id="getAgentSysTraditionalPosMer_nameInfoBySn" parameterType="java.lang.String" resultType="java.util.Map" >
+		select t.mer_name from t_sys_traditional_pos_info t where sn=#{sn}
+	</select>
+
+	<!-- 根据编号查询传统POS机详情 -->
+	<select id="getAgentSysTraditionalPosInfoById" parameterType="java.lang.String" resultType="java.util.Map" >
+		select * from t_sys_traditional_pos_info where id=#{pos_id}
+	</select>
+	
+	
+	<!-- 修改系统传统POS信息 -->
+	<update id="updateAgentSysTraditionalPosInfo" parameterType="java.util.Map" >
+		update t_sys_traditional_pos_info
+ 		<set>
+ 			<if test="map.account_id != null and map.account_id != ''">account_id = #{map.account_id},</if>
+ 			<if test="map.mer_id != null and map.mer_id != ''">mer_id = #{map.mer_id},</if>
+ 			<if test="map.mer_name != null and map.mer_name != ''">mer_name = #{map.mer_name},</if>
+ 			<if test="map.name != null and map.name != ''">name = #{map.name},</if>
+ 			<if test="map.tel != null and map.tel != ''">tel = #{map.tel},</if>
+ 			<if test="map.cash_back_type != null and map.cash_back_type != ''">cash_back_type = #{map.cash_back_type},</if>
+ 			<if test="map.cash_back_condition != null and map.cash_back_condition != ''">cash_back_condition = #{map.cash_back_condition},</if>
+ 			<if test="map.cash_back_money != null and map.cash_back_money != ''">cash_back_money = #{map.cash_back_money},</if>
+ 			<if test="map.credit_card_rate != null and map.credit_card_rate != ''">credit_card_rate = #{map.credit_card_rate},</if>
+			<if test="map.credit_card_rate_vip != null and map.credit_card_rate_vip != ''">credit_card_rate_vip = #{map.credit_card_rate_vip},</if>
+ 			<if test="map.cloud_flash_rate != null and map.cloud_flash_rate != ''">cloud_flash_rate = #{map.cloud_flash_rate},</if>
+ 			<if test="map.weixin_rate != null and map.weixin_rate != ''">weixin_rate = #{map.weixin_rate},</if>
+ 			<if test="map.zhifubao_rate != null and map.zhifubao_rate != ''">zhifubao_rate = #{map.zhifubao_rate},</if>
+ 			<if test="map.remark != null and map.remark != ''">remark = #{map.remark},</if>
+ 			<if test="map.update_by != null and map.update_by != ''">update_by = #{map.update_by},</if>
+ 			<if test="map.up_date != null and map.up_date != ''">up_date = #{map.up_date},</if>
+ 			<if test="map.up_time != null and map.up_time != ''">up_time = #{map.up_time},</if>
+ 		</set>
+ 		where id=#{map.pos_id} AND manager_id=#{map.manager_id}
+	</update>
+	
+	
+	<!-- 删除系统传统POS机信息 -->
+	<delete id="deleteAgentSysTraditionalPosInfo" parameterType="java.util.Map" >
+		delete from t_sys_traditional_pos_info 
+		where id=#{map.pos_id} AND manager_id=#{map.manager_id} and dis_status=#{map.dis_status}
+	</delete>
+	
+	
+	<!-- 修改系统传统POS分配状态 -->
+	<update id="updateAgentSysTraditionalPosInfoDisStatus" parameterType="java.util.Map" >
+		update t_sys_traditional_pos_info 
+			set dis_status=#{map.new_dis_status},up_date=#{map.up_date},
+				up_time=#{map.up_time},update_by=#{map.update_by}
+				<if test="map.remark != null and map.remark != ''">
+					,remark = #{map.remark}
+				</if>
+		where sn=#{map.sn} AND manager_id=#{map.manager_id} AND dis_status=#{map.old_dis_status}
+	</update>
+
+    <!-- 修改系统MPOS(含已分配和有交易的)分配状态,所属对象,费率byqh -->
+    <update id="updateSubAgentSysTraditionalPosInfoDisStatus" parameterType="java.util.Map" >
+        update t_sys_traditional_pos_info
+        set dis_status=#{map.new_dis_status},up_date=#{map.up_date},
+        up_time=#{map.up_time},update_by=#{map.update_by}
+        <if test="map.remark != null and map.remark != ''">
+            ,remark = #{map.remark}
+        </if>
+        where sn=#{map.sn} AND manager_id=#{map.manager_id}
+    </update>
+	
+	
+	<!-- 导出可分配的传统POS列表 -->
+	<select id="selectAgentNoDisSysTraditionalPosInfoList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.usertrapos.domain.AgentSelectUserTraditionalPosInfo" >
+		SELECT
+			t.sn
+		FROM
+			t_sys_traditional_pos_info t
+			LEFT JOIN sys_user_account t1 ON t.account_id = t1.id
+		<where>
+			t.manager_id = #{map.manager_id}
+			AND t.pos_type='epos'
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.sn != null and map.sn != ''">
+				AND t.sn = #{map.sn}
+			</if>
+			<if test="map.mer_id != null and map.mer_id != ''">
+				AND t.mer_id = #{map.mer_id}
+			</if>
+			<if test="map.mer_name != null and map.mer_name != ''">
+				AND t.mer_name = #{map.mer_name}
+			</if>
+			<if test="map.name != null and map.name != ''">
+				AND t.name = #{map.name}
+			</if>
+			<if test="map.tel != null and map.tel != ''">
+				AND t.tel = #{map.tel}
+			</if>
+			<if test="map.cash_back_type != null and map.cash_back_type != ''">
+				AND t.cash_back_type = #{map.cash_back_type}
+			</if>
+			<if test="map.cash_back_status != null and map.cash_back_status != ''">
+				AND t.cash_back_status = #{map.cash_back_status}
+			</if>
+			<if test="map.act_status != null and map.act_status != ''">
+				AND t.act_status = #{map.act_status}
+			</if>
+			<if test="map.dis_status != null and map.dis_status != ''">
+				AND t.dis_status = #{map.dis_status}
+			</if>
+			<if test="map.app_id != null and map.app_id != ''">
+				AND t1.app_id = #{map.app_id}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 更新传统POS的扫码支付状态 -->
+	<update id="updateAgentSysTraditionalPosInfoScanStatus" parameterType="java.util.Map" >
+		update 
+			t_sys_traditional_pos_info t
+			LEFT JOIN t_user_traditional_pos_info t1 ON t.sn=t1.sn
+		SET t.scan_status=#{map.new_scan_status},
+			t.up_date=#{map.up_date},t.up_time=#{map.up_time},t.remark=#{map.remark},t.update_by=#{map.update_by} 
+		where 
+			t.sn=#{map.sn} and t.scan_status=#{map.old_scan_status} 
+			and t.manager_id=#{map.manager_id} and t1.user_id=#{map.user_id}
+	</update>
+	
+	
+	
+	<!-- 查询系统传统POS信息列表 -->
+	<select id="getAgentSysTraditionalPosInfoDetailBySn" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT
+			t.id,
+			t.manager_id,
+			t.sn,
+			t.mer_id,
+			t.mer_name,
+			t.name,
+			t.tel,
+			t.cash_back_type,
+			t.cash_back_condition,
+			t.cash_back_money,
+			t.real_cash_back_money,
+			t.cash_back_status,
+			t.credit_card_rate,
+			t.cloud_flash_rate,
+			t.weixin_rate,
+			t.zhifubao_rate,
+			t.scan_status,
+			t.act_status,
+			t.dis_status,
+			t.act_user_id,
+			t.remark,
+			t.create_by,
+			t.update_by,
+			t.account_id,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.act_date, t.act_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS act_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t1.app_id
+		FROM
+			t_sys_traditional_pos_info t
+		LEFT JOIN sys_user_account t1 ON t.account_id = t1.id
+		where t.sn=#{sn}
+	</select>
+	
+</mapper>

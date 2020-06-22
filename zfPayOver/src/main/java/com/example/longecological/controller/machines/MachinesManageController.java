@@ -169,6 +169,12 @@ public class MachinesManageController {
 	public R getTraditionalPosSysParamRateList(@SIGNToken @RequestBody Map<String, Object> map) {
 		return machinesManageService.getTraditionalPosSysParamRateList(map);
 	}
+
+	@ResponseBody
+	@RequestMapping("/policy2OnOff")
+	public R policy2OnOff(@SIGNToken @RequestBody Map<String, Object> map){
+		return machinesManageService.policy2OnOff(map);
+	}
 	
 	/**
 	 * 查询系统结算价配置参数(MPOS)======》MD5验签方式

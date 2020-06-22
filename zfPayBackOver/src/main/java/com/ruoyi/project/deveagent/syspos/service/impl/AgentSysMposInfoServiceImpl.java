@@ -57,6 +57,12 @@ public class AgentSysMposInfoServiceImpl implements AgentSysMposInfoService {
 		return agentSysMposInfoMapper.getAgentSysMposInfoList(params);
 	}
 
+	@Override
+	public List<Map<String, Object>> getOneAgentPosList(Map<String, Object> params) {
+		params.put("manager_id", ShiroUtils.getUserId());
+		return agentSysMposInfoMapper.getOneAgentPosList(params);
+	}
+
 	/**
 	 * 查询系统一级代理MPOS信息列表byqh
 	 * @param params

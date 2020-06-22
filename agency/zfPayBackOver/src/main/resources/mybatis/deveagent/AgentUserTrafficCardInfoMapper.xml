@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.deveagent.usertracard.mapper.AgentUserTrafficCardInfoMapper">
+
+	<!-- 查询用户MPOS信息列表 -->
+	<select id="getAgentUserTrafficCardInfoList" parameterType="java.util.Map" resultType="java.util.Map" >
+		SELECT
+			t.id,
+			t.card_no,
+			t.user_id,
+			t.state_status,
+			t.del,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t2.manager_id,
+			t2.user_tel,
+			t2.real_name
+		FROM
+			t_user_traffic_card_info t
+		LEFT JOIN t_sys_traffic_card_info t1 ON t.card_no = t1.card_no
+		LEFT JOIN t_user_info t2 ON t.user_id = t2.id
+		<where>
+			t2.manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.user_id != null and map.user_id != ''">
+				AND t.user_id = #{map.user_id}
+			</if>
+			<if test="map.card_no != null and map.card_no != ''">
+				AND t.card_no = #{map.card_no}
+			</if>
+			<if test="map.state_status != null and map.state_status != ''">
+				AND t.state_status = #{map.state_status}
+			</if>
+			<if test="map.del != null and map.del != ''">
+				AND t.del = #{map.del}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t2.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t2.real_name = #{map.real_name}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 导出用户MPOS信息列表 -->
+	<select id="selectAgentUserTrafficCardInfoList" parameterType="java.util.Map" resultType="com.ruoyi.project.deveagent.usermpos.domain.AgentUserMposInfo" >
+		SELECT
+			t.id,
+			t.card_no,
+			t.user_id,
+			t.state_status,
+			t.del,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.cre_date, t.cre_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS cre_date,
+			DATE_FORMAT(
+				STR_TO_DATE(
+					CONCAT(t.up_date, t.up_time),
+					'%Y%m%d%H%i%s'
+				),
+				'%Y-%m-%d %H:%i:%s'
+			) AS up_date,
+			t2.manager_id,
+			t2.user_tel,
+			t2.real_name
+		FROM
+			t_user_traffic_card_info t
+		LEFT JOIN t_sys_traffic_card_info t1 ON t.card_no = t1.card_no
+		LEFT JOIN t_user_info t2 ON t.user_id = t2.id
+		<where>
+			t2.manager_id = #{map.manager_id}
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.user_id != null and map.user_id != ''">
+				AND t.user_id = #{map.user_id}
+			</if>
+			<if test="map.card_no != null and map.card_no != ''">
+				AND t.card_no = #{map.card_no}
+			</if>
+			<if test="map.state_status != null and map.state_status != ''">
+				AND t.state_status = #{map.state_status}
+			</if>
+			<if test="map.del != null and map.del != ''">
+				AND t.del = #{map.del}
+			</if>
+			<if test="map.user_tel != null and map.user_tel != ''">
+				AND t2.user_tel = #{map.user_tel}
+			</if>
+			<if test="map.real_name != null and map.real_name != ''">
+				AND t2.real_name = #{map.real_name}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+	
+	
+	<!-- 查询是否存在该用户和Mpos机的关系 -->
+	<select id="getAgentUserTrafficCardInfo" parameterType="com.ruoyi.project.deveagent.usertracard.domain.AgentUserTrafficCardInfo" resultType="java.util.Map" >
+		select * from t_user_traffic_card_info where card_no=#{card_no} and user_id=#{user_id}
+	</select>
+	
+	
+	<!-- 用户分配更新用户MPOS机信息 -->
+	<update id="updateAgentUserTrafficCardInfoByDis" parameterType="com.ruoyi.project.deveagent.usertracard.domain.AgentUserTrafficCardInfo" >
+		update 
+			t_user_traffic_card_info
+		SET state_status=#{state_status},del=#{del},update_by=#{create_by},
+			up_date=#{cre_date},up_time=#{cre_time}
+			<if test="remark != null and remark != ''">
+				,remark = #{remark}
+			</if>
+		WHERE id=#{id} and card_no=#{card_no} and user_id=#{user_id}
+	</update>
+	
+	
+	<!-- 保存系统MPOS信息 -->
+	<insert id="addAgentUserTrafficCardInfoByDis" parameterType="com.ruoyi.project.deveagent.usertracard.domain.AgentUserTrafficCardInfo" >
+		insert into t_user_traffic_card_info (
+			card_no, user_id, state_status, del, remark, create_by, cre_date, cre_time)
+		values (
+			#{card_no}, #{user_id}, #{state_status}, #{del}, #{remark}, #{create_by}, #{cre_date}, #{cre_time})
+	</insert>
+	
+</mapper>

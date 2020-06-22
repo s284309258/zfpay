@@ -10,6 +10,7 @@ import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.framework.web.page.TableDataInfo;
 import com.ruoyi.project.deveagent.syspos.domain.AgentSysTraditionalPosInfo;
 import com.ruoyi.project.deveagent.syspos.service.AgentSysEPOSInfoService;
+import com.ruoyi.project.deveagent.syspos.service.AgentSysTraditionalPosInfoService;
 import com.ruoyi.project.develop.common.domain.R;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,9 @@ public class AgentSysEPOSInfoController  extends BaseController {
     @Autowired
     private AgentSysEPOSInfoService agentSysEPOSInfoService;
 
+    @Autowired
+    private AgentSysTraditionalPosInfoService agentSysTraditionalPosInfoService;
+
 
     /**
      * 跳转系统传统POS信息列表页面
@@ -46,6 +50,25 @@ public class AgentSysEPOSInfoController  extends BaseController {
     public String sysTraditionalPosInfo()
     {
         return prefix + "/sysTraditionalPosInfo";
+    }
+
+
+    /***
+     * 查询代理名下所有MPOS
+     * @param params
+     * @return
+     */
+    @PostMapping("/OneAgentList")
+    @ResponseBody
+    public TableDataInfo OneAgentList(@RequestParam Map<String, Object> params)
+    {
+        //此方法配合前端完成自动分页
+        startPage();
+        //根据条件分页查询用户列表
+        params.put("pos_type","epos");
+        List<Map<String, Object>> list = agentSysTraditionalPosInfoService.getOneAgentPosList(params);
+        //处理响应请求分页数据
+        return getDataTable(list);
     }
 
 

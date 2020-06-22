@@ -121,6 +121,13 @@ public class BackUrlConstant {
 		//修改用户MPOS
 		BackUrlMap.put(VerifyConstant.AuthVerfiy_AgentEditUserMposInfo, "deveagent/userMposInfo/edit");
 
+		//批量修改用户结算低价add byqh202006
+		BackUrlMap.put(VerifyConstant.AuthVerfiy_SelectOneAgentPos, "deveagent/userMposInfo/selectOneAgentPos");
+		//批量修改用户结算低价add byqh202006
+		BackUrlMap.put(VerifyConstant.AuthVerfiy_SelectOneAgentTrapos, "deveagent/userTraditionalPosInfo/selectOneAgentPos");
+		//批量修改用户结算低价add byqh202006
+		BackUrlMap.put(VerifyConstant.AuthVerfiy_SelectOneAgentEpos, "deveagent/userEposInfo/selectOneAgentPos");
+
 		//新增一级代理商MPOS分配给他的二级代理商byqh
 		BackUrlMap.put(VerifyConstant.AuthVerfiy_AgentAddUserAgentMposInfo, "deveagent/userMposInfo/selectAgentUser");
 		

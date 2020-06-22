@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('修改线上活动(MPOS)奖励类型')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+	
+	<form class="form-horizontal m" id="form-sysMposActivityRewardInfo-edit" >
+	
+		<input id="reward_id" name="reward_id"  type="hidden" th:value="${id}"  />
+		
+		<div class="form-group" >
+			<label class="col-sm-3 control-label ">库存数量：</label>
+			<div class="col-sm-8">
+				<textarea rows="" cols="" name="pos_num" id="pos_nums" class="form-control" placeholder="批量数据请用英文分号(;)隔离" ></textarea>
+			</div>
+		</div>
+		
+		<div class="form-group" >
+			<label class="col-sm-3 control-label ">奖励金额（元）：</label>
+			<div class="col-sm-8">
+				<textarea rows="" cols="" name="reward_money" id="reward_moneys" class="form-control" placeholder="批量数据请用英文分号(;)隔离" ></textarea>
+			</div>
+		</div>
+		
+		<div class="form-group" >
+			<label class="col-sm-3 control-label ">交易额（万元）：</label>
+			<div class="col-sm-8">
+				<textarea rows="" cols="" name="expenditure" id="expenditures" class="form-control" placeholder="批量数据请用英文分号(;)隔离" ></textarea>
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-3 control-label">操作备注：</label>
+			<div class="col-sm-8">
+				<textarea id="remark" name="remark" class="form-control" placeholder="" ></textarea>
+			</div>
+		</div>
+	</form>
+</div>
+
+<th:block th:include="include :: footer" />
+<script type="text/javascript">
+
+var id = [[${id}]]; 
+//查询参数信息
+$(function(){
+	$.ajax({
+		url: "/deveagent/sysMposActivityRewardInfo/getAgentSysMposActivityRewardInfoById",
+		type: 'post',
+		dataType:"json",
+		data:{
+			'id' : id,
+		},
+		success:function(data){
+			$("#pos_nums").val(data.pos_num);
+			$("#reward_moneys").val(data.reward_money);
+			$("#expenditures").val(data.expenditure);
+    	}
+	}); 
+}) 
+
+//前缀路径
+var prefix = "/deveagent/sysMposActivityRewardInfo";
+
+$("#form-sysMposActivityRewardInfo-edit").validate({
+	onkeyup: false,
+	rules:{
+		pos_nums: {
+	        required: true
+      	},
+      	reward_moneys: {
+	        required: true
+      	},
+      	expenditures: {
+	        required: true
+      	},
+      	remark:{
+			required:true
+      	}
+	},
+	messages: {
+		pos_nums: {
+            required: "请输入库存数量"
+        },
+        reward_moneys: {
+            required: "请输入奖励金额（元）"
+        },
+        expenditures: {
+            required: "请输入交易额（万元）"
+        },
+		remark: {
+            required: "请输入操作备注"
+        }
+    },
+    focusCleanup: true
+});
+
+function submitHandler() {
+	if ($.validate.form()) {
+  		$.operate.save(prefix + "/edit", $('#form-sysMposActivityRewardInfo-edit').serialize());
+  	}
+}
+</script>
+</body>
+</html>

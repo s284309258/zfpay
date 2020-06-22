@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('公告资讯详情')" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+	<th:block th:include="include :: bootstrap-fileinput-css" />
+</head>
+
+<body class="white-bg">
+
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+
+	<form class="form-horizontal m" id="form-sysNotice-detail" >
+	          
+	  	<div class="form-group">	
+	     	<label class="col-sm-1 control-label">公告标题：</label>
+	     	<div class="col-sm-10">
+	           	<input type="hidden" id="notice_id" name="notice_id" th:value="${sysNotice.id}" readonly="true" >
+				<input type="hidden" name="notice_content" id="notice_content" th:value="${sysNotice.notice_content}" readonly="true" >
+	           	<input id="news_title" name="news_title" th:value="${sysNotice.notice_title}" class="form-control" type="text" required readonly >
+	  		</div>
+		</div>
+	          
+	 	<div class="form-group"> 
+	       	<label class="col-sm-1 control-label ">公告内容：</label>  
+	        <div class="col-sm-10">
+	         	<div class="ibox float-e-margins">
+	            	<div class="ibox-content">
+	                  	<div class="form-group">
+	                    	<div class="file-loading">
+					            <input id="fileinput-demo-notice_content" name="file"  type="file" multiple="multiple" >
+					        </div>
+	                  	</div>
+	             	</div>
+	          	</div>
+	      	</div>
+	   	</div>
+	</form>
+</div>
+
+    
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: bootstrap-fileinput-js" />
+    
+<script th:inline="javascript">
+
+$(document).ready(function () {
+	//公告内容
+	var notice_content_data = [];
+	var notice_content = $("#notice_content").val().split(",");
+	for(var i=0;i<notice_content.length;i++){
+		notice_content_data.push(qiniu_domain+notice_content[i]);
+	}
+	initFileInput2(notice_content_data,"notice_content");
+	
+	function initFileInput2(initDataArray,inputId){
+		//初始化fileinput控件（第一次初始化）
+	    $("#fileinput-demo-"+inputId+"").fileinput({
+	    	'theme': 'explorer-fas',
+	        allowedFileExtensions : ['jpg', 'png','gif'],//接收的文件后缀,
+	        uploadAsync:true,//采用同步上传
+	        maxFileCount: 10,//表示允许同时上传的最大文件个数
+	        validateInitialCount:true,
+	        overwriteInitial: false,
+	        initialPreviewAsData: true,
+	        showUpload: false, //是否显示上传按钮
+	        showRemove: false, //是否显示删除按钮
+	        showBrowse: false,//是否显示移除按钮
+	        showCaption:false,//是否显示标题
+	        initialPreview: initDataArray,
+	        layoutTemplates :{
+	            actionDelete:'', //去除上传预览的缩略图中的删除图标
+	            actionUpload:'',//去除上传预览缩略图中的上传图片；
+	            //actionZoom:''   //去除上传预览缩略图中的查看详情预览的缩略图标。
+	       }
+	    })
+	}
+});
+
+</script>
+</body>
+</html>
