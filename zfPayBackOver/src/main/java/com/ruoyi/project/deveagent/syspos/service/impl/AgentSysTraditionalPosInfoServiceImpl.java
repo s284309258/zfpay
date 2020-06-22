@@ -56,8 +56,14 @@ public class AgentSysTraditionalPosInfoServiceImpl implements AgentSysTraditiona
 		params.put("manager_id", ShiroUtils.getUserId());
 		return agentSysTraditionalPosInfoMapper.getAgentSysTraditionalPosInfoList(params);
 	}
-	
-	
+
+	@Override
+	public List<Map<String, Object>> getOneAgentPosList(Map<String, Object> params) {
+		params.put("manager_id", ShiroUtils.getUserId());
+		return agentSysTraditionalPosInfoMapper.getOneAgentPosList(params);
+	}
+
+
 	/**
 	 * 导出系统传统POS信息列表
 	 */

@@ -3,6 +3,60 @@
 
 <mapper namespace="com.ruoyi.project.deveagent.syspos.mapper.AgentSysTraditionalPosInfoMapper">
 
+	<!-- 查询系统MPOS信息列表 -->
+	<select id="getOneAgentPosList" parameterType="java.util.Map" resultType="java.util.Map" >
+		select t.id,tt.manager_id,tt.real_name,t.sn,t.card_settle_price,t.card_settle_price_vip,t.cloud_settle_price,t.single_profit_rate,t.cash_back_rate,
+		t.state_status,t.del,t.trade_status,t.cre_date,ttt.credit_card_rate,ttt.cloud_flash_rate,ttt.act_status,
+		ttt.dis_status,ttt.act_date,ttt.cash_back_type,ttt.cash_back_status,ttt.dis_status,ttt.weixin_rate,ttt.zhifubao_rate
+		from t_user_traditional_pos_info t inner join t_user_info tt on t.user_id=tt.id inner join t_sys_traditional_pos_info ttt on t.sn=ttt.sn
+		<where>
+			tt.manager_id = #{map.manager_id}
+			and t.user_id=#{map.user_id}
+			<choose>
+				<when test="map.pos_type!=null and map.pos_type!=''">
+					and t.pos_type='epos'
+				</when>
+				<otherwise>
+					and t.pos_type is null
+				</otherwise>
+			</choose>
+			<if test="map.id != null and map.id != ''">
+				AND t.id = #{map.id}
+			</if>
+			<if test="map.sn != null and map.sn != ''">
+				AND t.sn = #{map.sn}
+			</if>
+			<if test="map.state_status != null and map.state_status != ''">
+				AND t.state_status = #{map.state_status}
+			</if>
+			<if test="map.act_status != null and map.act_status != ''">
+				AND ttt.act_status = #{map.act_status}
+			</if>
+			<if test="map.cash_back_status != null and map.cash_back_status != ''">
+				AND ttt.cash_back_status = #{map.cash_back_status}
+			</if>
+			<if test="map.cash_back_type != null and map.cash_back_type != ''">
+				AND ttt.cash_back_type = #{map.cash_back_type}
+			</if>
+			<if test="map.dis_status != null and map.dis_status != ''">
+				AND ttt.dis_status = #{map.dis_status}
+			</if>
+			<if test="map.trade_status != null and map.trade_status != ''">
+				AND t.trade_status = #{map.trade_status}
+			</if>
+			<!-- 开始时间检索 -->
+			<if test="map.beginTime != null and map.beginTime != ''">
+				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
+			</if>
+			<!-- 结束时间检索 -->
+			<if test="map.endTime != null and map.endTime != ''">
+				AND t.cre_date &lt;= date_format(#{map.endTime},'%Y%m%d')
+			</if>
+		</where>
+		<!-- 数据范围过滤 -->
+		${map.dataScope}
+	</select>
+
 	<!-- 查询系统传统POS信息列表 update byqh 201912-->
 	<select id="getAgentSysTraditionalPosInfoList" parameterType="java.util.Map" resultType="java.util.Map" >
 		SELECT

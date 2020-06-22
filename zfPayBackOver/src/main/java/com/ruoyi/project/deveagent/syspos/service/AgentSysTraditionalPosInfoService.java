@@ -20,6 +20,14 @@ public interface AgentSysTraditionalPosInfoService {
 	 * @return
 	 */
 	List<Map<String, Object>> getAgentSysTraditionalPosInfoList(Map<String, Object> params);
+
+
+	/***
+	 * 得到代理名下所有Mpos add byqh202006
+	 * @param params
+	 * @return
+	 */
+	List<Map<String, Object>> getOneAgentPosList(Map<String, Object> params);
 	
 	
 	/**

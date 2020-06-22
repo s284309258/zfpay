@@ -41,6 +41,9 @@ public class AgentUserEPosInfoController extends BaseController
 	private AgentUserEPosInfoService agentUserEPosInfoService;
 
 	@Autowired
+	private AgentUserTraditionalPosInfoService agentUserTraditionalPosInfoService;
+
+	@Autowired
 	private SysPosPolicyServiceImpl sysPosPolicyService;
 	
 	
@@ -54,6 +57,30 @@ public class AgentUserEPosInfoController extends BaseController
 	{
 	    return prefix + "/userTraditionalPosInfo";
 	}
+
+
+    /**
+     * 跳转到新增页面=====》选择用户
+     * @param mmap
+     * @return
+     */
+    @GetMapping("/selectOneAgentPos/{uid}")
+    public String selectOneAgentPos(@PathVariable("uid") String uid, String operParam, ModelMap mmap)
+    {
+        if(!ShiroUtils.getSysUser().isAuth()) {
+            mmap.put("id",uid);
+            return "redirect:/system/user/profile/toIsAuth?id="+uid+"&operParam="+operParam+"&bus_type="+VerifyConstant.AuthVerfiy_SelectOneAgentEpos;
+        }else {
+            mmap.put("id", uid);
+            return prefix + "/selectOneAgentPos";
+        }
+    }
+
+    @PostMapping("/batchUpdate")
+    @ResponseBody
+    public R batchUpdate(@RequestParam Map<String,Object> params){
+        return agentUserTraditionalPosInfoService.batchUpdate(params);
+    }
 	
 	
 	/**

@@ -72,6 +72,25 @@ public class AgentSysTraditionalPosInfoController extends BaseController
 	}
 
 
+    /***
+     * 查询代理名下所有MPOS
+     * @param params
+     * @return
+     */
+    @RequiresPermissions("deveagent:sysMposInfo:list")
+    @PostMapping("/OneAgentList")
+    @ResponseBody
+    public TableDataInfo OneAgentList(@RequestParam Map<String, Object> params)
+    {
+        //此方法配合前端完成自动分页
+        startPage();
+        //根据条件分页查询用户列表
+        List<Map<String, Object>> list = agentSysTraditionalPosInfoService.getOneAgentPosList(params);
+        //处理响应请求分页数据
+        return getDataTable(list);
+    }
+
+
     /**
      * 查询系统传统POS信息列表byqh
      */

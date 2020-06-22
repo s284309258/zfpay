@@ -59,7 +59,24 @@ public class AgentUserTraditionalPosInfoController extends BaseController
 	{
 	    return prefix + "/userTraditionalPosInfo";
 	}
-	
+
+
+    /**
+     * 跳转到新增页面=====》选择用户
+     * @param mmap
+     * @return
+     */
+    @GetMapping("/selectOneAgentPos/{uid}")
+    public String selectOneAgentPos(@PathVariable("uid") String uid, String operParam, ModelMap mmap)
+    {
+        if(!ShiroUtils.getSysUser().isAuth()) {
+            mmap.put("id",uid);
+            return "redirect:/system/user/profile/toIsAuth?id="+uid+"&operParam="+operParam+"&bus_type="+VerifyConstant.AuthVerfiy_SelectOneAgentTrapos;
+        }else {
+            mmap.put("id", uid);
+            return prefix + "/selectOneAgentPos";
+        }
+    }
 	
 	/**
 	 * 查询用户传统POS信息列表
@@ -205,6 +222,12 @@ public class AgentUserTraditionalPosInfoController extends BaseController
     	List<AgentSelectUserTraditionalPosInfo> list = agentUserTraditionalPosInfoService.selectAgentNoDisSysTraditionalPosInfoList(params);
         ExcelUtil<AgentSelectUserTraditionalPosInfo> util = new ExcelUtil<AgentSelectUserTraditionalPosInfo>(AgentSelectUserTraditionalPosInfo.class);
         return util.exportExcel(list, "可分配的传统POS导入模板");
+    }
+
+    @PostMapping("/batchUpdate")
+    @ResponseBody
+    public R batchUpdate(@RequestParam Map<String,Object> params){
+        return agentUserTraditionalPosInfoService.batchUpdate(params);
     }
 	
 	

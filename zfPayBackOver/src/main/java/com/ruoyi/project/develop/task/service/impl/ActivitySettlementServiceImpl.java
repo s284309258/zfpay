@@ -939,7 +939,16 @@ public class ActivitySettlementServiceImpl implements ActivitySettlementService 
 					String order_id = StringUtil.getDateTimeAndRandomForID();
 					Map<String, Object> edit_user = new HashMap<>();
 					BigDecimal reward_money = new BigDecimal(StringUtil.getMapValue(map, "module2_reward"));
-					edit_user.put("user_id", StringUtil.getMapValue(map, "user_id"));
+					String user_id = StringUtil.getMapValue(map, "user_id");
+					if("0".equals(StringUtil.getMapValue(map, "is_reward"))){
+						Map<String,Object> userMap = agentUserInfoMapper.getAgentUserMapById(StringUtil.getMapValue(map, "user_id"));
+						if(null!=userMap.get("referer_id")){
+							user_id = StringUtil.getMapValue(userMap, "referer_id");
+						}
+					}else{
+						user_id = StringUtil.getMapValue(map, "user_id");
+					}
+					edit_user.put("user_id", user_id);
 					edit_user.put("money", reward_money);
 					edit_user.put("today_benefit", reward_money);
 					edit_user.put("total_benefit", reward_money);
@@ -958,7 +967,7 @@ public class ActivitySettlementServiceImpl implements ActivitySettlementService 
 					//记录活动奖励
 					Map<String, Object> record = new HashMap<>();
 					record.put("order_id", order_id);
-					record.put("user_id", StringUtil.getMapValue(map, "user_id"));
+					record.put("user_id", user_id);
 					record.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
 //				record.put("activity_reward_id", StringUtil.getMapValue(map, "activity_reward_id"));
 //				record.put("apply_id", StringUtil.getMapValue(mposApply, "apply_id"));
@@ -1005,7 +1014,16 @@ public class ActivitySettlementServiceImpl implements ActivitySettlementService 
 					String order_id = StringUtil.getDateTimeAndRandomForID();
 					Map<String, Object> edit_user = new HashMap<>();
 					BigDecimal reward_money = new BigDecimal(StringUtil.getMapValue(map, "module2_reward"));
-					edit_user.put("user_id", StringUtil.getMapValue(map, "user_id"));
+					String user_id = StringUtil.getMapValue(map, "user_id");
+					if("0".equals(StringUtil.getMapValue(map, "is_reward"))){
+						Map<String,Object> userMap = agentUserInfoMapper.getAgentUserMapById(StringUtil.getMapValue(map, "user_id"));
+						if(null!=userMap.get("referer_id")){
+							user_id = StringUtil.getMapValue(userMap, "referer_id");
+						}
+					}else{
+						user_id = StringUtil.getMapValue(map, "user_id");
+					}
+					edit_user.put("user_id", user_id);
 					edit_user.put("money", reward_money);
 					edit_user.put("today_benefit", reward_money);
 					edit_user.put("total_benefit", reward_money);
@@ -1029,13 +1047,10 @@ public class ActivitySettlementServiceImpl implements ActivitySettlementService 
 					//记录活动奖励
 					Map<String, Object> record = new HashMap<>();
 					record.put("order_id", order_id);
-					record.put("user_id", StringUtil.getMapValue(map, "user_id"));
+					record.put("user_id", user_id);
 					record.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
-//				record.put("activity_reward_id", StringUtil.getMapValue(map, "activity_reward_id"));
-//				record.put("apply_id", StringUtil.getMapValue(mposApply, "apply_id"));
 					record.put("sn", StringUtil.getMapValue(map, "sn"));
 					record.put("money", reward_money);
-//				record.put("expenditure", StringUtil.getMapValue(mpos, "expenditure"));
 					record.put("begin_date",act_date);
 					record.put("end_date",enddate);
 					record.put("cre_date", TimeUtil.getDayString());
@@ -1088,7 +1103,6 @@ public class ActivitySettlementServiceImpl implements ActivitySettlementService 
 					}else{
 						policy3map.put("user_id",StringUtil.getMapValue(map, "user_id"));
 					}
-					policy3map.put("user_id",StringUtil.getMapValue(map, "user_id"));
 					policy3map.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
 					policy3map.put("begin_date",act_date);
 					policy3map.put("end_date",enddate);

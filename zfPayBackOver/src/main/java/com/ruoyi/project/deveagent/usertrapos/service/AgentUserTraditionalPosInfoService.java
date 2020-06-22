@@ -41,6 +41,14 @@ public interface AgentUserTraditionalPosInfoService {
 			String user_id);
 
 
+	/***
+	 * add byqh202006
+	 * @param params
+	 * @return
+	 */
+	R batchUpdate(Map<String,Object> params);
+
+
 	/**
 	 * 导出可分配的传统pos导入模板
 	 * @param params

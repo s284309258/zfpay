@@ -1,10 +1,12 @@
 package com.ruoyi.project.deveagent.usermpos.service.impl;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.ruoyi.project.deveagent.syspospolicy.service.SysPosPolicyServiceImpl;
+import com.ruoyi.project.deveagent.user.domain.AgentUserInfo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,6 +54,9 @@ public class AgentUserMposInfoServiceImpl implements AgentUserMposInfoService {
 
 	@Autowired
 	private SysPosPolicyServiceImpl sysPosPolicyService;
+
+	@Autowired
+	private AgentUserMposInfoService agentUserMposInfoService;
 
 	
 	/**
@@ -285,6 +290,98 @@ public class AgentUserMposInfoServiceImpl implements AgentUserMposInfoService {
 		}else {
 			return R.error(Type.WARN, "新增类型异常");
 		}
+	}
+
+	/***
+	 * add byqh202006
+	 * @param params
+	 * @return
+	 */
+	@Override
+	public R batchUpdate(Map<String, Object> params) {
+		String message = "操作成功";
+		String user_id = params.get("user_id").toString();
+		AgentUserInfo userInfo = agentUserInfoMapper.getAgentUserInfoById(user_id);
+		List<Map<String,Object>> list = agentUserMposInfoMapper.getAgentAllUserMpos(userInfo.getParent_chain()+","+user_id,user_id);
+		for(Map<String,Object> mm : list){
+			try {
+				if(!ShiroUtils.getSysUser().isAuth()) {
+					return R.error(Type.WARN, "身份信息未认证，不能操作");
+				}
+				if(StringUtils.isEmpty(StringUtil.getMapValue(params, "remark"))) {
+					return R.error(Type.WARN, "操作备注不能为空");
+				}
+
+				Map<String,Object> map = new HashMap<>();
+				if(params.get("card_settle_price")!=null && !"".equals(params.get("card_settle_price"))){
+					BigDecimal card_settle_price1 = new BigDecimal(mm.get("card_settle_price").toString());
+					BigDecimal card_settle_price2 = new BigDecimal(params.get("card_settle_price").toString());
+					Double card_settle_price = card_settle_price1.add(card_settle_price2).doubleValue();
+					map.put("card_settle_price",card_settle_price);
+					Map<String, Object> check = agentSysMposInfoMapper.getAgentSysMposInfoBySn(mm.get("sn").toString());
+					if(card_settle_price>=Double.parseDouble(check.get("credit_card_rate").toString())){
+						card_settle_price = Double.parseDouble(check.get("credit_card_rate").toString());
+						map.put("card_settle_price",card_settle_price);
+						if("操作成功".equals(message)){
+							message = mm.get("real_name")+"代理及下级分润为0";
+						}
+					}
+				}
+				if(params.get("cloud_settle_price")!=null && !"".equals(params.get("cloud_settle_price"))){
+					BigDecimal cloud_settle_price1 = new BigDecimal(mm.get("cloud_settle_price").toString());
+					BigDecimal cloud_settle_price2 = new BigDecimal(params.get("cloud_settle_price").toString());
+					Double cloud_settle_price = cloud_settle_price1.add(cloud_settle_price2).doubleValue();
+					map.put("cloud_settle_price",cloud_settle_price);
+					Map<String, Object> check = agentSysMposInfoMapper.getAgentSysMposInfoBySn(mm.get("sn").toString());
+					if(cloud_settle_price>=Double.parseDouble(check.get("cloud_flash_rate").toString())){
+						cloud_settle_price = Double.parseDouble(check.get("cloud_flash_rate").toString());
+						map.put("cloud_settle_price",cloud_settle_price);
+						if("操作成功".equals(message)){
+							message = mm.get("real_name")+"代理及下级分润为0";
+						}
+					}
+				}
+				map.put("user_pos_id",mm.get("id"));
+				//（1）查询刷卡结算底价参数是否有效
+				List<Map<String, Object>> sysParamRateList1 = manaSysParamRateMapper.getManaSysParamRateIsValid(TypeStatusConstant.sys_param_rate_type_2,StringUtil.getMapValue(map, "card_settle_price"));
+				if(sysParamRateList1.size()<=0) {
+					return R.error(Type.WARN, "刷卡结算底价数值异常");
+				}
+				//（2）查询云闪付结算底价参数是否有效
+				List<Map<String, Object>> sysParamRateList2 = manaSysParamRateMapper.getManaSysParamRateIsValid(TypeStatusConstant.sys_param_rate_type_3,StringUtil.getMapValue(map, "cloud_settle_price"));
+				if(sysParamRateList2.size()<=0) {
+					return R.error(Type.WARN, "云闪付结算底价数值异常");
+				}
+				int i=0;
+				//（5）查询old参数信息
+				Map<String, Object> oldValue = agentUserMposInfoMapper.getAgentUserMposInfoById(map.get("user_pos_id").toString());
+				//（6）更新用户MPOS信息
+				params.put("up_date", TimeUtil.getDayString());//更新日期
+				params.put("up_time", TimeUtil.getTimeString());//更新时间
+				params.put("update_by", ShiroUtils.getLoginName());//创建人
+				i = agentUserMposInfoMapper.updateAgentUserMposInfo(map);
+				if(i != 1) {
+					return R.error(Type.WARN, "系统MPOS信息更新失败");
+				}
+				//（7）查询new参数信息
+				Map<String, Object> newValue = agentUserMposInfoMapper.getAgentUserMposInfoById(map.get("user_pos_id").toString());
+				//（8）记录修改记录
+				params.put("table_name", SysTableNameConstant.t_user_mpos_info);
+				params.put("old_value", NetJsonUtils.mapToJson1(oldValue));
+				params.put("new_value", NetJsonUtils.mapToJson1(newValue));
+				i = manaSysEditMapper.addManaSysEdit(params);
+				if(i != 1) {
+					TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+					return R.error(Type.WARN, "修改记录记录失败");
+				}
+//				return R.ok(message);
+			} catch (Exception e) {
+				e.printStackTrace();
+				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+				return R.error(Type.ERROR, "操作异常");
+			}
+		}
+		return R.ok(message);
 	}
 
 

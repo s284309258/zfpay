@@ -35,8 +35,8 @@
 		WHERE
 			user_id = #{map.sys_user_id}
 		AND state_status = '1'
-		AND activity_status = '0'
-		AND trade_status = '0'
+		<!--AND activity_status = '0'-->
+		<!--AND trade_status = '0'-->
 		AND del = '0'
 		<choose>
 			<when test="map.pos_type!=null and map.pos_type!=''">
@@ -71,8 +71,8 @@
 		WHERE
 			user_id = #{map.sys_user_id}
 		AND state_status = '1'
-		AND activity_status = '0'
-		AND trade_status = '0'
+		<!--AND activity_status = '0'-->
+		<!--AND trade_status = '0'-->
 		AND del = '0'
 		<if test="map.start_number != null and map.start_number != ''" >
         	AND sn >= #{map.start_number}
@@ -1386,6 +1386,5 @@
 		select GROUP_CONCAT(policy_name) as policy_name from t_sys_pos_policy_info
 		where sn in(select sn from t_user_pos_batch_allocate where batch_no=#{batch_no})
 	</select>
-
 
 </mapper>

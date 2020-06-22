@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 public interface AgentSysEPOSInfoMapper {
+
+
+    List<Map<String,Object>> getOneAgentPosList(@Param("map") Map<String, Object> params);
     /**
      * 查询系统传统POS信息列表
      * @param params
