@@ -37,6 +37,12 @@
 			<if test="map.trade_status != null and map.trade_status != ''">
 				AND t.trade_status = #{map.trade_status}
 			</if>
+			<if test="map.AbeginTime != null and map.AbeginTime != ''">
+				AND ttt.act_date &gt;= date_format(#{map.AbeginTime},'%Y%m%d')
+			</if>
+			<if test="map.AendTime != null and map.AendTime != ''">
+				AND ttt.act_date &lt;= date_format(#{map.AendTime},'%Y%m%d')
+			</if>
 			<!-- 开始时间检索 -->
 			<if test="map.beginTime != null and map.beginTime != ''">
 				AND t.cre_date &gt;= date_format(#{map.beginTime},'%Y%m%d')
