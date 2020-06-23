@@ -8,6 +8,7 @@ import com.ruoyi.framework.aspectj.lang.enums.BusinessType;
 import com.ruoyi.framework.web.controller.BaseController;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.framework.web.page.TableDataInfo;
+import com.ruoyi.project.deveagent.syspos.service.AgentSysTraditionalPosInfoService;
 import com.ruoyi.project.deveagent.syspospolicy.service.SysPosPolicyServiceImpl;
 import com.ruoyi.project.deveagent.usertrapos.domain.AgentSelectUserTraditionalPosInfo;
 import com.ruoyi.project.deveagent.usertrapos.domain.AgentUserTraditionalPosInfo;
@@ -45,6 +46,9 @@ public class AgentUserEPosInfoController extends BaseController
 
 	@Autowired
 	private SysPosPolicyServiceImpl sysPosPolicyService;
+
+    @Autowired
+    private AgentSysTraditionalPosInfoService agentSysTraditionalPosInfoService;
 	
 	
 	/**
@@ -79,7 +83,9 @@ public class AgentUserEPosInfoController extends BaseController
     @PostMapping("/batchUpdate")
     @ResponseBody
     public R batchUpdate(@RequestParam Map<String,Object> params){
-        return agentUserTraditionalPosInfoService.batchUpdate(params);
+        params.put("pos_type","epos");
+        List<Map<String, Object>> list = agentSysTraditionalPosInfoService.getOneAgentPosList(params);
+        return agentUserTraditionalPosInfoService.batchUpdate(params,list);
     }
 	
 	

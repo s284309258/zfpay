@@ -58,9 +58,10 @@ public interface AgentUserMposInfoService {
 	/***
 	 * add byqh202006
 	 * @param params
+	 * @param list
 	 * @return
 	 */
-	R batchUpdate(Map<String,Object> params);
+	R batchUpdate(Map<String,Object> params,List<Map<String, Object>> list);
 
 
 	/**

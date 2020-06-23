@@ -46,7 +46,7 @@ public interface AgentUserTraditionalPosInfoService {
 	 * @param params
 	 * @return
 	 */
-	R batchUpdate(Map<String,Object> params);
+	R batchUpdate(Map<String,Object> params,List<Map<String, Object>> list);
 
 
 	/**

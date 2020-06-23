@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ruoyi.project.deveagent.syspos.service.AgentSysMposInfoService;
 import com.ruoyi.project.deveagent.syspospolicy.service.SysPosPolicyServiceImpl;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,9 @@ public class AgentUserMposInfoController extends BaseController
 
 	@Autowired
 	private SysPosPolicyServiceImpl sysPosPolicyService;
+
+    @Autowired
+    private AgentSysMposInfoService agentSysMposInfoService;
 	
 	
 	/**
@@ -224,7 +228,8 @@ public class AgentUserMposInfoController extends BaseController
     @PostMapping("/batchUpdate")
     @ResponseBody
     public R batchUpdate(@RequestParam Map<String,Object> params){
-	    return agentUserMposInfoService.batchUpdate(params);
+        List<Map<String, Object>> list = agentSysMposInfoService.getOneAgentPosList(params);
+	    return agentUserMposInfoService.batchUpdate(params,list);
     }
 	
 	

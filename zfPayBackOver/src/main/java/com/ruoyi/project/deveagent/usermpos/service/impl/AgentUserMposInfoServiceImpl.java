@@ -298,11 +298,11 @@ public class AgentUserMposInfoServiceImpl implements AgentUserMposInfoService {
 	 * @return
 	 */
 	@Override
-	public R batchUpdate(Map<String, Object> params) {
+	public R batchUpdate(Map<String, Object> params,List<Map<String,Object>> list) {
 		String message = "操作成功";
 		String user_id = params.get("user_id").toString();
-		AgentUserInfo userInfo = agentUserInfoMapper.getAgentUserInfoById(user_id);
-		List<Map<String,Object>> list = agentUserMposInfoMapper.getAgentAllUserMpos(userInfo.getParent_chain()+","+user_id,user_id);
+//		AgentUserInfo userInfo = agentUserInfoMapper.getAgentUserInfoById(user_id);
+//		List<Map<String,Object>> list = agentUserMposInfoMapper.getAgentAllUserMpos(userInfo.getParent_chain()+","+user_id,user_id);
 		for(Map<String,Object> mm : list){
 			try {
 				if(!ShiroUtils.getSysUser().isAuth()) {

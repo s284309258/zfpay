@@ -82,7 +82,7 @@ public class AgentSysMposInfoController extends BaseController
     public TableDataInfo OneAgentList(@RequestParam Map<String, Object> params)
     {
         //此方法配合前端完成自动分页
-        startPage();
+//        startPage();
         //根据条件分页查询用户列表
         List<Map<String, Object>> list = agentSysMposInfoService.getOneAgentPosList(params);
         //处理响应请求分页数据
