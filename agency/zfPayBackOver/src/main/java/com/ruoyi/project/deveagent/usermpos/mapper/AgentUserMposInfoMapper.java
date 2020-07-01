@@ -83,6 +83,9 @@ public interface AgentUserMposInfoMapper {
 	@Update("update t_user_mpos_info set is_reward=0 where sn=#{sn} and user_id=#{user_id} and is_reward=1")
 	int upateIsReWard0BySNUID(@Param("sn") String sn,@Param("user_id") Integer user_id);
 
+	@Update("update t_sys_pos_policy_info set module2_reward_flag=#{user_id} where sn=#{sn} and policy_id=#{policy_id} and module2_reward_flag is null")
+	int updateIsReWard1BySNUID(@Param("policy_id") String policy_id,@Param("sn") String sn,@Param("user_id") String user_id);
+
 	/**
 	 * 建立用户MPOS关系
 	 * @param agentUserMposInfo

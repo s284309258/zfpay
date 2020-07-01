@@ -203,6 +203,16 @@ public class AgentUserTraditionalPosInfo extends BaseEntity
 
 	private String is_reward;
 
+	private String is_reward1;
+
+	public String getIs_reward1() {
+		return is_reward1;
+	}
+
+	public void setIs_reward1(String is_reward1) {
+		this.is_reward1 = is_reward1;
+	}
+
 	public String getIs_reward() {
 		return is_reward;
 	}

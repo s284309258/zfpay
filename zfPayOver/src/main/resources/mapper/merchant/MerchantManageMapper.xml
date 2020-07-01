@@ -29,6 +29,9 @@
 			user_id = #{map.sys_user_id}
 		AND state_status = '1'
 		AND del = '0'
+		<if test="map.trade_status!=null and map.trade_status!=''">
+			AND trade_status=#{map.trade_status}
+		</if>
 		<choose>
 			<when test="map.pos_type!=null and map.pos_type!=''">
 				and pos_type='epos'
@@ -146,6 +149,9 @@
 			user_id = #{map.sys_user_id}
 		AND state_status = '1'
 		AND del='0'
+		<if test="map.trade_status!=null and map.trade_status!=''">
+			AND trade_status=#{map.trade_status}
+		</if>
 	</select>
 	
 	<!-- 查询优质商户数量（MPOS） -->
@@ -587,23 +593,23 @@
 	</select>
 
 	<!--查询商户月交易量排名byqh202006-->
-	<select id="getTradeVolumeRankByMonth">
+	<select id="getTradeVolumeRankByMonth" resultType="java.util.Map">
 		select * from (
 		select t.sn,tt.mer_name,t.performance from t_summary_mpos_trans_month t,t_sys_mpos_info tt
 		where t.sn=tt.sn and t.user_id=#{map.sys_user_id} and t.cre_month=date_format(CURDATE(), '%Y%m')
 		union
 		select t.sn,tt.mer_name,t.performance from t_summary_traditional_pos_trans_month t,t_sys_traditional_pos_info tt
-		where t.sn=tt.sn and t.user_id=#{map.sys_user_id} and t.cre_month=date_format(CURDATE(), '%Y%m')
+		where t.sn=tt.sn and t.user_id=#{map.sys_user_id} <!--and t.cre_month=date_format(CURDATE(), '%Y%m')-->
 		) tb
 		order by performance desc
 	</select>
-	<select id="getTradeVolumeRankByDay">
+	<select id="getTradeVolumeRankByDay" resultType="java.util.Map">
 		select * from (
 		select t.sn,tt.mer_name,t.performance from t_summary_mpos_trans_everyday t,t_sys_mpos_info tt
 		where t.sn=tt.sn and t.user_id=#{map.sys_user_id} and t.cre_date=date_format(CURDATE(), '%Y%m%d')
 		union all
 		select t.sn,tt.mer_name,t.performance from t_summary_traditional_pos_trans_everyday t,t_sys_traditional_pos_info tt
-		where t.sn=tt.sn and t.user_id=#{map.sys_user_id} and t.cre_date=date_format(CURDATE(), '%Y%m%d')
+		where t.sn=tt.sn and t.user_id=#{map.sys_user_id} <!--and t.cre_date=date_format(CURDATE(), '%Y%m%d')-->
 		) tb
 		order by performance desc
 	</select>

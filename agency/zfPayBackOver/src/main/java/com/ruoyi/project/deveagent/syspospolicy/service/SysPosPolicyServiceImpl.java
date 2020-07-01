@@ -1,9 +1,12 @@
 package com.ruoyi.project.deveagent.syspospolicy.service;
 
+import com.ruoyi.common.utils.BasicSerivce;
 import com.ruoyi.common.utils.security.ShiroUtils;
 import com.ruoyi.common.utils.text.Convert;
 import com.ruoyi.project.deveagent.syspospolicy.domain.SysPosPolicy;
 import com.ruoyi.project.deveagent.syspospolicy.mapper.SysPosPolicyMapper;
+import com.ruoyi.project.deveagent.user.domain.AgentUserInfo;
+import com.ruoyi.project.deveagent.user.mapper.AgentUserInfoMapper;
 import com.ruoyi.project.develop.common.domain.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,9 +18,15 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class SysPosPolicyServiceImpl {
+public class SysPosPolicyServiceImpl extends BasicSerivce {
     @Autowired
     public SysPosPolicyMapper sysPosPolicyMapper;
+    @Autowired
+    public AgentUserInfoMapper agentUserInfoMapper;
+
+    public List<Map<String,Object>> selectSysPosPolicy2(String[] pos_sns){
+        return sysPosPolicyMapper.selectSysPosPolicy2(pos_sns,getShiroUserInfo().getManager_id());
+    }
 
     public List<Map<String,Object>> selectSysPosPolicyList(Map<String, Object> params){
         params.put("manager_id", ShiroUtils.getUserId());

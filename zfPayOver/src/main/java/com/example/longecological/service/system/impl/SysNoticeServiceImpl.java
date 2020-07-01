@@ -152,7 +152,7 @@ public class SysNoticeServiceImpl implements SysNoticeService {
 			map.put("news_type","cashFlag");
 			List<Map<String,Object>> listNewsRead6 = sysNoticeMapper.selectNewsReadState(map);
 			if(listNewsRead6.size()<1){
-				sysNoticeMapper.insertNewsReadState(StringUtil.getMapValue(map,"sys_user_id"),"appImgFlag",0,0,manager_id);
+				sysNoticeMapper.insertNewsReadState(StringUtil.getMapValue(map,"sys_user_id"),"cashFlag",0,0,manager_id);
 			}else{
 				String read_flag = String.valueOf(listNewsRead6.get(0).get("read_flag"));
 				cashFlag = read_flag;

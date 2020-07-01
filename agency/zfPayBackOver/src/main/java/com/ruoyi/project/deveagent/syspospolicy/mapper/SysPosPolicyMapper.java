@@ -2,12 +2,15 @@ package com.ruoyi.project.deveagent.syspospolicy.mapper;
 
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.ResultType;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 import java.util.Map;
 
 public interface SysPosPolicyMapper {
+
+    List<Map<String,Object>> selectSysPosPolicy2(@Param("sns") String[] sn, @Param("manager_id") String manager_id);
 
     List<Map<String,Object>> selectUserPOSBelongList(Map<String, Object> params);
 

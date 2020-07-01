@@ -183,10 +183,7 @@
 		        sortName: 'id',
 	          	sortOrder: 'desc',
 		        //列信息
-		        columns: [{
-		        	//field: 'state',
-		            checkbox: true
-		        },
+		        columns: [
 		        {
 					field : 'id', 
 					sortable: true,
@@ -218,6 +215,14 @@
 				{
 					field : 'cloud_settle_price',
 					title : '云闪付结算底价（%）'
+				},
+				{
+					field : 'weixin_settle_price',
+					title : '微信结算底价（%）'
+				},
+				{
+					field : 'zhifubao_settle_price',
+					title : '支付宝结算底价（%）'
 				},
 				{
 					field : 'single_profit_rate',

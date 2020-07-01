@@ -3,6 +3,14 @@
 
 <mapper namespace="com.ruoyi.project.deveagent.syspospolicy.mapper.SysPosPolicyMapper">
 
+	<select id="selectSysPosPolicy2" resultType="java.util.Map">
+		select distinct policy_id,policy_name from t_sys_pos_policy_info where sn in
+		<foreach collection="sns" close=")" open="(" item="sn" separator=",">
+			#{sn}
+		</foreach>
+		and policy_id in(select id from t_sys_pos_policy_define where manager_id=#{manager_id} and policy_type=2 and isuse=1)
+	</select>
+
 	<select id="selectUserPOSBelongList" parameterType="java.util.Map" resultType="java.util.Map">
 		select * from (
 		select tt.id,tt.real_name,tt.user_tel,t.sn,card_settle_price,cloud_settle_price,single_profit_rate,cash_back_rate,tt.manager_id,t.cre_date,'02' as pos_type from t_user_mpos_info t inner join t_user_info tt on t.user_id=tt.id where del=0 and state_status=1

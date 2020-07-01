@@ -310,6 +310,7 @@ public class AgentUserMposInfoServiceImpl extends BasicSerivce implements AgentU
         agentUserMposInfo.setCash_back_rate(params.get("cash_back_rate").toString());//返现比例
         agentUserMposInfo.setRemark(params.get("remark").toString());//备注
 		agentUserMposInfo.setIs_reward(params.get("is_reward").toString());
+		agentUserMposInfo.setIs_reward1(params.get("is_reward1").toString());
 		if(TypeStatusConstant.sys_add_type_1.equals(StringUtil.getMapValue(params, "add_type"))) {
 			//add byqh 201912
 //			sysPosPolicyService.insertPolicySNInfo(String.valueOf(params.get("policy")),params.get("pos_sns").toString(),params.get("user_id").toString(),"MPOS");
@@ -443,6 +444,15 @@ public class AgentUserMposInfoServiceImpl extends BasicSerivce implements AgentU
 
 			if("0".equals(agentUserMposInfo.getIs_reward())){
 				agentUserMposInfoMapper.upateIsReWard0BySNUID(agentUserMposInfo.getSn(),getShiroUserInfo().getId());
+			}
+
+			if(agentUserMposInfo.getIs_reward1()!=null && !"".equals(agentUserMposInfo.getIs_reward1())){
+				String[] policyArray = agentUserMposInfo.getIs_reward1().split(";");
+				for(String policy : policyArray){
+					if(policy!=null && !"".equals(policy)){
+						agentUserMposInfoMapper.updateIsReWard1BySNUID(policy,agentUserMposInfo.getSn(),String.valueOf(getShiroUserInfo().getId()));
+					}
+				}
 			}
 
 			return R.ok("操作成功");

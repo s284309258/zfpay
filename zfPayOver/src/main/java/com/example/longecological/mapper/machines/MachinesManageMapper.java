@@ -249,8 +249,7 @@ public interface MachinesManageMapper {
 	 * @param sn
 	 * @return
 	 */
-	@Select("select policy_id,policy_name from t_sys_pos_policy_info where sn=#{sn} and module_type=2")
-	List<Map<String, Object>> getPolicy2BySN(@Param("sn") String sn);
+	List<Map<String, Object>> getPolicy2BySN(@Param("map") Map<String, Object> map);
 
 	/***
 	 * add byqh 202006
@@ -509,7 +508,6 @@ public interface MachinesManageMapper {
 	String checkIsPolicy3(@Param("map") Map<String, Object> map);
 
 
-	@Update("update t_user_traditional_pos_info set is_reward=#{map.is_reward} where sn=#{map.sn} and user_id=#{map.user_id}")
 	int policy2OnOff(@Param("map") Map<String, Object> map);
 
 	/***

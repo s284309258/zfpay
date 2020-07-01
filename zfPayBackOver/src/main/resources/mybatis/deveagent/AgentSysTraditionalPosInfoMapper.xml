@@ -5,7 +5,7 @@
 
 	<!-- 查询系统MPOS信息列表 -->
 	<select id="getOneAgentPosList" parameterType="java.util.Map" resultType="java.util.Map" >
-		select t.id,tt.manager_id,tt.real_name,t.sn,t.card_settle_price,t.card_settle_price_vip,t.cloud_settle_price,t.single_profit_rate,t.cash_back_rate,
+		select t.id,tt.manager_id,tt.real_name,t.sn,t.card_settle_price,t.card_settle_price_vip,t.cloud_settle_price,t.weixin_settle_price,t.zhifubao_settle_price,t.single_profit_rate,t.cash_back_rate,
 		t.state_status,t.del,t.trade_status,t.cre_date,ttt.credit_card_rate,ttt.cloud_flash_rate,ttt.act_status,
 		ttt.dis_status,ttt.act_date,ttt.cash_back_type,ttt.cash_back_status,ttt.dis_status,ttt.weixin_rate,ttt.zhifubao_rate
 		from t_user_traditional_pos_info t inner join t_user_info tt on t.user_id=tt.id inner join t_sys_traditional_pos_info ttt on t.sn=ttt.sn

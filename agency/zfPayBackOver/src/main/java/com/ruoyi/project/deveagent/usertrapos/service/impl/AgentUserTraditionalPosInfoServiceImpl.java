@@ -364,6 +364,7 @@ public class AgentUserTraditionalPosInfoServiceImpl extends BasicSerivce impleme
 		agentUserTraditionalPosInfo.setWeixin_settle_price_vip(params.get("weixin_settle_price_vip").toString());
 		agentUserTraditionalPosInfo.setZhifubao_settle_price_vip(params.get("zhifubao_settle_price_vip").toString());
 		agentUserTraditionalPosInfo.setIs_reward(params.get("is_reward").toString());
+		agentUserTraditionalPosInfo.setIs_reward1(params.get("is_reward1").toString());
 		//add end byqh 201912
 		if(TypeStatusConstant.sys_add_type_1.equals(StringUtil.getMapValue(params, "add_type"))) {
 			//add byqh 201912
@@ -712,7 +713,15 @@ public class AgentUserTraditionalPosInfoServiceImpl extends BasicSerivce impleme
 			}
 
 			if("0".equals(agentUserTraditionalPosInfo.getIs_reward())){
-				agentUserTraditionalPosInfoMapper.upateIsReWard0BySNUID(agentUserTraditionalPosInfo.getSn(),getShiroUserInfo().getId());
+				agentUserTraditionalPosInfoMapper.updateIsReWard0BySNUID(agentUserTraditionalPosInfo.getSn(),getShiroUserInfo().getId());
+			}
+			if(agentUserTraditionalPosInfo.getIs_reward1()!=null && !"".equals(agentUserTraditionalPosInfo.getIs_reward1())){
+				String[] policyArray = agentUserTraditionalPosInfo.getIs_reward1().split(";");
+				for(String policy : policyArray){
+					if(policy!=null && !"".equals(policy)){
+						agentUserTraditionalPosInfoMapper.updateIsReWard1BySNUID(policy,agentUserTraditionalPosInfo.getSn(),String.valueOf(getShiroUserInfo().getId()));
+					}
+				}
 			}
 			return R.ok("操作成功");
 		} catch (Exception e) {

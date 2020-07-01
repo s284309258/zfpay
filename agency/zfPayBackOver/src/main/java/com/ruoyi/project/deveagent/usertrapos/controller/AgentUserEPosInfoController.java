@@ -146,9 +146,17 @@ public class AgentUserEPosInfoController extends BaseController
     public String selectPos(@PathVariable("id") String id, ModelMap mmap)
     {
 		mmap.put("user_id", id);
-        List<Map<String,Object>> list = sysPosPolicyService.selectSysPosPolicyList(new HashMap<>());
-        mmap.addAttribute("policyList",list);
+//        List<Map<String,Object>> policyList = sysPosPolicyService.selectSysPosPolicy2(null);
+//        mmap.addAttribute("policyList",policyList);
         return prefix + "/selectSysPos";
+    }
+
+    @PostMapping("/selectSysPosPolicy2")
+    @ResponseBody
+    public List<Map<String,Object>> selectSysPosPolicy2(@RequestParam Map<String, Object> params){
+        String[] sns = String.valueOf(params.get("pos_sns")).split(";");
+        List<Map<String,Object>> policyList = sysPosPolicyService.selectSysPosPolicy2(sns);
+        return policyList;
     }
     
     

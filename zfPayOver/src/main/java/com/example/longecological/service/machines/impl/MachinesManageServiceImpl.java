@@ -321,31 +321,49 @@ public class MachinesManageServiceImpl implements MachinesManageService {
 			map.put("manager_id", StringUtil.getMapValue(user, "manager_id"));
 
 			List<Map<String, Object>> machinesPolicy3Record = machinesManageMapper.selectPolicy3Record(map);
+			List<Map<String, Object>> machinesPolicy5Record = machinesManageMapper.selectPolicy5Record(map);
+
 			for(Map<String,Object> subMap : machinesPolicy3Record){
+				subMap.put("policy_type","3");
 				map.put("sn",subMap.get("sn"));
 				List<Map<String, Object>> policy3List = machinesManageMapper.selectPolicy3List(map);
 				subMap.put("policy3List",policy3List);
 			}
+
+			for(Map<String,Object> subMap : machinesPolicy5Record){
+				subMap.put("policy_type","5");
+				subMap.put("end_date", TimeUtil.getDayString());
+				subMap.put("begin_date", TimeUtil.getDayString());
+				subMap.put("trade_amount","300");
+				List<Map<String, Object>> policy5List = new ArrayList<>();
+				Map<String,Object> subMap5 = new HashMap<>();
+				subMap5.put("policy_quantity","300");
+				subMap5.put("id",subMap.get("policy_id"));
+				subMap5.put("policy_amount",subMap.get("money"));
+				policy5List.add(subMap5);
+				subMap.put("policy3List",policy5List);
+			}
+			machinesPolicy3Record.addAll(machinesPolicy5Record);
 			respondMap.put("machinesPolicy3Record",machinesPolicy3Record);
 
 
 
 			//byqh202006 达标商户5
-			List<Map<String, Object>> machinesPolicy5Record = machinesManageMapper.selectPolicy5Record(map);
-			for(Map map5 : machinesPolicy5Record){
-				map5.put("end_date", TimeUtil.getDayString());
-				map5.put("begin_date", TimeUtil.getDayString());
-				map5.put("trade_amount","300");
-				List<Map<String, Object>> policy5List = new ArrayList<>();
-				Map<String,Object> subMap5 = new HashMap<>();
-				subMap5.put("policy_quantity","300");
-				subMap5.put("id",map5.get("policy_id"));
-				subMap5.put("policy_amount",map5.get("money"));
-				policy5List.add(subMap5);
-				map5.put("policy5List",policy5List);
-			}
-			respondMap.put("machinesPolicy5Record",machinesPolicy5Record);
-			//byqh202006 达标商户5
+//			List<Map<String, Object>> machinesPolicy5Record = machinesManageMapper.selectPolicy5Record(map);
+//			for(Map map5 : machinesPolicy5Record){
+//				map5.put("end_date", TimeUtil.getDayString());
+//				map5.put("begin_date", TimeUtil.getDayString());
+//				map5.put("trade_amount","300");
+//				List<Map<String, Object>> policy5List = new ArrayList<>();
+//				Map<String,Object> subMap5 = new HashMap<>();
+//				subMap5.put("policy_quantity","300");
+//				subMap5.put("id",map5.get("policy_id"));
+//				subMap5.put("policy_amount",map5.get("money"));
+//				policy5List.add(subMap5);
+//				map5.put("policy5List",policy5List);
+//			}
+//			respondMap.put("machinesPolicy5Record",machinesPolicy5Record);
+//			//byqh202006 达标商户5
 			return R.ok(CommonCodeConstant.COMMON_CODE_999983, CommonCodeConstant.COMMON_MSG_999983, respondMap);
 		}catch (Exception e){
 			LOGGER.error("MachinesManageServiceImpl -- selectPolicy3Record方法处理异常：" + ExceptionUtil.getExceptionAllinformation(e));
@@ -1088,10 +1106,10 @@ public class MachinesManageServiceImpl implements MachinesManageService {
 				respondMap.put("traditionalPosSysParamRate", traditionalPosSysParamRate);
 
 				//增加交易达标，分期达标标识 add byqh202006
-				List<Map<String, Object>> policy2 = machinesManageMapper.getPolicy2BySN(String.valueOf(map.get("sn")));
+				List<Map<String, Object>> policy2 = machinesManageMapper.getPolicy2BySN(map);
 				respondMap.put("policy2",policy2);
-				List<Map<String, Object>> policy3 = machinesManageMapper.getPolicy3BySN(String.valueOf(map.get("sn")));
-				respondMap.put("policy3",policy3);
+//				List<Map<String, Object>> policy3 = machinesManageMapper.getPolicy3BySN(String.valueOf(map.get("sn")));
+//				respondMap.put("policy3",policy3);
 				//增加交易达标，分期达标标识 add byqh202006
 			}
 
@@ -1135,7 +1153,7 @@ public class MachinesManageServiceImpl implements MachinesManageService {
 				respondMap.put("mposSysParamRate", mposSysParamRate);
 
 				//增加交易达标，分期达标标识 add byqh202006
-				List<Map<String, Object>> policy2 = machinesManageMapper.getPolicy2BySN(String.valueOf(map.get("sn")));
+				List<Map<String, Object>> policy2 = machinesManageMapper.getPolicy2BySN(map);
 				respondMap.put("policy2",policy2);
 				List<Map<String, Object>> policy3 = machinesManageMapper.getPolicy3BySN(String.valueOf(map.get("sn")));
 				respondMap.put("policy3",policy3);

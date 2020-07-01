@@ -209,6 +209,19 @@
 					</div>
 
 					<div class="form-group">
+						<label class="col-sm-1 control-label ">不让下级领取分期达标奖励的请打勾：</label>
+						<div class="col-sm-9" id="dynamicLabel">
+<!--							<label th:each="policy:${policyList}" class="check-box">-->
+<!--								<input name="policy" type="checkbox" th:value="${policy.id}" th:text="${policy.policy_name}">-->
+<!--							</label>-->
+<!--							<select class="form-control" name="is_reward1" id="is_reward1" th:with="type=${@dict.getType('user_pos_info_trade_status')}">-->
+<!--								<option value="">默认</option>-->
+<!--&lt;!&ndash;								<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>&ndash;&gt;-->
+<!--							</select>-->
+						</div>
+					</div>
+
+					<div class="form-group">
 						<label class="col-sm-1 control-label ">分配的EPOS机设备号（机器编号）：</label>
 						<div class="col-sm-9">
 							<textarea rows="" cols="" name="pos_sns" id="pos_sns" class="form-control" placeholder="请选择下方未分配的传统POS机或者手动填写，批量数据请用英文分号(;)隔离" required ></textarea>
@@ -489,6 +502,27 @@
     				}
     			});
     			$("#pos_sns").val(pos_sns);
+				document.getElementById("dynamicLabel").innerHTML = "";
+				$.ajax({
+					url: "/deveagent/userMposInfo/selectSysPosPolicy2",
+					type: "post",
+					data: {"pos_sns":pos_sns},
+					success: function(result) {
+						// 加入复选框
+						for(var i=0;i<result.length;i++){
+							var ul=document.createElement("ul");
+							var checkBox=document.createElement("input");
+							checkBox.setAttribute("type","checkbox");
+							checkBox.setAttribute("name", "policy");
+							checkBox.setAttribute("value",result[i].policy_id);
+							var li=document.createElement("li");
+							li.appendChild(checkBox);
+							li.appendChild(document.createTextNode(result[i].policy_name));
+							ul.appendChild(li);
+							$("#dynamicLabel").append(ul);
+						}
+					}
+				});
     		});
         }
 		
@@ -575,8 +609,12 @@
 			// data2.push({"name":"policy","value":pos});
 			// $("#policy").val($.form.selectSelects("policy"));
 			var data = $('#form-userTraditionalPosInfo-add').serializeArray();
-			var policies =$.form.selectSelects("policy");
-			data.push({"name":"policy","value":policies});
+			var policies = $('input[name=policy]:checked');
+			var vals="";
+			for(var i=0;i<policies.length;i++){
+				vals+=policies[i].value+";";
+			}
+			data.push({"name":"is_reward1","value":vals});
        		$.operate.saveModal("/deveagent/userEposInfo/add", data,function (data) {
 				alert(data.msg);
 				location.reload();

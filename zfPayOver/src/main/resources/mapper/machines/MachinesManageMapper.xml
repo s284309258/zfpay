@@ -1118,6 +1118,31 @@
 		select * from t_sys_pos_policy5_record where mer_id=#{map.mer_id} and choose=0
 	</select>
 
+	<select id="getPolicy2BySN" parameterType="java.util.Map" resultType="java.util.Map">
+		select distinct policy_id,policy_name from t_sys_pos_policy_info where sn in
+		<foreach collection="map.sn_list.split(',')" open="(" close=")" item="item" separator=",">
+			#{item}
+		</foreach>
+		and module_type=2 and isuse=1
+	</select>
+
+	<update id="policy2OnOff" parameterType="java.util.Map">
+		update t_sys_pos_policy_info set 
+		<choose>
+			<when test="map.is_reward==1">
+				module2_reward_flag=#{map.sys_user_id}
+			</when>
+			<otherwise>
+				module2_reward_flag=null
+			</otherwise>
+		</choose>
+		where sn in
+		<foreach collection="map.sn_list.split(',')" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+		and policy_id=#{map.policy_id} and isuse=1
+	</update>
+
 
 	<!-- 更新用户收益 add byqh 201912 -->
 	<update id="updateUserMoneyBenefit" parameterType="java.util.Map">

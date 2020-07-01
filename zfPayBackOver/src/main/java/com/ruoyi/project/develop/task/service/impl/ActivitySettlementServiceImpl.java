@@ -939,12 +939,13 @@ public class ActivitySettlementServiceImpl implements ActivitySettlementService 
 					String order_id = StringUtil.getDateTimeAndRandomForID();
 					Map<String, Object> edit_user = new HashMap<>();
 					BigDecimal reward_money = new BigDecimal(StringUtil.getMapValue(map, "module2_reward"));
-					String user_id = StringUtil.getMapValue(map, "user_id");
-					if("0".equals(StringUtil.getMapValue(map, "is_reward"))){
-						Map<String,Object> userMap = agentUserInfoMapper.getAgentUserMapById(StringUtil.getMapValue(map, "user_id"));
-						if(null!=userMap.get("referer_id")){
-							user_id = StringUtil.getMapValue(userMap, "referer_id");
-						}
+					String user_id = "";
+					if(!"".equals(StringUtil.getMapValue(map, "module2_reward_flag"))){
+						user_id = StringUtil.getMapValue(map, "module2_reward_flag");
+//						Map<String,Object> userMap = agentUserInfoMapper.getAgentUserMapById(StringUtil.getMapValue(map, "user_id"));
+//						if(null!=userMap.get("referer_id")){
+//							user_id = StringUtil.getMapValue(userMap, "referer_id");
+//						}
 					}else{
 						user_id = StringUtil.getMapValue(map, "user_id");
 					}
@@ -1014,12 +1015,13 @@ public class ActivitySettlementServiceImpl implements ActivitySettlementService 
 					String order_id = StringUtil.getDateTimeAndRandomForID();
 					Map<String, Object> edit_user = new HashMap<>();
 					BigDecimal reward_money = new BigDecimal(StringUtil.getMapValue(map, "module2_reward"));
-					String user_id = StringUtil.getMapValue(map, "user_id");
-					if("0".equals(StringUtil.getMapValue(map, "is_reward"))){
-						Map<String,Object> userMap = agentUserInfoMapper.getAgentUserMapById(StringUtil.getMapValue(map, "user_id"));
-						if(null!=userMap.get("referer_id")){
-							user_id = StringUtil.getMapValue(userMap, "referer_id");
-						}
+					String user_id = "";
+					if(!"".equals(StringUtil.getMapValue(map, "module2_reward_flag"))){
+						user_id = StringUtil.getMapValue(map, "module2_reward_flag");
+//						Map<String,Object> userMap = agentUserInfoMapper.getAgentUserMapById(StringUtil.getMapValue(map, "user_id"));
+//						if(null!=userMap.get("referer_id")){
+//							user_id = StringUtil.getMapValue(userMap, "referer_id");
+//						}
 					}else{
 						user_id = StringUtil.getMapValue(map, "user_id");
 					}

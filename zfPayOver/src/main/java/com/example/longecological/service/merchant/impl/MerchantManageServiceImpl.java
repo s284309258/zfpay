@@ -52,6 +52,12 @@ public class MerchantManageServiceImpl implements MerchantManageService {
 				return (R) map.get("result");
 			}
 			Map<String, Object> respondMap = new HashMap<>();
+
+			map.put("trade_status","1");
+			int install_merchant = merchantManageMapper.getAllMerchantTraditionalPosNum(map);
+
+			map.put("trade_status","0");
+			int uninstall_merchant = merchantManageMapper.getAllMerchantTraditionalPosNum(map);
 			//所有商户
 			int all_merchant = merchantManageMapper.getAllMerchantTraditionalPosNum(map);
 			//优质商户
@@ -67,6 +73,8 @@ public class MerchantManageServiceImpl implements MerchantManageService {
 			int dormant_merchant = merchantManageMapper.getDormantMerchantTraditionalPosNum(map);
 			//达标商户数量
 			int standard_merchant = merchantManageMapper.getStandardMerchantTraditionalPosNum(map);
+			respondMap.put("install_merchant", install_merchant);
+			respondMap.put("uninstall_merchant", uninstall_merchant);
 			respondMap.put("all_merchant", all_merchant);
 			respondMap.put("excellent_merchant", excellent_merchant);
 			respondMap.put("active_merchant", active_merchant);
@@ -91,6 +99,12 @@ public class MerchantManageServiceImpl implements MerchantManageService {
 			}
 			Map<String, Object> respondMap = new HashMap<>();
 			//所有商户
+			map.put("trade_status","1");
+			int install_merchant = merchantManageMapper.getAllMerchantMposNum(map);
+
+			map.put("trade_status","0");
+			int uninstall_merchant = merchantManageMapper.getAllMerchantMposNum(map);
+
 			int all_merchant = merchantManageMapper.getAllMerchantMposNum(map);
 			//优质商户
 			map.put("month", TimeUtil.getDayFormat10());
@@ -105,6 +119,9 @@ public class MerchantManageServiceImpl implements MerchantManageService {
 			int dormant_merchant = merchantManageMapper.getDormantMerchantMposNum(map);
 			//达标商户数量
 			int standard_merchant = merchantManageMapper.getStandardMerchantMPosNum(map);
+			respondMap.put("install_merchant", install_merchant);
+			respondMap.put("uninstall_merchant", uninstall_merchant);
+
 			respondMap.put("all_merchant", all_merchant);
 			respondMap.put("excellent_merchant", excellent_merchant);
 			respondMap.put("active_merchant", active_merchant);
@@ -374,7 +391,7 @@ public class MerchantManageServiceImpl implements MerchantManageService {
 				return (R) map.get("result");
 			}
 			Map<String, Object> respondMap = new HashMap<>();
-			List<Map<String, Object>> tradeVolumeRank = merchantManageMapper.getMposTradeVolumeRankByMonth(map);
+			List<Map<String, Object>> tradeVolumeRank = merchantManageMapper.getTradeVolumeRankByDay(map);
 			//新增代理直营商户交易总必输,交易总金额字段end byqh
 			respondMap.put("tradeVolumeRank", tradeVolumeRank);
 			return R.ok(CommonCodeConstant.COMMON_CODE_999983, CommonCodeConstant.COMMON_MSG_999983, respondMap);
@@ -397,7 +414,7 @@ public class MerchantManageServiceImpl implements MerchantManageService {
 				return (R) map.get("result");
 			}
 			Map<String, Object> respondMap = new HashMap<>();
-			List<Map<String, Object>> tradeVolumeRank = merchantManageMapper.getMposTradeVolumeRankByMonth(map);
+			List<Map<String, Object>> tradeVolumeRank = merchantManageMapper.getTradeVolumeRankByMonth(map);
 			//新增代理直营商户交易总必输,交易总金额字段end byqh
 			respondMap.put("tradeVolumeRank", tradeVolumeRank);
 			return R.ok(CommonCodeConstant.COMMON_CODE_999983, CommonCodeConstant.COMMON_MSG_999983, respondMap);
