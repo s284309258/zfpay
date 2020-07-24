@@ -40,4 +40,6 @@ public interface ZhongFuDataAcquireService {
 	 * 获取中付激活信息
 	 */
 	void getDataActivatedState();
+
+	void getDataActivatedStateSN(String sn);
 }

@@ -310,6 +310,37 @@
 		AND t.dis_status = '1'
 		AND t2.trade_status = '1'
 	</select>
+
+
+	<select id="getTraposUnactivatedStateSNList" resultType="java.util.Map">
+		SELECT
+		DISTINCT
+			t.id,
+			t.sn,
+			t1.app_id,
+			t1.app_key
+		FROM
+		t_sys_traditional_pos_info t
+		LEFT JOIN sys_user_account t1 ON t.account_id = t1.id
+		LEFT JOIN t_user_traditional_pos_info t2 ON t.sn = t2.sn
+		WHERE
+			t.sn = #{sn}
+	</select>
+
+	<select id="getMposUnactivatedStateSNList" resultType="java.util.Map">
+		SELECT
+		DISTINCT
+			t.id,
+			t.sn,
+			t1.app_id,
+			t1.app_key
+		FROM
+			t_sys_mpos_info t
+		LEFT JOIN sys_user_account t1 ON t.account_id = t1.id
+		LEFT JOIN t_user_mpos_info t2 ON t.sn = t2.sn
+		WHERE
+			t.sn = #{sn}
+	</select>
 	
 	<!-- 未激活POS机列表（MPOS） -->
 	<select id="getMposUnactivatedStateList" resultType="java.util.Map">
@@ -430,7 +461,7 @@
 
 	<!--得到政策5第一代用户信息555555555-->
 	<select id="getPolicy5UserInfo" parameterType="java.util.Map" resultType="java.util.Map">
-		select user_id,module5_reward,id from t_sys_pos_policy_info where module_type=5 and isuse=1 and sn=#{map.SN}
+		select user_id,module5_reward,policy_id,id from t_sys_pos_policy_info where module_type=5 and isuse=1 and sn=#{map.SN} order by module5_reward desc
 	</select>
 
 	<!--得到政策5第一代用户信息555555555-->

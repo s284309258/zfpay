@@ -47,4 +47,8 @@ public class ZhongFuDataAcquireTask {
 	public void getDataActivatedState(){
 		zhongFuDataAcquireService.getDataActivatedState();
 	}
+
+	public void getDataActivatedStateSN(String sn){
+		zhongFuDataAcquireService.getDataActivatedStateSN(sn);
+	}
 }

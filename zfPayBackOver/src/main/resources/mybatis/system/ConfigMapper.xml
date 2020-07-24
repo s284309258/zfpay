@@ -97,6 +97,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </set>
         where config_id = #{configId}
     </update>
+
+    <update id="updateMachineActDate" parameterType="com.ruoyi.project.system.config.domain.Config">
+        update t_sys_traditional_pos_info
+        <set>
+            <if test="configValue != null and configValue != ''">act_date = #{configValue}</if>
+        </set>
+        where sn=#{configKey};
+        update t_sys_mpos_info
+        <set>
+            <if test="configValue != null and configValue != ''">act_date = #{configValue}</if>
+        </set>
+        where sn=#{configKey}
+    </update>
 	
     <delete id="deleteConfigByIds" parameterType="String">
         delete from sys_config where config_id in 

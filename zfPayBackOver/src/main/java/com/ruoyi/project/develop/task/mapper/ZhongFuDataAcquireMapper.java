@@ -154,12 +154,18 @@ public interface ZhongFuDataAcquireMapper {
 	 * @return
 	 */
 	List<Map<String, Object>> getTraposUnactivatedStateList();
+
+
+	List<Map<String, Object>> getTraposUnactivatedStateSNList(@Param("sn") String sn);
 	
 	/**
 	 * 未激活POS机列表（MPOS）
 	 * @return
 	 */
 	List<Map<String, Object>> getMposUnactivatedStateList();
+
+
+	List<Map<String, Object>> getMposUnactivatedStateSNList(@Param("sn") String sn);
 	
 	/**
 	 * 更新POS机激活状态（传统POS）

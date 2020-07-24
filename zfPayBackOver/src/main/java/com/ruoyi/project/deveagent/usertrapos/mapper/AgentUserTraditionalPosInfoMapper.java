@@ -59,6 +59,10 @@ public interface AgentUserTraditionalPosInfoMapper {
 	 */
 	Map<String, Object> getAgentUserTraditionalPosInfo(AgentUserTraditionalPosInfo agentUserTraditionalPosInfo);
 
+
+	@Select("select * from t_user_traditional_pos_info where sn=#{sn} and user_id=#{user_id} and del=0")
+	Map<String, Object> getAgentUserTraditionalPosInfoSNUserID(@Param("sn") String sn,@Param("user_id") String user_id);
+
 	
 	/**
 	 * 用户分配更新用户传统POS机信息

@@ -87,6 +87,7 @@ public class ManaSysVersionServiceImpl implements ManaSysVersionService {
 			}
 			redisUtils.remove(RedisNameConstants.zfpay_sys_version_info_new+TypeStatusConstant.user_info_device_type_iOS);
 			redisUtils.remove(RedisNameConstants.zfpay_sys_version_info_new+TypeStatusConstant.user_info_device_type_android);
+			redisUtils.remove(RedisNameConstants.zfpay_sys_version_info_new+"zhanggui");
 			return R.ok("操作成功");
 		} catch (Exception e) {
 			e.printStackTrace();

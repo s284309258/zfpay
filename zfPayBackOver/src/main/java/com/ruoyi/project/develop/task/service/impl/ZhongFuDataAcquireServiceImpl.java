@@ -7,6 +7,9 @@ import java.util.Map;
 
 import com.ruoyi.project.deveagent.syspos.mapper.AgentSysMposInfoMapper;
 import com.ruoyi.project.deveagent.syspos.mapper.AgentSysTraditionalPosInfoMapper;
+import com.ruoyi.project.deveagent.usertrapos.domain.AgentUserTraditionalPosInfo;
+import com.ruoyi.project.deveagent.usertrapos.mapper.AgentUserTraditionalPosInfoMapper;
+import com.ruoyi.project.deveagent.usertrapos.service.AgentUserTraditionalPosInfoService;
 import com.ruoyi.project.develop.task.mapper.ActivitySettlementMapper;
 import com.ruoyi.project.devemana.param.service.ManaSysParamService;
 import io.swagger.models.auth.In;
@@ -57,6 +60,9 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 
 	@Autowired
 	private ActivitySettlementMapper activitySettlementMapper;
+
+	@Autowired
+	private AgentUserTraditionalPosInfoService agentUserTraditionalPosInfoService;
 
 	/**
 	 * 获取中付交易数据，插入到待处理表中
@@ -544,7 +550,8 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 	 * @param bean
 	 * @return
 	 */
-	private int mposPolicy5RecordHandle(Map<String, Object> bean){
+	@Transactional
+	public int mposPolicy5RecordHandle(Map<String, Object> bean){
 		List<Map<String, Object>> arrayList = zhongFuDataAcquireMapper.getPolicy5UserInfo(bean);
 		if(arrayList.size()>0) {
 			Map<String, Object> map = arrayList.get(0);
@@ -570,6 +577,7 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 				}
 			}
 			activitySettlementMapper.update_t_sys_pos_policy_info(zhishudaili,StringUtil.getMapValue(map, "id"));
+
 			if (arrayList2.size() == 1) {
 				if (reward == 22){mmm.put(0,22);}
 				if (reward == 21){mmm.put(0,21);}
@@ -581,31 +589,17 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 				if (reward == 10) {mmm.put(0, 10);}
 				if (reward == 8) {mmm.put(0, 8);}
 				if (reward == 5) {mmm.put(0, 5);}
-				if(reward>=5){
-					if(reward==5){
-						Integer cnt = zhongFuDataAcquireMapper.selectPolicy5Reward5(zhishudaili);
-						if(cnt==0){
-							HashMap<String, Object> params = new HashMap<>();
-							params.put("sn", StringUtil.getMapValue(bean, "SN"));
-							params.put("user_id", zhishudaili);
-							params.put("policy_id", StringUtil.getMapValue(map, "id"));
-							params.put("money", mmm.get(0));
-							params.put("mer_name", mer_name);
-							params.put("mer_id", mer_id);
-							params.put("pos_type","02");
-							zhongFuDataAcquireMapper.insertPolicy5Record(params);
-						}
-					}else{
-						HashMap<String, Object> params = new HashMap<>();
-						params.put("sn", StringUtil.getMapValue(bean, "SN"));
-						params.put("user_id", zhishudaili);
-						params.put("policy_id", StringUtil.getMapValue(map, "id"));
-						params.put("money", mmm.get(0));
-						params.put("mer_name", mer_name);
-						params.put("mer_id", mer_id);
-						params.put("pos_type","02");
-						zhongFuDataAcquireMapper.insertPolicy5Record(params);
-					}
+				Integer cnt = zhongFuDataAcquireMapper.selectPolicy5Reward5(zhishudaili);
+				if(cnt==0){
+					HashMap<String, Object> params = new HashMap<>();
+					params.put("sn", StringUtil.getMapValue(bean, "SN"));
+					params.put("user_id", zhishudaili);
+					params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+					params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,"0"));
+					params.put("mer_name", mer_name);
+					params.put("mer_id", mer_id);
+					params.put("pos_type","02");
+					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
 			}
 			if (arrayList2.size() == 2) {
@@ -618,26 +612,24 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 				if (reward == 12) {mmm.put(0, 2);mmm.put(1, 10);}
 				if (reward == 10) {mmm.put(0, 2);mmm.put(1, 8);}
 				if (reward == 8) {mmm.put(0, 3);mmm.put(1, 5);}
-				if(reward>=8){
-					HashMap<String, Object> params = new HashMap<>();
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", zhishudaili);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(1));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", shangjidaili1);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(0));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-				}
+				HashMap<String, Object> params = new HashMap<>();
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", zhishudaili);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,"0"));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", shangjidaili1);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,shangjidaili1));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 			}
 			if (arrayList2.size() == 3) {
 				if(reward==22){mmm.put(0,1);mmm.put(1,1);mmm.put(2,20);}
@@ -648,35 +640,34 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 				if (reward == 15) {mmm.put(0, 3);mmm.put(1, 2);mmm.put(2, 10);}
 				if (reward == 12) {mmm.put(0, 2);mmm.put(1, 2);mmm.put(2, 8);}
 				if (reward == 10) {mmm.put(0, 2);mmm.put(1, 3);mmm.put(2, 5);}
-				if(reward>=10){
-					HashMap<String, Object> params = new HashMap<>();
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", zhishudaili);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(2));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", shangjidaili1);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(1));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", shangjidaili2);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(0));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-				}
+				HashMap<String, Object> params = new HashMap<>();
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", zhishudaili);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,"0"));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", shangjidaili1);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,shangjidaili1));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
+
+				String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", shangjidaili2);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili1,shangjidaili2));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 			}
 			if (arrayList2.size() == 4) {
 				if(reward==22){mmm.put(0,1);mmm.put(1,1);mmm.put(2,2);mmm.put(3,18);}
@@ -686,46 +677,44 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 				if (reward == 18) {mmm.put(0, 2);mmm.put(1, 3);mmm.put(2, 2);mmm.put(3, 10);}
 				if (reward == 15) {mmm.put(0, 3);mmm.put(1, 2);mmm.put(2, 2);mmm.put(3, 8);}
 				if (reward == 12) {mmm.put(0, 2);mmm.put(1, 2);mmm.put(2, 3);mmm.put(3, 5);}
-				if(reward>=12){
-					HashMap<String, Object> params = new HashMap<>();
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", zhishudaili);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(3));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", shangjidaili1);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(2));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				HashMap<String, Object> params = new HashMap<>();
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", zhishudaili);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,"0"));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", shangjidaili1);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,shangjidaili1));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", shangjidaili2);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(1));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", shangjidaili2);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili1,shangjidaili2));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", shangjidaili3);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(0));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-				}
+				String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", shangjidaili3);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili2,shangjidaili3));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 			}
 			if (arrayList2.size() == 5) {
 				if(reward==22){mmm.put(0,1);mmm.put(1,1);mmm.put(2,2);mmm.put(3,3);mmm.put(4,15);}
@@ -734,55 +723,53 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 				if (reward == 20) {mmm.put(0, 2);mmm.put(1, 3);mmm.put(2, 3);mmm.put(3, 2);mmm.put(4, 10);}
 				if (reward == 18) {mmm.put(0, 3);mmm.put(1, 3);mmm.put(2, 2);mmm.put(3, 2);mmm.put(4, 8);}
 				if (reward == 15) {mmm.put(0, 3);mmm.put(1, 2);mmm.put(2, 2);mmm.put(3, 2);mmm.put(4, 5);}
-				if(reward>=15){
-					HashMap<String, Object> params = new HashMap<>();
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", zhishudaili);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(4));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", shangjidaili1);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(3));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				HashMap<String, Object> params = new HashMap<>();
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", zhishudaili);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,"0"));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", shangjidaili1);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,shangjidaili1));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", shangjidaili2);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(2));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", shangjidaili2);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili1,shangjidaili2));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", shangjidaili3);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(1));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", shangjidaili3);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili2,shangjidaili3));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", shangjidaili4);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(0));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-				}
+				String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", shangjidaili4);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili3,shangjidaili4));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 			}
 
 			if (arrayList2.size() == 6) {
@@ -791,320 +778,312 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 
 				if (reward == 20) {mmm.put(0, 2);mmm.put(1, 3);mmm.put(2, 3);mmm.put(3, 2);mmm.put(4, 2);mmm.put(5, 8);}
 				if (reward == 18) {mmm.put(0, 3);mmm.put(1, 3);mmm.put(2, 2);mmm.put(3, 2);mmm.put(4, 3);mmm.put(5, 5);}
-				if(reward>=18){
-					HashMap<String, Object> params = new HashMap<>();
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", zhishudaili);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(5));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", shangjidaili1);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(4));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				HashMap<String, Object> params = new HashMap<>();
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", zhishudaili);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,"0"));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", shangjidaili1);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,shangjidaili1));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", shangjidaili2);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(3));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", shangjidaili2);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili1,shangjidaili2));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", shangjidaili3);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(2));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", shangjidaili3);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili2,shangjidaili3));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", shangjidaili4);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(1));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", shangjidaili4);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili3,shangjidaili4));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", shangjidaili5);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(0));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-				}
+				String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", shangjidaili5);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili4,shangjidaili5));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 			}
 			if (arrayList2.size() == 7) {
 				if(reward==22){mmm.put(0,1);mmm.put(1,1);mmm.put(2,2);mmm.put(3,3);mmm.put(4,3);mmm.put(5,2);mmm.put(6,10);}
 				if(reward==21){mmm.put(0,1);mmm.put(1,2);mmm.put(2,3);mmm.put(3,3);mmm.put(4,2);mmm.put(5,2);mmm.put(6,8);}
 
 				if (reward == 20) {mmm.put(0, 2);mmm.put(1, 3);mmm.put(2, 3);mmm.put(3, 2);mmm.put(4, 2);mmm.put(5, 3);mmm.put(6, 5);}
-				if(reward>=20){
-					HashMap<String, Object> params = new HashMap<>();
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", zhishudaili);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(6));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", shangjidaili1);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(5));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				HashMap<String, Object> params = new HashMap<>();
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", zhishudaili);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,"0"));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", shangjidaili1);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,shangjidaili1));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", shangjidaili2);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(4));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", shangjidaili2);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili1,shangjidaili2));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", shangjidaili3);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(3));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", shangjidaili3);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili2,shangjidaili3));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", shangjidaili4);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(2));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", shangjidaili4);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili3,shangjidaili4));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", shangjidaili5);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(1));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", shangjidaili5);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili4,shangjidaili5));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 
-					String shangjidaili6 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili5);
-					params.put("sn", StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id", shangjidaili6);
-					params.put("policy_id", StringUtil.getMapValue(map, "id"));
-					params.put("money", mmm.get(0));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-				}
+				String shangjidaili6 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili5);
+				params.put("sn", StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id", shangjidaili6);
+				params.put("policy_id", StringUtil.getMapValue(map, "policy_id"));
+				params.put("money", agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili5,shangjidaili6));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 			}
 			if(arrayList2.size()==8){
 				if(reward==22){mmm.put(0,1);mmm.put(1,1);mmm.put(2,2);mmm.put(3,3);mmm.put(4,3);mmm.put(5,2);mmm.put(6,2);mmm.put(7,8);}
 				if(reward==21){mmm.put(0,1);mmm.put(1,2);mmm.put(2,3);mmm.put(3,3);mmm.put(4,2);mmm.put(5,2);mmm.put(6,3);mmm.put(7,5);}
-				if(reward>=21){
-					HashMap<String,Object> params = new HashMap<>();
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",zhishudaili);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(7));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili1);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(6));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				HashMap<String,Object> params = new HashMap<>();
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",zhishudaili);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,"0"));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili1);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,shangjidaili1));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili2);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(5));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili2);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili1,shangjidaili2));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili3);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(4));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili3);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili2,shangjidaili3));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili4);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(3));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili4);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili3,shangjidaili4));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili5);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(2));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili5);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili4,shangjidaili5));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 
-					String shangjidaili6 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili5);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili6);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(1));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili6 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili5);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili6);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili5,shangjidaili6));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili7 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili6);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili7);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(0));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-				}
+				String shangjidaili7 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili6);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili7);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili6,shangjidaili7));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 			}
 			if(arrayList2.size()==9){
 				if(reward==22){mmm.put(0,1);mmm.put(1,1);mmm.put(2,2);mmm.put(3,3);mmm.put(4,3);mmm.put(5,2);mmm.put(6,2);mmm.put(7,3);mmm.put(8,5);}
-				if(reward>=22){
-					HashMap<String,Object> params = new HashMap<>();
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",zhishudaili);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(8));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili1);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(7));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				HashMap<String,Object> params = new HashMap<>();
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",zhishudaili);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,"0"));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili1);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,shangjidaili1));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili2);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(6));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili2);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili1,shangjidaili2));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili3);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(5));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili3);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili2,shangjidaili3));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili4);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(4));
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili4);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili3,shangjidaili4));
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili5);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(3));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili5);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili4,shangjidaili5));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 
-					String shangjidaili6 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili5);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili6);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(2));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili6 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili5);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili6);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili5,shangjidaili6));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili7 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili6);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili7);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(1));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili7 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili6);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili7);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili6,shangjidaili7));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili8 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili7);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili8);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(0));
-					params.put("mer_name", mer_name);
-					params.put("mer_id", mer_id);
-					params.put("pos_type","02");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-				}
+				String shangjidaili8 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili7);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili8);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili7,shangjidaili8));
+				params.put("mer_name", mer_name);
+				params.put("mer_id", mer_id);
+				params.put("pos_type","02");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 			}
 		}
 		return 0;
@@ -1115,7 +1094,8 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 	 * @param bean
 	 * @return
 	 */
-	private int traposPolicy5RecordHandle(Map<String, Object> bean){
+	@Transactional
+	public int traposPolicy5RecordHandle(Map<String, Object> bean){
 		List<Map<String, Object>> arrayList = zhongFuDataAcquireMapper.getPolicy5UserInfo(bean);
 		if(arrayList.size()>0){
 			Map<String, Object> map = arrayList.get(0);
@@ -1147,31 +1127,17 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 				if(reward==10){mmm.put(0,10);}
 				if(reward==8){mmm.put(0,8);}
 				if(reward==5){mmm.put(0,5);}
-				if(reward>=5){
-					if(reward==5){
-						Integer cnt = zhongFuDataAcquireMapper.selectPolicy5Reward5(zhishudaili);
-						if(cnt==0){
-							HashMap<String,Object> params = new HashMap<>();
-							params.put("sn",StringUtil.getMapValue(bean, "SN"));
-							params.put("user_id",zhishudaili);
-							params.put("policy_id",StringUtil.getMapValue(map, "id"));
-							params.put("money",mmm.get(0));
-							params.put("mer_name",mer_name);
-							params.put("mer_id",mer_id);
-							params.put("pos_type","01");
-							zhongFuDataAcquireMapper.insertPolicy5Record(params);
-						}
-					}else{
-						HashMap<String,Object> params = new HashMap<>();
-						params.put("sn",StringUtil.getMapValue(bean, "SN"));
-						params.put("user_id",zhishudaili);
-						params.put("policy_id",StringUtil.getMapValue(map, "id"));
-						params.put("money",mmm.get(0));
-						params.put("mer_name",mer_name);
-						params.put("mer_id",mer_id);
-						params.put("pos_type","01");
-						zhongFuDataAcquireMapper.insertPolicy5Record(params);
-					}
+				Integer cnt = zhongFuDataAcquireMapper.selectPolicy5Reward5(zhishudaili);
+				if(cnt==0){
+					HashMap<String,Object> params = new HashMap<>();
+					params.put("sn",StringUtil.getMapValue(bean, "SN"));
+					params.put("user_id",zhishudaili);
+					params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+					params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,"0"));
+					params.put("mer_name",mer_name);
+					params.put("mer_id",mer_id);
+					params.put("pos_type","01");
+					zhongFuDataAcquireMapper.insertPolicy5Record(params);
 				}
 			}
 			if(arrayList2.size()==2){
@@ -1184,26 +1150,24 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 				if(reward==12){mmm.put(0,2);mmm.put(1,10);}
 				if(reward==10){mmm.put(0,2);mmm.put(1,8);}
 				if(reward==8){mmm.put(0,3);mmm.put(1,5);}
-				if(reward>=8){
-					HashMap<String,Object> params = new HashMap<>();
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",zhishudaili);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(1));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili1);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(0));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-				}
+				HashMap<String,Object> params = new HashMap<>();
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",zhishudaili);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,"0"));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili1);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,shangjidaili1));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 			}
 			if(arrayList2.size()==3){
 				if(reward==22){mmm.put(0,1);mmm.put(1,1);mmm.put(2,20);}
@@ -1215,36 +1179,34 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 				if(reward==15){mmm.put(0,3);mmm.put(1,2);mmm.put(2,10);}
 				if(reward==12){mmm.put(0,2);mmm.put(1,2);mmm.put(2,8);}
 				if(reward==10){mmm.put(0,2);mmm.put(1,3);mmm.put(2,5);}
-				if(reward>=10){
-					HashMap<String,Object> params = new HashMap<>();
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",zhishudaili);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(2));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili1);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(1));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				HashMap<String,Object> params = new HashMap<>();
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",zhishudaili);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,"0"));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili1);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,shangjidaili1));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili2);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(0));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-				}
+				String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili2);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili1,shangjidaili2));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 			}
 			if(arrayList2.size()==4){
 				if(reward==22){mmm.put(0,1);mmm.put(1,1);mmm.put(2,2);mmm.put(3,18);}
@@ -1254,46 +1216,44 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 				if(reward==18){mmm.put(0,2);mmm.put(1,3);mmm.put(2,2);mmm.put(3,10);}
 				if(reward==15){mmm.put(0,3);mmm.put(1,2);mmm.put(2,2);mmm.put(3,8);}
 				if(reward==12){mmm.put(0,2);mmm.put(1,2);mmm.put(2,3);mmm.put(3,5);}
-				if(reward>=12){
-					HashMap<String,Object> params = new HashMap<>();
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",zhishudaili);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(3));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili1);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(2));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				HashMap<String,Object> params = new HashMap<>();
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",zhishudaili);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,"0"));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili1);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,shangjidaili1));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili2);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(1));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili2);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili1,shangjidaili2));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili3);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(0));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-				}
+				String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili3);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili2,shangjidaili3));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 			}
 			if(arrayList2.size()==5){
 				if(reward==22){mmm.put(0,1);mmm.put(1,1);mmm.put(2,2);mmm.put(3,3);mmm.put(4,15);}
@@ -1302,56 +1262,54 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 				if(reward==20){mmm.put(0,2);mmm.put(1,3);mmm.put(2,3);mmm.put(3,2);mmm.put(4,10);}
 				if(reward==18){mmm.put(0,3);mmm.put(1,3);mmm.put(2,2);mmm.put(3,2);mmm.put(4,8);}
 				if(reward==15){mmm.put(0,3);mmm.put(1,2);mmm.put(2,2);mmm.put(3,2);mmm.put(4,5);}
-				if(reward>=15){
-					HashMap<String,Object> params = new HashMap<>();
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",zhishudaili);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(4));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili1);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(3));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				HashMap<String,Object> params = new HashMap<>();
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",zhishudaili);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,"0"));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili1);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,shangjidaili1));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili2);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(2));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili2);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili1,shangjidaili2));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili3);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(1));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili3);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili2,shangjidaili3));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili4);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(0));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-				}
+				String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili4);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili3,shangjidaili4));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 			}
 			if(arrayList2.size()==6){
 				if(reward==22){mmm.put(0,1);mmm.put(1,1);mmm.put(2,2);mmm.put(3,3);mmm.put(4,3);mmm.put(5,12);}
@@ -1359,321 +1317,313 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 
 				if(reward==20){mmm.put(0,2);mmm.put(1,3);mmm.put(2,3);mmm.put(3,2);mmm.put(4,2);mmm.put(5,8);}
 				if(reward==18){mmm.put(0,3);mmm.put(1,3);mmm.put(2,2);mmm.put(3,2);mmm.put(4,3);mmm.put(5,5);}
-				if(reward>=18){
-					HashMap<String,Object> params = new HashMap<>();
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",zhishudaili);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(5));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili1);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(4));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				HashMap<String,Object> params = new HashMap<>();
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",zhishudaili);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,"0"));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili1);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,shangjidaili1));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili2);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(3));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili2);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili1,shangjidaili2));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili3);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(2));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili3);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili2,shangjidaili3));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili4);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(1));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili4);
+				params.put("policy_id",StringUtil.getMapValue(map, "id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili3,shangjidaili4));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili5);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(0));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-				}
+				String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili5);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili4,shangjidaili5));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 			}
 			if(arrayList2.size()==7){
 				if(reward==22){mmm.put(0,1);mmm.put(1,1);mmm.put(2,2);mmm.put(3,3);mmm.put(4,3);mmm.put(5,2);mmm.put(6,10);}
 				if(reward==21){mmm.put(0,1);mmm.put(1,2);mmm.put(2,3);mmm.put(3,3);mmm.put(4,2);mmm.put(5,2);mmm.put(6,8);}
 				if(reward==20){mmm.put(0,2);mmm.put(1,3);mmm.put(2,3);mmm.put(3,2);mmm.put(4,2);mmm.put(5,3);mmm.put(6,5);}
-				if(reward>=20){
-					HashMap<String,Object> params = new HashMap<>();
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",zhishudaili);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(6));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili1);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(5));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				HashMap<String,Object> params = new HashMap<>();
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",zhishudaili);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,"0"));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili1);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,shangjidaili1));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili2);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(4));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili2);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili1,shangjidaili2));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili3);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(3));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili3);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili2,shangjidaili3));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili4);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(2));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili4);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili3,shangjidaili4));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili5);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(1));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili5);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili4,shangjidaili5));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 
-					String shangjidaili6 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili5);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili6);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(0));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-				}
+				String shangjidaili6 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili5);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili6);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili5,shangjidaili6));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 			}
 			if(arrayList2.size()==8){
 				if(reward==22){mmm.put(0,1);mmm.put(1,1);mmm.put(2,2);mmm.put(3,3);mmm.put(4,3);mmm.put(5,2);mmm.put(6,2);mmm.put(7,8);}
 				if(reward==21){mmm.put(0,1);mmm.put(1,2);mmm.put(2,3);mmm.put(3,3);mmm.put(4,2);mmm.put(5,2);mmm.put(6,3);mmm.put(7,5);}
-				if(reward>=21){
-					HashMap<String,Object> params = new HashMap<>();
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",zhishudaili);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(7));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili1);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(6));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				HashMap<String,Object> params = new HashMap<>();
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",zhishudaili);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,"0"));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili1);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,"0"));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili2);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(5));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili2);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili1,shangjidaili2));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili3);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(4));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili3);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili2,shangjidaili3));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili4);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(3));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili4);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili3,shangjidaili4));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili5);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(2));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili5);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili4,shangjidaili5));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 
-					String shangjidaili6 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili5);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili6);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(1));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili6 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili5);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili6);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili5,shangjidaili6));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili7 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili6);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili7);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(0));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-				}
+				String shangjidaili7 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili6);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili7);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili6,shangjidaili7));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 			}
 			if(arrayList2.size()==9){
 				if(reward==22){mmm.put(0,1);mmm.put(1,1);mmm.put(2,2);mmm.put(3,3);mmm.put(4,3);mmm.put(5,2);mmm.put(6,2);mmm.put(7,3);mmm.put(8,5);}
-				if(reward>=22){
-					HashMap<String,Object> params = new HashMap<>();
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",zhishudaili);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(8));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-					String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili1);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(7));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				HashMap<String,Object> params = new HashMap<>();
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",zhishudaili);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,"0"));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili1 = zhongFuDataAcquireMapper.getUserRefererID(zhishudaili);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili1);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),zhishudaili,shangjidaili1));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili2);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(6));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili2 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili1);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili2);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili1,shangjidaili2));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili3);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(5));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili3 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili2);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili3);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili2,shangjidaili3));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili4);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(4));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili4 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili3);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili4);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili3,shangjidaili4));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili5);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(3));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili5 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili4);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili5);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili4,shangjidaili5));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
 
-					String shangjidaili6 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili5);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili6);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(2));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili6 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili5);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili6);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili5,shangjidaili6));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili7 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili6);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili7);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(1));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
+				String shangjidaili7 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili6);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili7);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili6,shangjidaili7));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 
-					String shangjidaili8 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili7);
-					params.put("sn",StringUtil.getMapValue(bean, "SN"));
-					params.put("user_id",shangjidaili8);
-					params.put("policy_id",StringUtil.getMapValue(map, "id"));
-					params.put("money",mmm.get(0));
-					params.put("mer_name",mer_name);
-					params.put("mer_id",mer_id);
-					params.put("pos_type","01");
-					zhongFuDataAcquireMapper.insertPolicy5Record(params);
-				}
+				String shangjidaili8 = zhongFuDataAcquireMapper.getUserRefererID(shangjidaili7);
+				params.put("sn",StringUtil.getMapValue(bean, "SN"));
+				params.put("user_id",shangjidaili8);
+				params.put("policy_id",StringUtil.getMapValue(map, "policy_id"));
+				params.put("money",agentUserTraditionalPosInfoService.calcPolicy5Amount(StringUtil.getMapValue(bean, "SN"),shangjidaili7,shangjidaili8));
+				params.put("mer_name",mer_name);
+				params.put("mer_id",mer_id);
+				params.put("pos_type","01");
+				zhongFuDataAcquireMapper.insertPolicy5Record(params);
 			}
 		}
 		return 0;
@@ -1853,6 +1803,30 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 
 	}
 
+	@Override
+	public void getDataActivatedStateSN(String sn) {
+		LOGGER.info("------------------中付激活信息接口SN-START-------------");
+		try{
+			//获取传统POS未激活有交易pos列表
+			List<Map<String, Object>> traposList = zhongFuDataAcquireMapper.getTraposUnactivatedStateSNList(sn);
+			if(traposList!=null && traposList.size()>0){
+				for(Map<String, Object> trapos : traposList){
+					SpringUtils.getAopProxy(this).getDataActivatedStateRecord(trapos, ZhongFuInterfaceCodeConstant.machine_type_02);
+				}
+			}
+			//获取MPOS未激活有交易pos列表
+			List<Map<String, Object>> mposList =zhongFuDataAcquireMapper.getMposUnactivatedStateSNList(sn);
+			if(mposList!=null && mposList.size()>0){
+				for(Map<String, Object> mpos : mposList){
+					SpringUtils.getAopProxy(this).getDataActivatedStateRecord(mpos, ZhongFuInterfaceCodeConstant.machine_type_01);
+				}
+			}
+		}catch(Exception e){
+			LOGGER.error("ZhongFuDataAcquireServiceImpl -- getDataActivatedState方法处理异常:" + ExceptionUtil.getExceptionAllinformation(e));
+		}
+		LOGGER.info("------------------中付激活信息接口SN-END--------------");
+	}
+
 	/**
 	 * 查询单个POS机激活状态
 	 * @param map
@@ -1860,6 +1834,7 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 	 */
 	@Transactional
 	public void getDataActivatedStateRecord(Map<String, Object> map, String machine_type){
+
 		int num = 0;
 		try{
 			String startTime = "20180101000000";
@@ -1880,6 +1855,13 @@ public class ZhongFuDataAcquireServiceImpl implements ZhongFuDataAcquireService 
 				JSONArray list = data.getJSONArray("details");
 				if(list==null || list.size()<1) return;
 				Map<String, Object> bean = (Map<String, Object>)list.get(0);
+
+
+				//测试测试测试
+				bean.put("SN","00000302J8NL10321539");
+				traposPolicy5RecordHandle(bean);
+				//测试测试测试
+
 				//判断是否已激活
 				if("1".equals(StringUtil.getMapValue(bean, "activateStatus"))){
 					//更新激活状态

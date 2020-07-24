@@ -50,6 +50,8 @@ public interface ConfigMapper
      */
     public int updateConfig(Config config);
 
+    public int updateMachineActDate(Config config);
+
     /**
      * 批量删除参数配置
      * 

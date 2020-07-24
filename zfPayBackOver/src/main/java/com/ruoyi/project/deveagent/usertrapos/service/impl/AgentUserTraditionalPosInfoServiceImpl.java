@@ -66,8 +66,30 @@ public class AgentUserTraditionalPosInfoServiceImpl implements AgentUserTraditio
 		params.put("manager_id", ShiroUtils.getUserId());
 		return agentUserTraditionalPosInfoMapper.getAgentUserTraditionalPosInfoList(params);
 	}
-	
-	
+
+	@Override
+	public String calcPolicy5Amount(String sn, String user_id, String senior) {
+		Map<String, Object> map1 = agentUserTraditionalPosInfoMapper.getAgentUserTraditionalPosInfoSNUserID(sn,user_id);
+		Map<String, Object> map2 = agentUserTraditionalPosInfoMapper.getAgentUserTraditionalPosInfoSNUserID(sn,senior);
+		Integer amount1 = 0;
+		Integer amount2 = 0;
+		Integer spread = 0;
+		if(map1!=null){
+			amount1 = (Integer)map1.get("retail_reward");
+		}
+		if(map2!=null){
+			amount2 = (Integer)map2.get("retail_reward");
+		}
+		if("0".equals(senior)){
+			spread = amount1;
+		}else{
+			spread = (amount2-amount1)<0?0:(amount2-amount1);
+		}
+
+		return spread.toString();
+	}
+
+
 	/**
 	 * 导出用户传统POS信息列表
 	 */

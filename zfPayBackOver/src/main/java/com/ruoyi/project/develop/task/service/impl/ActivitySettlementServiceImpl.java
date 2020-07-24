@@ -859,6 +859,11 @@ public class ActivitySettlementServiceImpl implements ActivitySettlementService 
 				record.put("end_date",StringUtil.getMapValue(map,"module1_end_date"));
 				record.put("cre_date", TimeUtil.getDayString());
 				record.put("cre_time", TimeUtil.getTimeString());
+				if("epos".equals(pos_type)){
+					record.put("pos_type", BenefitParamConstants.pos_type_03);
+				}else{
+					record.put("pos_type", BenefitParamConstants.pos_type_01);
+				}
 				num = activitySettlementMapper.insertUserTraposDeductRecord(record);
 				if(num != 1){
 					throw new Exception("扣除记录异常:"+record.toString());
@@ -905,6 +910,7 @@ public class ActivitySettlementServiceImpl implements ActivitySettlementService 
 				record.put("end_date",StringUtil.getMapValue(map,"module1_end_date"));
 				record.put("cre_date", TimeUtil.getDayString());
 				record.put("cre_time", TimeUtil.getTimeString());
+				record.put("pos_type", BenefitParamConstants.pos_type_02);
 				num = activitySettlementMapper.insertUserMposDeductRecord(record);
 				if(num != 1){
 					throw new Exception("扣除记录异常:"+record.toString());
@@ -1058,7 +1064,9 @@ public class ActivitySettlementServiceImpl implements ActivitySettlementService 
 					record.put("cre_date", TimeUtil.getDayString());
 					record.put("cre_time", TimeUtil.getTimeString());
 					if("epos".equals(pos_type)){
-						record.put("pos_type","03");
+						record.put("pos_type", BenefitParamConstants.pos_type_03);
+					}else{
+						record.put("pos_type", BenefitParamConstants.pos_type_01);
 					}
 					num = activitySettlementMapper.insertUserTraposActivityRewardRecord(record);
 					if(num != 1){
@@ -1225,6 +1233,7 @@ public class ActivitySettlementServiceImpl implements ActivitySettlementService 
 					record.put("end_date",enddate);
 					record.put("cre_date", TimeUtil.getDayString());
 					record.put("cre_time", TimeUtil.getTimeString());
+					record.put("pos_type",BenefitParamConstants.pos_type_02);
 					num = activitySettlementMapper.insertUserMposDeductRecord(record);
 					if(num != 1){
 						throw new Exception("扣除记录异常:"+record.toString());
@@ -1287,6 +1296,11 @@ public class ActivitySettlementServiceImpl implements ActivitySettlementService 
 					record.put("end_date",enddate);
 					record.put("cre_date", TimeUtil.getDayString());
 					record.put("cre_time", TimeUtil.getTimeString());
+					if("epos".equals(pos_type)){
+						record.put("pos_type", BenefitParamConstants.pos_type_03);
+					}else{
+						record.put("pos_type", BenefitParamConstants.pos_type_01);
+					}
 					num = activitySettlementMapper.insertUserTraposDeductRecord(record);
 					if(num != 1){
 						throw new Exception("扣除记录异常:"+record.toString());

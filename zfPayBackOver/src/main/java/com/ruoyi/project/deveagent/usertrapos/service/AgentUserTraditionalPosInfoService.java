@@ -21,6 +21,9 @@ public interface AgentUserTraditionalPosInfoService {
 	 * @return
 	 */
 	List<Map<String, Object>> getAgentUserTraditionalPosInfoList(Map<String, Object> params);
+
+
+	String calcPolicy5Amount(String sn,String user_id,String senior);
 	
 	
 	/**

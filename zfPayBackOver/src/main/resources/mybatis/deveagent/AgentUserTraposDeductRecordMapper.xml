@@ -27,7 +27,7 @@
 		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
 		<where>
 			t1.manager_id = #{map.manager_id}
-			and t.pos_type is null
+			and t.pos_type='01'
 			<if test="map.id != null and map.id != ''">
 				AND t.id = #{map.id}
 			</if>
@@ -87,7 +87,7 @@
 		LEFT JOIN t_user_info t1 ON t.user_id = t1.id
 		<where>
 			t1.manager_id = #{map.manager_id}
-			and t.pos_type is null
+			and t.pos_type='01'
 			<if test="map.id != null and map.id != ''">
 				AND t.id = #{map.id}
 			</if>

@@ -85,7 +85,12 @@ public class ConfigServiceImpl implements IConfigService
     public int updateConfig(Config config)
     {
         config.setUpdateBy(ShiroUtils.getLoginName());
-        return configMapper.updateConfig(config);
+        if("修改机器激活日期".equals(config.getConfigName())){
+            configMapper.updateMachineActDate(config);
+            return 1;
+        }else{
+            return configMapper.updateConfig(config);
+        }
     }
 
     /**
