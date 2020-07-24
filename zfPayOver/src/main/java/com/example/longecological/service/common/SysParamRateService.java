@@ -10,7 +10,7 @@ public interface SysParamRateService {
 	 * @param type
 	 * @return
 	 */
-	List<Map<String, Object>> getRateListByType(String type);
+	List<Map<String, Object>> getRateListByType(String type,String pos_type);
 	
 	/**
 	 * 传统POS-系统分配参数

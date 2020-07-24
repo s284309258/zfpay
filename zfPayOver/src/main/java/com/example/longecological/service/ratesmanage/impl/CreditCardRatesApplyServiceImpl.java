@@ -88,7 +88,7 @@ public class CreditCardRatesApplyServiceImpl implements CreditCardRatesApplyServ
 				return (R) map.get("result");
 			}
 			Map<String, Object> respondMap = new HashMap<>();
-			List<Map<String, Object>> creditCardRateList = sysParamRateService.getRateListByType("1");
+			List<Map<String, Object>> creditCardRateList = sysParamRateService.getRateListByType("1",String.valueOf(map.get("pos_type")));
 			respondMap.put("creditCardRateList", creditCardRateList);
 			return R.ok(CommonCodeConstant.COMMON_CODE_999983, CommonCodeConstant.COMMON_MSG_999983, respondMap);
 		} catch (Exception e) {

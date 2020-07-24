@@ -5,7 +5,17 @@
 
 	<!-- 根据类型查询费率列表 -->
 	<select id="getRateListByType" parameterType="java.lang.String" resultType="java.lang.String" >
-		select FORMAT(rate,3) as rate from t_sys_param_rate where type=#{type} order by cast(rate as decimal(20,2))
+		select FORMAT(rate,3) as rate from t_sys_param_rate where type=#{type}
+		<if test="pos_type eq 'epos'">
+			 and remark='EPOS刷卡费率'
+		</if>
+		<if test="pos_type eq 'mpos'">
+			and remark='MPOS刷卡费率'
+		</if>
+		<if test="pos_type eq 'TraditionalPOS'">
+			and remark='传统POS刷卡费率'
+		</if>
+		 order by cast(rate as decimal(20,2))
 	</select>
 	
 	<!-- 费率表所有值 -->

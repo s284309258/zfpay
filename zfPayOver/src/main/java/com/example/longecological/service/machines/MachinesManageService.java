@@ -12,6 +12,13 @@ public interface MachinesManageService {
 	 * @return
 	 */
 	R getTraditionalPosAllocationList(Map<String, Object> map);
+
+	/**
+	 * 获取checkin列表（传统POS）
+	 * @param map
+	 * @return
+	 */
+	R getTraditionalPosCheckInList(Map<String, Object> map);
 	
 	/**
 	 * 获取待分配列表（MPOS）

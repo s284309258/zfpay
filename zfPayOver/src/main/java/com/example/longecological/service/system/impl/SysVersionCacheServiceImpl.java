@@ -28,8 +28,8 @@ public class SysVersionCacheServiceImpl implements SysVersionCacheService {
 	/**
 	 * 查询最新版本
 	 */
-	@EnableCacheService(keyPrefix=RedisNameConstants.zfpay_sys_version_info_new,
-			fieldKey="#map['device_type']", cacheOperation=CacheOperation.QUERY)
+//	@EnableCacheService(keyPrefix=RedisNameConstants.zfpay_sys_version_info_new,
+//			fieldKey="#map['device_type']", cacheOperation=CacheOperation.QUERY)
 	@Override
 	public Map<String, Object> getNewVersion(Map<String, Object> map) {
 		return sysVersionMapper.getNewVersion(map);

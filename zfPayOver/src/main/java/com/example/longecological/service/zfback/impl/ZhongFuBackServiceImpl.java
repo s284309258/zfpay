@@ -30,6 +30,14 @@ public class ZhongFuBackServiceImpl implements ZhongFuBackService {
 	private ZhongFuBackMapper zhongFuBackMapper;
 
 	@Override
+	public void merchantInstallProcess(Map<String, Object> map) {
+		LOGGER.info("开始处理中付进件照片上传："+map.toString());
+		map.put("cre_date", TimeUtil.getDayString());
+		map.put("cre_time", TimeUtil.getTimeString());
+		zhongFuBackMapper.insertTraditionalPosInstallProcess(map);
+	}
+
+	@Override
 	@Transactional
 	public String merchantIntoCallback(Map<String, Object> map) {
 		int num = 0;
@@ -70,6 +78,7 @@ public class ZhongFuBackServiceImpl implements ZhongFuBackService {
 						throw new Exception("装机设备记录保存异常");
 					}
 				}
+				zhongFuBackMapper.updateTraditionalPosInstallProcess(map);
 			}
 		}catch(Exception e){
 			LOGGER.error("中付回调处理异常:"+ExceptionUtil.getExceptionAllinformation(e));
@@ -87,8 +96,13 @@ public class ZhongFuBackServiceImpl implements ZhongFuBackService {
 				return (R) map.get("result");
 			}
 			Map<String, Object> respondMap = new HashMap<>();
-			List<Map<String, Object>> traditionalPosInstallList = zhongFuBackMapper.getTraditionalPosInstallList(map);
-			respondMap.put("traditionalPosInstallList", traditionalPosInstallList);
+			if("02".equals(map.get("biz_code"))){
+				List<Map<String, Object>> traditionalPosInstallList = zhongFuBackMapper.getTraditionalPosInstallProcess(map);
+				respondMap.put("traditionalPosInstallList", traditionalPosInstallList);
+			}else{
+				List<Map<String, Object>> traditionalPosInstallList = zhongFuBackMapper.getTraditionalPosInstallList(map);
+				respondMap.put("traditionalPosInstallList", traditionalPosInstallList);
+			}
 			return R.ok(CommonCodeConstant.COMMON_CODE_999983, CommonCodeConstant.COMMON_MSG_999983, respondMap);
 		} catch (Exception e) {
 			LOGGER.error("MerchantManageServiceImpl -- getTraditionalPosInstallList方法处理异常：" + ExceptionUtil.getExceptionAllinformation(e));

@@ -7,6 +7,12 @@ import org.apache.ibatis.annotations.Param;
 
 public interface ZhongFuBackMapper {
 
+	int insertTraditionalPosInstallProcess(@Param("map") Map<String, Object> map);
+
+	int updateTraditionalPosInstallProcess(@Param("map") Map<String, Object> map);
+
+	List<Map<String, Object>> getTraditionalPosInstallProcess(@Param("map") Map<String, Object> map);
+
 	/**
 	 * 查询设备号直属用户
 	 * @param machine_id

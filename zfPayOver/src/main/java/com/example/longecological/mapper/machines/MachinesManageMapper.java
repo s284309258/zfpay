@@ -16,6 +16,13 @@ public interface MachinesManageMapper {
 	 * @return
 	 */
 	List<Map<String, Object>> getTraditionalPosAllocationList(@Param("map") Map<String, Object> map);
+
+	/**
+	 * 获取待分配列表（传统POS）
+	 * @param map
+	 * @return
+	 */
+	List<Map<String, Object>> getTraditionalPosCheckInList(@Param("map") Map<String, Object> map);
 	
 	/**
 	 * 获取待分配列表（MPOS）
@@ -136,7 +143,7 @@ public interface MachinesManageMapper {
 	@Update("update t_sys_pos_policy3_record set choose=#{map.id} where mer_id=#{map.mer_id}")
 	int updatePolicy3RecordChooseField(@Param("map") Map<String,Object> map);
 
-	@Update("update t_sys_pos_policy5_record set choose=#{map.id} where mer_id=#{map.mer_id}")
+	@Update("update t_sys_pos_policy5_record set choose=#{map.id} where mer_id=#{map.mer_id} and user_id=#{map.sys_user_id}")
 	int updatePolicy5RecordChooseField(@Param("map") Map<String,Object> map);
 	
 	/**
@@ -250,6 +257,15 @@ public interface MachinesManageMapper {
 	 * @return
 	 */
 	List<Map<String, Object>> getPolicy2BySN(@Param("map") Map<String, Object> map);
+
+
+	@Select("<script>" +
+			"select DISTINCT policy_id,policy_name,module5_reward as retail_reward from t_sys_pos_policy_info where module_type=5 and isuse=1 and sn in"+
+			"<foreach collection='map.sn_list.split(\",\")' open='(' close=')' item='item' separator=','>"+
+			"#{item}"+
+			"</foreach>"+
+			"</script>")
+	List<Map<String, Object>> getPolicy5BySN(@Param("map") Map<String, Object> map);
 
 	/***
 	 * add byqh 202006
@@ -509,6 +525,9 @@ public interface MachinesManageMapper {
 
 
 	int policy2OnOff(@Param("map") Map<String, Object> map);
+
+
+	int policy2OnOffByBatchNo(@Param("map") Map<String, Object> map);
 
 	/***
 	 * add byqh202003

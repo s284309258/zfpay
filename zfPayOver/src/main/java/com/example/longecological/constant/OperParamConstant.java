@@ -17,7 +17,7 @@ public class OperParamConstant {
 	
 	
 	//用户设备类型（选取====》android、iOS）
-	public static final String[] USER_DEVICE_TYPE = {"android","iOS"};
+	public static final String[] USER_DEVICE_TYPE = {"android","iOS","zhanggui"};
 	
 	
 	//用户结算卡操作类型（选取====》新增、删除、设置默认）

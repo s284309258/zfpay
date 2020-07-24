@@ -345,7 +345,7 @@
 				and t.pos_type='03'
 			</when>
 			<otherwise>
-				and t.pos_type is null
+				and t.pos_type='01'
 			</otherwise>
 		</choose>
 		and t.cre_date between #{map.start_date} and #{map.end_date}
@@ -357,7 +357,7 @@
 				and t.pos_type='03'
 			</when>
 			<otherwise>
-				and t.pos_type is null
+				and t.pos_type='01'
 			</otherwise>
 		</choose>
 		and t.cre_date between #{map.start_date} and #{map.end_date}

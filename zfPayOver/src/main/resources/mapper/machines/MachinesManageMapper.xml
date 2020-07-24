@@ -12,6 +12,45 @@
 		</foreach>
 		and iscomplete='0' and isuse=1
 	</select>
+
+	<!-- 获取待分配列表（传统POS）update byqh 201912 -->
+	<select id="getTraditionalPosCheckInList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+		sn,
+		IFNULL(card_settle_price, '无') AS card_settle_price,
+		IFNULL(weixin_settle_price, '无') AS weixin_settle_price,
+		IFNULL(zhifubao_settle_price,'无') AS zhifubao_settle_price,
+		IFNULL(cloud_settle_price, '无') AS cloud_settle_price,
+		IFNULL(card_settle_price_vip, '无') AS card_settle_price_vip,
+		IFNULL(weixin_settle_price_vip, '无') AS weixin_settle_price_vip,
+		IFNULL(zhifubao_settle_price_vip,'无') AS zhifubao_settle_price_vip,
+		IFNULL(cloud_settle_price_vip, '无') AS cloud_settle_price_vip,
+		IFNULL(single_profit_rate, '无') AS single_profit_rate,
+		IFNULL(cash_back_rate, '无') AS cash_back_rate
+		FROM
+		t_user_traditional_pos_info
+		WHERE
+		user_id = #{map.sys_user_id}
+		AND state_status = '1'
+		AND activity_status = '0'
+		AND trade_status = '0'
+		AND del = '0'
+		<choose>
+			<when test="map.pos_type!=null and map.pos_type!=''">
+				AND pos_type='epos'
+			</when>
+			<otherwise>
+				AND pos_type is null
+			</otherwise>
+		</choose>
+		<if test="map.start_number != null and map.start_number != ''" >
+			AND sn >= #{map.start_number}
+		</if>
+		<if test="map.end_number != null and map.end_number != ''" >
+			AND sn &lt;= #{map.end_number}
+		</if>
+		order by sn
+	</select>
 	
 	<!-- 获取待分配列表（传统POS）update byqh 201912 -->
 	<select id="getTraditionalPosAllocationList" parameterType="java.util.Map" resultType="java.util.Map">
@@ -27,6 +66,7 @@
 			IFNULL(cloud_settle_price_vip, '无') AS cloud_settle_price_vip,
 			IFNULL(single_profit_rate, '无') AS single_profit_rate,
 			IFNULL(cash_back_rate, '无') AS cash_back_rate,
+			(select act_status from t_sys_traditional_pos_info where sn=t_user_traditional_pos_info.sn) as act_status,
 			(select GROUP_CONCAT(policy_name) from t_sys_pos_policy_info tt where tt.sn=t_user_traditional_pos_info.sn) as policy_name,
 			cast((select (case when TIMESTAMPDIFF(day,CURRENT_DATE,str_to_date(max(module1_end_date),'%Y%m%d'))>=0 then TIMESTAMPDIFF(day,CURRENT_DATE,str_to_date(max(module1_end_date),'%Y%m%d')) else 0 end)  as expire_day
 			from t_sys_pos_policy_info tt where tt.sn=t_user_traditional_pos_info.sn and tt.module_type=1) as char) as expire_day
@@ -63,6 +103,7 @@
 			IFNULL(cloud_settle_price, '无') AS cloud_settle_price,
 			IFNULL(single_profit_rate, '无') AS single_profit_rate,
 			IFNULL(cash_back_rate, '无') AS cash_back_rate,
+			(select act_status from t_sys_mpos_info where sn=t_user_mpos_info.sn) as act_status,
 			(select GROUP_CONCAT(policy_name) from t_sys_pos_policy_info tt where tt.sn=t_user_mpos_info.sn) as policy_name,
 			cast((select (case when TIMESTAMPDIFF(day,CURRENT_DATE,str_to_date(module1_end_date,'%Y%m%d'))>=0 then TIMESTAMPDIFF(day,CURRENT_DATE,str_to_date(module1_end_date,'%Y%m%d')) else 0 end)  as expire_day
 			from t_sys_pos_policy_info tt where tt.sn=t_user_mpos_info.sn and tt.module_type=1) as char) as expire_day
@@ -217,7 +258,8 @@
 						cre_time,
 						card_settle_price_vip,
 						pos_type,
-						is_reward
+						is_reward,
+						retail_reward
 					) SELECT
 						#{map.acce_user_id},
 						t.sn,
@@ -232,12 +274,13 @@
 						#{map.cre_time},
 						#{map.card_settle_price_vip},
 						t.pos_type,
-						#{map.is_reward}
+						#{map.is_reward},
+						#{map.retail_reward}
 						FROM
 							t_user_traditional_pos_info t
 						WHERE
 							t.user_id = #{map.sys_user_id}
-						AND t.activity_status = '0'
+						<!--AND t.activity_status = '0'-->
 						AND t.state_status = '1'
 						AND FIND_IN_SET(t.sn, #{map.sn_list})
 						AND NOT EXISTS (
@@ -280,7 +323,7 @@
  			   up_time = #{map.up_time}
  		  WHERE
 			   user_id = #{map.sys_user_id}
-		   AND activity_status = '0'
+		   <!--AND activity_status = '0'-->
 		   AND state_status = '1'
 		   AND FIND_IN_SET(sn, #{map.sn_list})
 	</update>
@@ -343,7 +386,8 @@
 						cash_back_rate,
 						cre_date,
 						cre_time,
-						is_reward
+						is_reward,
+						retail_reward
 					) SELECT
 						#{map.acce_user_id},
 						t.sn,
@@ -353,12 +397,13 @@
 						#{map.cash_back_rate},
 						#{map.cre_date},
 						#{map.cre_time},
-						#{map.is_reward}
+						#{map.is_reward},
+						#{map.retail_reward}
 						FROM
 							t_user_mpos_info t
 						WHERE
 							t.user_id = #{map.sys_user_id}
-						AND t.activity_status = '0'
+						<!--AND t.activity_status = '0'-->
 						AND t.state_status = '1'
 						AND FIND_IN_SET(t.sn, #{map.sn_list})
 						AND NOT EXISTS (
@@ -1001,8 +1046,8 @@
 		WHERE
 			user_id = #{map.sys_user_id}
 		AND state_status = '1'
-		AND activity_status = '0'
-		AND trade_status = '0'
+		<!--AND activity_status = '0'
+		AND trade_status = '0'-->
 		AND del = '0'
 		AND find_in_set(sn, #{map.sn_list})
 		AND cast(card_settle_price as decimal) &lt;= cast(#{map.card_settle_price} as decimal)
@@ -1023,8 +1068,8 @@
 		WHERE
 			user_id = #{map.sys_user_id}
 		AND state_status = '1'
-		AND activity_status = '0'
-		AND trade_status = '0'
+		<!--AND activity_status = '0'
+		AND trade_status = '0'-->
 		AND del = '0'
 		AND find_in_set(sn, #{map.sn_list})
 		AND cast(card_settle_price as decimal) &lt;= cast(#{map.card_settle_price} as decimal)
@@ -1104,7 +1149,7 @@
 	</select>
 
 	<select id="selectPolicy5Record" parameterType="java.util.Map" resultType="java.util.Map">
-		select sn,user_id,policy_id,money,reward_date,mer_id,mer_name from t_sys_pos_policy5_record where user_id=#{map.sys_user_id}
+		select sn,user_id,policy_id,money,reward_date,mer_id,mer_name,choose from t_sys_pos_policy5_record where user_id=#{map.sys_user_id}
 	</select>
 
 	<!-- 查询达标商户所有字段 add byqh  201912 -->
@@ -1115,31 +1160,49 @@
 
 	<!-- 查询达标商户所有字段 add byqh 201912 -->
 	<select id="selectPolicy5RecordAll" parameterType="java.util.Map" resultType="java.util.Map">
-		select * from t_sys_pos_policy5_record where mer_id=#{map.mer_id} and choose=0
+		select * from t_sys_pos_policy5_record where mer_id=#{map.mer_id} and user_id=#{map.sys_user_id} and choose=0
 	</select>
 
 	<select id="getPolicy2BySN" parameterType="java.util.Map" resultType="java.util.Map">
-		select distinct policy_id,policy_name from t_sys_pos_policy_info where sn in
+		select distinct cast(policy_id as char) as policy_id,policy_name,IF(module2_reward_flag is null,1,0) is_reward from t_sys_pos_policy_info where sn in
 		<foreach collection="map.sn_list.split(',')" open="(" close=")" item="item" separator=",">
 			#{item}
 		</foreach>
-		and module_type=2 and isuse=1
+		and module_type=2 and isuse=1 and
+		(
+		module2_reward_flag is null or module2_reward_flag=#{map.sys_user_id} or #{map.sys_user_id} in(select parent_chain from t_user_info where id=module2_reward_flag)
+		)
 	</select>
 
 	<update id="policy2OnOff" parameterType="java.util.Map">
 		update t_sys_pos_policy_info set 
 		<choose>
-			<when test="map.is_reward==1">
-				module2_reward_flag=#{map.sys_user_id}
+			<when test="map.is_reward2==1">
+				module2_reward_flag=null
 			</when>
 			<otherwise>
-				module2_reward_flag=null
+				module2_reward_flag=#{map.sys_user_id}
 			</otherwise>
 		</choose>
 		where sn in
 		<foreach collection="map.sn_list.split(',')" item="item" open="(" close=")" separator=",">
 			#{item}
 		</foreach>
+		and policy_id=#{map.policy_id} and isuse=1
+	</update>
+
+
+	<update id="policy2OnOffByBatchNo" parameterType="java.util.Map">
+		update t_sys_pos_policy_info set
+		<choose>
+			<when test="map.is_reward2==1">
+				module2_reward_flag=null
+			</when>
+			<otherwise>
+				module2_reward_flag=#{map.sys_user_id}
+			</otherwise>
+		</choose>
+		where sn in(select sn from t_user_pos_batch_allocate where batch_no=#{map.batch_no})
 		and policy_id=#{map.policy_id} and isuse=1
 	</update>
 
@@ -1177,7 +1240,8 @@
 			cre_time,
 			policy_id,
 			begin_date,
-			end_date
+			end_date,
+			pos_type
 		)
 		values
 		(
@@ -1193,7 +1257,8 @@
 			#{map.cre_time},
 			#{map.policy_id},
 			#{map.begin_date},
-			#{map.end_date}
+			#{map.end_date},
+			#{map.pos_type}
 		)
 	</insert>
 
@@ -1408,7 +1473,7 @@
 
 	<!--查询政策名称 add byqh 201912-->
 	<select id="selectAllocatePolicyName" parameterType="java.lang.String" resultType="java.lang.String">
-		select GROUP_CONCAT(policy_name) as policy_name from t_sys_pos_policy_info
+		select GROUP_CONCAT(DISTINCT policy_name) as policy_name from t_sys_pos_policy_info
 		where sn in(select sn from t_user_pos_batch_allocate where batch_no=#{batch_no})
 	</select>
 

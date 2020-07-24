@@ -596,22 +596,24 @@
 	<select id="getTradeVolumeRankByMonth" resultType="java.util.Map">
 		select * from (
 		select t.sn,tt.mer_name,t.performance from t_summary_mpos_trans_month t,t_sys_mpos_info tt
-		where t.sn=tt.sn and t.user_id=#{map.sys_user_id} and t.cre_month=date_format(CURDATE(), '%Y%m')
+		where t.sn=tt.sn and (t.user_id=#{map.sys_user_id} or t.user_id in(select id from t_user_info where parent_chain like concat(#{map.parent_chain},'%'))) and t.cre_month=date_format(CURDATE(), '%Y%m')
 		union
 		select t.sn,tt.mer_name,t.performance from t_summary_traditional_pos_trans_month t,t_sys_traditional_pos_info tt
-		where t.sn=tt.sn and t.user_id=#{map.sys_user_id} <!--and t.cre_month=date_format(CURDATE(), '%Y%m')-->
-		) tb
+		where t.sn=tt.sn and (t.user_id=#{map.sys_user_id} or t.user_id in(select id from t_user_info where parent_chain like concat(#{map.parent_chain},'%'))) and t.cre_month=date_format(CURDATE(), '%Y%m')
+		) tb where performance>0
 		order by performance desc
+		limit 0,20
 	</select>
 	<select id="getTradeVolumeRankByDay" resultType="java.util.Map">
 		select * from (
 		select t.sn,tt.mer_name,t.performance from t_summary_mpos_trans_everyday t,t_sys_mpos_info tt
-		where t.sn=tt.sn and t.user_id=#{map.sys_user_id} and t.cre_date=date_format(CURDATE(), '%Y%m%d')
-		union all
+		where t.sn=tt.sn and (t.user_id=#{map.sys_user_id} or t.user_id in(select id from t_user_info where parent_chain like concat(#{map.parent_chain},'%'))) and t.cre_date=date_format(CURDATE(), '%Y%m%d')
+		union
 		select t.sn,tt.mer_name,t.performance from t_summary_traditional_pos_trans_everyday t,t_sys_traditional_pos_info tt
-		where t.sn=tt.sn and t.user_id=#{map.sys_user_id} <!--and t.cre_date=date_format(CURDATE(), '%Y%m%d')-->
-		) tb
+		where t.sn=tt.sn and (t.user_id=#{map.sys_user_id} or t.user_id in(select id from t_user_info where parent_chain like concat(#{map.parent_chain},'%'))) and t.cre_date=date_format(CURDATE(), '%Y%m%d')
+		) tb where performance>0
 		order by performance desc
+		limit 0,20
 	</select>
 
 	<select id="getMposTradeVolumeRankByMonth" parameterType="java.util.Map" resultType="java.util.Map">

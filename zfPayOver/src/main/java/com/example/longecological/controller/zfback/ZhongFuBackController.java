@@ -25,6 +25,13 @@ public class ZhongFuBackController {
 	@Autowired
 	private ZhongFuBackService zhongFuBackService;
 
+
+	@ResponseBody
+	@RequestMapping("/merchantInstallProcess")
+	public void merchantInstallProcess(@SIGNToken @RequestBody Map<String, Object> map){
+		zhongFuBackService.merchantInstallProcess(map);
+	}
+
 	/**
 	 * 进件接口回调
 	 * @param map

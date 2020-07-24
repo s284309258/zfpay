@@ -7,6 +7,7 @@ import com.example.longecological.entity.R;
 
 public interface ZhongFuBackService {
 
+	void merchantInstallProcess(Map<String, Object> map);
 	/**
 	 * 处理进件中付回调
 	 * @param map

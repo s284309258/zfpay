@@ -51,7 +51,9 @@ public class ReportFormsServiceImpl implements ReportFormsService {
 				traposDetail.put("performance","0");
 				traposDetail.put("act_num","0");
 			}
-			traposDetail.put("act_num_day",reportFormsMapper.getHomePageInfoTraditionalActNumDay(String.valueOf(map.get("sys_user_id"))));
+			String  act_num_day1 = reportFormsMapper.getHomePageInfoTraditionalActNumDay(String.valueOf(map.get("sys_user_id")));
+			if(act_num_day1==null){act_num_day1="0";}
+			traposDetail.put("act_num_day",act_num_day1);
 			respondMap.put("traposDetail", traposDetail);
 			//获取MPOS信息
 			Map<String, Object> mposDetail = reportFormsMapper.getHomePageInfoByMpos(map);
@@ -62,7 +64,9 @@ public class ReportFormsServiceImpl implements ReportFormsService {
 				mposDetail.put("performance","0");
 				mposDetail.put("act_num","0");
 			}
-			mposDetail.put("act_num_day",reportFormsMapper.getHomePageInfoMPOSActNumDay(String.valueOf(map.get("sys_user_id"))));
+			String act_num_day2 = reportFormsMapper.getHomePageInfoMPOSActNumDay(String.valueOf(map.get("sys_user_id")));
+			if(act_num_day2==null){act_num_day2="0";}
+			mposDetail.put("act_num_day",act_num_day2);
 			respondMap.put("mposDetail", mposDetail);
 			//获取EPOS信息
 			Map<String, Object> eposDetail = reportFormsMapper.getHomePageInfoByEpos(map);

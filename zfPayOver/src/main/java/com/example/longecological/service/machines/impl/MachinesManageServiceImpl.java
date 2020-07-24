@@ -12,6 +12,7 @@ import com.example.longecological.mapper.merchant.MerchantManageMapper;
 import com.example.longecological.mapper.mpos.MposMapper;
 import com.example.longecological.mapper.system.SysNoticeMapper;
 import com.example.longecological.mapper.traditionalpos.TraditionalPosMapper;
+import com.example.longecological.mapper.user.UserInfoMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,9 @@ public class MachinesManageServiceImpl implements MachinesManageService {
 	@Autowired
 	private MerchantManageMapper merchantManageMapper;
 
+	@Autowired
+	private UserInfoMapper userInfoMapper;
+
 	/**
 	 * 获取待分配列表（传统POS）
 	 */
@@ -79,7 +83,25 @@ public class MachinesManageServiceImpl implements MachinesManageService {
 			return R.error(CommonCodeConstant.COMMON_CODE_999996, CommonCodeConstant.COMMON_MSG_999996);
 		}
 	}
-	
+
+	@Override
+	public R getTraditionalPosCheckInList(Map<String, Object> map) {
+		try {
+			//验签成功与否验证
+			if(!TokenUtil.checkRSAdecrypt((Map<String, Object>)map.get("result"))) {
+				return (R) map.get("result");
+			}
+			Map<String, Object> respondMap = new HashMap<>();
+			List<Map<String, Object>> traditionalPosAllocationList = machinesManageMapper.getTraditionalPosCheckInList(map);
+			respondMap.put("traditionalPosAllocationList", traditionalPosAllocationList);
+
+			return R.ok(CommonCodeConstant.COMMON_CODE_999983, CommonCodeConstant.COMMON_MSG_999983, respondMap);
+		} catch (Exception e) {
+			LOGGER.error("MachinesManageServiceImpl -- getTraditionalPosAllocationList方法处理异常：" + ExceptionUtil.getExceptionAllinformation(e));
+			return R.error(CommonCodeConstant.COMMON_CODE_999996, CommonCodeConstant.COMMON_MSG_999996);
+		}
+	}
+
 	/**
 	 * 获取待分配列表（MPOS）
 	 */
@@ -191,6 +213,21 @@ public class MachinesManageServiceImpl implements MachinesManageService {
 
 							machinesMap.put("cre_date",up_date);
 							machinesMap.put("cre_time",up_time);
+							machinesMap.put("pos_type",null);
+							num = machinesManageMapper.insertUserTraposActivityRewardRecord(machinesMap);
+							if(num!=1){
+								TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+								return R.ok(CommonCodeConstant.COMMON_CODE_999997, CommonCodeConstant.COMMON_MSG_999997);
+							}
+						}else if("03".equals(machinesMap.get("pos_type"))){
+							num = machinesManageMapper.updateUserMoneyBenefit(machinesMap);
+							if(num!=1){
+								TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+								return R.ok(CommonCodeConstant.COMMON_CODE_999997, CommonCodeConstant.COMMON_MSG_999997);
+							}
+
+							machinesMap.put("cre_date",up_date);
+							machinesMap.put("cre_time",up_time);
 							num = machinesManageMapper.insertUserTraposActivityRewardRecord(machinesMap);
 							if(num!=1){
 								TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -221,7 +258,7 @@ public class MachinesManageServiceImpl implements MachinesManageService {
 
 			List<Map<String,Object>> list5 = machinesManageMapper.selectPolicy5RecordAll(map);
 			if(list5.size()>0){
-				for(Map<String,Object> machinesMap : list){
+				for(Map<String,Object> machinesMap : list5){
 					if(map.get("id").equals(machinesMap.get("policy_id").toString())){
 						String order_id = StringUtil.getDateTimeAndRandomForID();
 						String up_date = TimeUtil.getDayString();
@@ -242,7 +279,25 @@ public class MachinesManageServiceImpl implements MachinesManageService {
 
 							machinesMap.put("cre_date",up_date);
 							machinesMap.put("cre_time",up_time);
-							machinesMap.put("begin_date",up_date);
+							machinesMap.put("begin_date",null);
+							machinesMap.put("end_date",null);
+							machinesMap.put("pos_type",null);
+							num = machinesManageMapper.insertUserTraposActivityRewardRecord(machinesMap);
+							if(num!=1){
+								TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+								return R.ok(CommonCodeConstant.COMMON_CODE_999997, CommonCodeConstant.COMMON_MSG_999997);
+							}
+						}else if("03".equals(machinesMap.get("pos_type"))){
+							num = machinesManageMapper.updateUserMoneyBenefit(machinesMap);
+							if(num!=1){
+								TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+								return R.ok(CommonCodeConstant.COMMON_CODE_999997, CommonCodeConstant.COMMON_MSG_999997);
+							}
+
+							machinesMap.put("cre_date",up_date);
+							machinesMap.put("cre_time",up_time);
+							machinesMap.put("begin_date",null);
+							machinesMap.put("end_date",null);
 							num = machinesManageMapper.insertUserTraposActivityRewardRecord(machinesMap);
 							if(num!=1){
 								TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -257,7 +312,8 @@ public class MachinesManageServiceImpl implements MachinesManageService {
 
 							machinesMap.put("cre_date",up_date);
 							machinesMap.put("cre_time",up_time);
-							machinesMap.put("begin_date",up_date);
+							machinesMap.put("begin_date",null);
+							machinesMap.put("end_date",null);
 							num = machinesManageMapper.insertUserMposActivityRewardRecord(machinesMap);
 							if(num!=1){
 								TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -470,6 +526,14 @@ public class MachinesManageServiceImpl implements MachinesManageService {
 			}
 			//add byqh202003 end
 
+			//add byqh202007 bgin
+			policy2OnOff(map);
+
+			if(map.get("retail_reward")==null){
+				map.put("retail_reward","0");
+			}
+			//add byqh202007 end
+
 			/********************开始处理分配操作***************************/
 			//插入最新的分配记录
 			map.put("cre_date", TimeUtil.getDayString());
@@ -618,6 +682,9 @@ public class MachinesManageServiceImpl implements MachinesManageService {
 			//插入最新的分配记录
 			map.put("cre_date", TimeUtil.getDayString());
 			map.put("cre_time", TimeUtil.getTimeString());
+			if(map.get("retail_reward")==null){
+				map.put("retail_reward","0");
+			}
 			int num1 = machinesManageMapper.addAllocationMpos(map);
 			//更新旧的分配记录
 			map.put("up_date", TimeUtil.getDayString());
@@ -1106,10 +1173,20 @@ public class MachinesManageServiceImpl implements MachinesManageService {
 				respondMap.put("traditionalPosSysParamRate", traditionalPosSysParamRate);
 
 				//增加交易达标，分期达标标识 add byqh202006
-				List<Map<String, Object>> policy2 = machinesManageMapper.getPolicy2BySN(map);
+				Map<String, Object> mm =userInfoMapper.getUserInfoById(String.valueOf(map.get("sys_user_id")));
+				String parent_chain = String.valueOf(mm.get("parent_chain"))+","+map.get("sys_user_id");
+				map.put("parent_chain",parent_chain);
+				List<Map<String, Object>> policy2 = new ArrayList<>();
+				if(map.get("sn_list")!=null && !"".equals(map.get("sn_list"))){
+					policy2 = machinesManageMapper.getPolicy2BySN(map);
+				}
 				respondMap.put("policy2",policy2);
-//				List<Map<String, Object>> policy3 = machinesManageMapper.getPolicy3BySN(String.valueOf(map.get("sn")));
-//				respondMap.put("policy3",policy3);
+
+				List<Map<String, Object>> policy5 = new ArrayList<>();
+				if(map.get("sn_list")!=null && !"".equals(map.get("sn_list"))){
+					policy5 = machinesManageMapper.getPolicy5BySN(map);
+				}
+				respondMap.put("policy5",policy5);
 				//增加交易达标，分期达标标识 add byqh202006
 			}
 
@@ -1126,7 +1203,36 @@ public class MachinesManageServiceImpl implements MachinesManageService {
 		if(!TokenUtil.checkRSAdecrypt((Map<String, Object>)map.get("result"))) {
 			return (R) map.get("result");
 		}
-		int cnt = machinesManageMapper.policy2OnOff(map);
+		int cnt = 0;
+		if(map.get("batch_no")!=null && !"".equals(map.get("batch_no"))){
+			String policy_idArray = String.valueOf(map.get("policy_id"));
+			String is_reward2Array = String.valueOf(map.get("is_reward2"));
+			if(policy_idArray!=null && !"null".equals(policy_idArray)) {
+				if (is_reward2Array != null && !"null".equals(is_reward2Array)) {
+					String[] policy_ids = policy_idArray.split(",");
+					String[] is_rewards = is_reward2Array.split(",");
+					for(int i=0;i<policy_ids.length;i++){
+						map.put("policy_id",policy_ids[i]);
+						map.put("is_reward2",is_rewards[i]);
+						cnt = machinesManageMapper.policy2OnOffByBatchNo(map);
+					}
+				}
+			}
+		}else{
+			String policy_idArray = String.valueOf(map.get("policy_id"));
+			String is_reward2Array = String.valueOf(map.get("is_reward2"));
+			if(policy_idArray!=null && !"null".equals(policy_idArray)){
+				if(is_reward2Array!=null && !"null".equals(is_reward2Array)){
+					String[] policy_ids = policy_idArray.split(",");
+					String[] is_rewards = is_reward2Array.split(",");
+					for(int i=0;i<policy_ids.length;i++){
+						map.put("policy_id",policy_ids[i]);
+						map.put("is_reward2",is_rewards[i]);
+						cnt = machinesManageMapper.policy2OnOff(map);
+					}
+				}
+			}
+		}
 		if(cnt>0){
 			return R.ok(CommonCodeConstant.COMMON_CODE_999999,CommonCodeConstant.COMMON_MSG_999999);
 		}
@@ -1153,11 +1259,17 @@ public class MachinesManageServiceImpl implements MachinesManageService {
 				respondMap.put("mposSysParamRate", mposSysParamRate);
 
 				//增加交易达标，分期达标标识 add byqh202006
-				List<Map<String, Object>> policy2 = machinesManageMapper.getPolicy2BySN(map);
+				List<Map<String, Object>> policy2 = new ArrayList<>();
 				respondMap.put("policy2",policy2);
-				List<Map<String, Object>> policy3 = machinesManageMapper.getPolicy3BySN(String.valueOf(map.get("sn")));
-				respondMap.put("policy3",policy3);
 				//增加交易达标，分期达标标识 add byqh202006
+
+				//20200709
+				List<Map<String, Object>> policy5 = new ArrayList<>();
+				if(map.get("sn_list")!=null && !"".equals(map.get("sn_list"))){
+					policy5 = machinesManageMapper.getPolicy5BySN(map);
+				}
+				respondMap.put("policy5",policy5);
+				//20200709
 			}
 
 			return R.ok(CommonCodeConstant.COMMON_CODE_999983, CommonCodeConstant.COMMON_MSG_999983, respondMap);
@@ -1304,6 +1416,9 @@ public class MachinesManageServiceImpl implements MachinesManageService {
 			if(!Boolean.valueOf(checkEditAllocationTraditionalPos.get(R.SUCCESS_TAG).toString())) {
 			    return checkEditAllocationTraditionalPos;
 			}
+			//add byqh202007 begin
+			policy2OnOff(map);
+			//add byqh202007 end
 			/********************开始处理分配操作***************************/
 			//更新分配记录
 			map.put("up_date", TimeUtil.getDayString());

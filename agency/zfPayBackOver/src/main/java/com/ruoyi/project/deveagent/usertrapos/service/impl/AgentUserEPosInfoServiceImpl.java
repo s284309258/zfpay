@@ -623,8 +623,8 @@ public class AgentUserEPosInfoServiceImpl extends BasicSerivce implements AgentU
 			if(Double.parseDouble(agentUserTraditionalPosInfo.getZhifubao_settle_price())<Double.parseDouble(zhifubao_settle_price)){
 				return R.error(Type.WARN, "设备号（机器编号）"+agentUserTraditionalPosInfo.getSn()+"支付宝结算底价不能低于"+zhifubao_settle_price);
 			}
-			if(Double.parseDouble(agentUserTraditionalPosInfo.getMer_cap_fee())>Double.parseDouble(mer_cap_fee)){
-				return R.error(Type.WARN, "设备号（机器编号）"+agentUserTraditionalPosInfo.getSn()+"封顶费不能高于"+mer_cap_fee);
+			if(Double.parseDouble(agentUserTraditionalPosInfo.getMer_cap_fee())<Double.parseDouble(mer_cap_fee)){
+				return R.error(Type.WARN, "设备号（机器编号）"+agentUserTraditionalPosInfo.getSn()+"封顶费不能低于"+mer_cap_fee);
 			}
 			if(Double.parseDouble(agentUserTraditionalPosInfo.getSingle_profit_rate())<Double.parseDouble(single_profit_rate)){
 				return R.error(Type.WARN, "设备号（机器编号）"+agentUserTraditionalPosInfo.getSn()+"单笔分润比例不能低于"+single_profit_rate);

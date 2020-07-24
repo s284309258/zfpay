@@ -651,8 +651,8 @@ public class AgentUserTraditionalPosInfoServiceImpl extends BasicSerivce impleme
 			if(Double.parseDouble(agentUserTraditionalPosInfo.getMer_cap_fee())<Double.parseDouble(mer_cap_fee)){
 				return R.error(Type.WARN, "设备号（机器编号）"+agentUserTraditionalPosInfo.getSn()+"封顶费不能低于"+mer_cap_fee);
 			}
-			if(Double.parseDouble(agentUserTraditionalPosInfo.getSingle_profit_rate())>Double.parseDouble(single_profit_rate)){
-				return R.error(Type.WARN, "设备号（机器编号）"+agentUserTraditionalPosInfo.getSn()+"单笔分润比例不能高于"+single_profit_rate);
+			if(Double.parseDouble(agentUserTraditionalPosInfo.getSingle_profit_rate())<Double.parseDouble(single_profit_rate)){
+				return R.error(Type.WARN, "设备号（机器编号）"+agentUserTraditionalPosInfo.getSn()+"单笔分润比例不能低于"+single_profit_rate);
 			}
 			if(Double.parseDouble(agentUserTraditionalPosInfo.getCash_back_rate())>Double.parseDouble(cash_back_rate)){
 				return R.error(Type.WARN, "设备号（机器编号）"+agentUserTraditionalPosInfo.getSn()+"返现比例不能高于"+cash_back_rate);

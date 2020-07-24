@@ -59,26 +59,26 @@
 			#{map.is_take_machi}
 		)
 	</insert>
-	
+
 	<!-- 查询进件记录 -->
 	<select id="getTraditionalPosInstallList" parameterType="java.util.Map" resultType="java.util.Map">
 		select
-			cast(id as char) as install_id,
-			merchant_name,
-			mer_code,
-			biz_msg,
-			DATE_FORMAT(STR_TO_DATE(CONCAT(cre_date, cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		cast(id as char) as install_id,
+		merchant_name,
+		mer_code,
+		biz_msg,
+		DATE_FORMAT(STR_TO_DATE(CONCAT(cre_date, cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
 		from t_user_traditional_pos_install_info
 		where user_id = #{map.sys_user_id}
-		  and biz_code = #{map.biz_code}
-		   <if test="map.key_word != null and map.key_word != ''" >
-        	and merchant_name like concat('%',#{map.key_word},'%') 
-      	  </if>
-		  <if test="map.last_id != null and map.last_id != ''" >
-        	and id &lt; #{map.last_id}
-      	  </if>
-      	order by id desc
-        limit 0,10
+		and biz_code = #{map.biz_code}
+		<if test="map.key_word != null and map.key_word != ''" >
+			and merchant_name like concat('%',#{map.key_word},'%')
+		</if>
+		<if test="map.last_id != null and map.last_id != ''" >
+			and id &lt; #{map.last_id}
+		</if>
+		order by id desc
+		limit 0,10
 	</select>
 	
 	<!-- 查询进件详情 -->
@@ -107,5 +107,36 @@
 		from t_user_traditional_pos_install_detail
 		where install_id = #{map.install_id}
 	</select>
+
+	<!-- 查询进件记录 -->
+	<select id="getTraditionalPosInstallProcess" parameterType="java.util.Map" resultType="java.util.Map">
+		select
+		cast(id as char) as install_id,
+		account,
+		merchantName as merchant_name,
+		merchantCode as mer_code,
+		'待完善' as biz_msg,
+		DATE_FORMAT(STR_TO_DATE(CONCAT(cre_date, cre_time),'%Y%m%d%H%i%s'),'%Y-%m-%d %H:%i:%s') AS cre_datetime
+		from t_sys_traditional_pos_install_process
+		where user_id = #{map.sys_user_id}
+		and status = '0'
+		<if test="map.key_word != null and map.key_word != ''" >
+			and merchantName like concat('%',#{map.key_word},'%')
+		</if>
+		<if test="map.last_id != null and map.last_id != ''" >
+			and id &lt; #{map.last_id}
+		</if>
+		order by id desc
+		limit 0,10
+	</select>
+
+	<insert id="insertTraditionalPosInstallProcess" parameterType="java.util.Map">
+		insert into t_sys_traditional_pos_install_process(account,merchantCode,merchantName,merchantStepProgess,other,returnMsg,status,user_id,cre_date,cre_time)
+		values(#{map.account},#{map.merchantCode},#{map.merchantName},#{map.merchantStepProgess},#{map.other},#{map.returnMsg},'0',#{map.sys_user_id},#{map.cre_date},#{map.cre_time})
+	</insert>
+
+	<update id="updateTraditionalPosInstallProcess" parameterType="java.util.Map">
+		update t_sys_traditional_pos_install_process set status='2' where merchantCode=#{map.merCode}
+	</update>
 	
 </mapper>

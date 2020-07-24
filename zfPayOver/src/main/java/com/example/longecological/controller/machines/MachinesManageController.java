@@ -36,6 +36,17 @@ public class MachinesManageController {
 	public R getTraditionalPosAllocationList(@SIGNToken @RequestBody Map<String, Object> map) {
 		return machinesManageService.getTraditionalPosAllocationList(map);
 	}
+
+	/**
+	 * 获取待分配列表（传统POS）======》MD5验签方式
+	 * @param map
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/getTraditionalPosCheckInList")
+	public R getTraditionalPosCheckInList(@SIGNToken @RequestBody Map<String, Object> map) {
+		return machinesManageService.getTraditionalPosCheckInList(map);
+	}
 	
 	/**
 	 * 获取待分配列表（MPOS）======》MD5验签方式

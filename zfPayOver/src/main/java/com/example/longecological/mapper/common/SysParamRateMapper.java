@@ -10,7 +10,7 @@ public interface SysParamRateMapper {
 	 * @param type
 	 * @return
 	 */
-	List<Map<String, Object>> getRateListByType(String type);
+	List<Map<String, Object>> getRateListByType(String type,String pos_type);
 	
 	/**
 	 * 费率表所有值

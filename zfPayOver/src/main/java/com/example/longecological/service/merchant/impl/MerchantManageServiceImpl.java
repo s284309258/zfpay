@@ -375,7 +375,15 @@ public class MerchantManageServiceImpl implements MerchantManageService {
 				return (R) map.get("result");
 			}
 			Map<String, Object> respondMap = new HashMap<>();
-			List<Map<String, Object>> tradeVolumeRank = merchantManageMapper.getMposTradeVolumeRankByMonth(map);
+			Map<String, Object> mm =userInfoMapper.getUserInfoById(String.valueOf(map.get("sys_user_id")));
+			String parent_chain = null;
+			if(mm.get("parent_chain")!=null){
+				parent_chain=mm.get("parent_chain")+","+map.get("sys_user_id");
+			}else{
+				parent_chain=String.valueOf(map.get("sys_user_id"));
+			}
+			map.put("parent_chain",parent_chain);
+			List<Map<String, Object>> tradeVolumeRank = merchantManageMapper.getTradeVolumeRankByMonth(map);
 			//新增代理直营商户交易总必输,交易总金额字段end byqh
 			respondMap.put("tradeVolumeRank", tradeVolumeRank);
 			return R.ok(CommonCodeConstant.COMMON_CODE_999983, CommonCodeConstant.COMMON_MSG_999983, respondMap);
@@ -391,6 +399,14 @@ public class MerchantManageServiceImpl implements MerchantManageService {
 				return (R) map.get("result");
 			}
 			Map<String, Object> respondMap = new HashMap<>();
+			Map<String, Object> mm =userInfoMapper.getUserInfoById(String.valueOf(map.get("sys_user_id")));
+			String parent_chain = null;
+			if(mm.get("parent_chain")!=null){
+				parent_chain=mm.get("parent_chain")+","+map.get("sys_user_id");
+			}else{
+				parent_chain=String.valueOf(map.get("sys_user_id"));
+			}
+			map.put("parent_chain",parent_chain);
 			List<Map<String, Object>> tradeVolumeRank = merchantManageMapper.getTradeVolumeRankByDay(map);
 			//新增代理直营商户交易总必输,交易总金额字段end byqh
 			respondMap.put("tradeVolumeRank", tradeVolumeRank);

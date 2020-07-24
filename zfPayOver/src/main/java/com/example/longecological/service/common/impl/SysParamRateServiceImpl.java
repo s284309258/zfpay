@@ -40,8 +40,8 @@ public class SysParamRateServiceImpl implements SysParamRateService {
 //	@EnableCacheService(keyPrefix=RedisNameConstants.zfpay_sys_param_rate_list,
 //			fieldKey="#type", cacheOperation=CacheOperation.QUERY)
 	@Override
-	public List<Map<String, Object>> getRateListByType(String type) {
-		return sysParamRateMapper.getRateListByType(type);
+	public List<Map<String, Object>> getRateListByType(String type,String pos_type) {
+		return sysParamRateMapper.getRateListByType(type,pos_type);
 	}
 
 	/**

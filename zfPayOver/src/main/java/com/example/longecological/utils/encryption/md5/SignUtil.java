@@ -146,10 +146,13 @@ public class SignUtil{
     
     public static void main(String[] args) {
     	Map<String, Object> map=new HashMap<>();
-    	map.put("token", "181|OYLPCOIM3HWYPORP9ZWGOH6JRBWM7O78");
+    	map.put("token", "181|7WU2PYJOUWT0GJEKKNMDPHF1ZJAWPRRO");
 //        map.put("sn_list","M1231233123333,M456456465111");
-        map.put("cre_month","202001");
-        map.put("user_id","1977");
+        map.put("policy_id","73");
+        map.put("sign","DD68250D1D160274336D084246ED3078");
+        map.put("sn","000001021812CE153671");
+        map.put("sn_list","000001021812CE153671");
+        map.put("is_reward","1");
 //        map.put("policy_quantity",1000);
 //        map.put("policy_end_day",90);
 //        map.put("cloud_settle_price","0.35");
