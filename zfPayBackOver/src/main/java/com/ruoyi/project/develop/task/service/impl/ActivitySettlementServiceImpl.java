@@ -1162,7 +1162,43 @@ public class ActivitySettlementServiceImpl implements ActivitySettlementService 
 					if("0".equals(StringUtil.getMapValue(map, "is_reward"))){
 						Map<String,Object> userMap = agentUserInfoMapper.getAgentUserMapById(StringUtil.getMapValue(map, "user_id"));
 						if(null!=userMap.get("referer_id")){
-							policy3map.put("user_id",StringUtil.getMapValue(userMap, "referer_id"));
+							Map<String,Object> userMap2 = agentUserInfoMapper.getAgentUserMapById(userMap.get("referer_id").toString());
+							if("0".equals(StringUtil.getMapValue(userMap2, "is_reward"))){
+								Map<String,Object> userMap3 = agentUserInfoMapper.getAgentUserMapById(userMap2.get("referer_id").toString());
+								if("0".equals(StringUtil.getMapValue(userMap3, "is_reward"))){
+									Map<String,Object> userMap4 = agentUserInfoMapper.getAgentUserMapById(userMap3.get("referer_id").toString());
+									if("0".equals(StringUtil.getMapValue(userMap4, "is_reward"))){
+										Map<String,Object> userMap5 = agentUserInfoMapper.getAgentUserMapById(userMap4.get("referer_id").toString());
+										if("0".equals(StringUtil.getMapValue(userMap5, "is_reward"))){
+											Map<String,Object> userMap6 = agentUserInfoMapper.getAgentUserMapById(userMap5.get("referer_id").toString());
+											if("0".equals(StringUtil.getMapValue(userMap6, "is_reward"))){
+												Map<String,Object> userMap7 = agentUserInfoMapper.getAgentUserMapById(userMap6.get("referer_id").toString());
+												if("0".equals(StringUtil.getMapValue(userMap7, "is_reward"))){
+													Map<String,Object> userMap8 = agentUserInfoMapper.getAgentUserMapById(userMap7.get("referer_id").toString());
+													if("0".equals(StringUtil.getMapValue(userMap8, "is_reward"))){
+														Map<String,Object> userMap9 = agentUserInfoMapper.getAgentUserMapById(userMap8.get("referer_id").toString());
+														policy3map.put("user_id",StringUtil.getMapValue(userMap9, "id"));
+													}else{
+														policy3map.put("user_id",StringUtil.getMapValue(userMap8, "id"));
+													}
+												}else{
+													policy3map.put("user_id",StringUtil.getMapValue(userMap7, "id"));
+												}
+											}else{
+												policy3map.put("user_id",StringUtil.getMapValue(userMap6, "id"));
+											}
+										}else{
+											policy3map.put("user_id",StringUtil.getMapValue(userMap5, "id"));
+										}
+									}else{
+										policy3map.put("user_id",StringUtil.getMapValue(userMap4, "id"));
+									}
+								}else{
+									policy3map.put("user_id",StringUtil.getMapValue(userMap3, "id"));
+								}
+							}else{
+								policy3map.put("user_id",StringUtil.getMapValue(userMap2, "id"));
+							}
 						}
 					}else{
 						policy3map.put("user_id",StringUtil.getMapValue(map, "user_id"));

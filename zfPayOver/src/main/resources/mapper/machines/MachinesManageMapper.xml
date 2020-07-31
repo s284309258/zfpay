@@ -916,11 +916,12 @@
 		FROM
 			t_user_mpos_recall_record_info 
 		WHERE acce_user_id = #{map.sys_user_id} AND status = #{map.status}
-		<if test="map.last_id != null and map.last_id != ''" >
-        	AND id &lt; #{map.last_id}
-      	</if>
-      	ORDER BY id desc
-      	limit 0,10
+		ORDER BY id desc
+<!--		<if test="map.last_id != null and map.last_id != ''" >-->
+<!--        	AND id &lt; #{map.last_id}-->
+<!--      	</if>-->
+<!--      	ORDER BY id desc-->
+<!--      	limit 0,10-->
 	</select>
 	
 	<!-- 更新召回状态（MPOS） -->
@@ -984,11 +985,12 @@
 		FROM
 			t_user_trafficcard_recall_record_info 
 		WHERE acce_user_id = #{map.sys_user_id} AND status = #{map.status}
-		<if test="map.last_id != null and map.last_id != ''" >
-        	AND id &lt; #{map.last_id}
-      	</if>
-      	ORDER BY id desc
-      	limit 0,10
+		ORDER BY id desc
+<!--		<if test="map.last_id != null and map.last_id != ''" >-->
+<!--        	AND id &lt; #{map.last_id}-->
+<!--      	</if>-->
+<!--      	ORDER BY id desc-->
+<!--      	limit 0,10-->
 	</select>
 	
 	<!-- 更新召回状态（流量卡） -->

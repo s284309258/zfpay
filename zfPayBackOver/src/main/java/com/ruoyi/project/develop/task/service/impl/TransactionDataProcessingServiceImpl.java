@@ -207,6 +207,11 @@ public class TransactionDataProcessingServiceImpl implements TransactionDataProc
 					rate = new BigDecimal(StringUtil.getMapValue(trapos, "credit_card_rate"));
 					settle_price = "card_settle_price";
 				}
+
+				if (mer_cap_fee.doubleValue() == 0.0D) {
+					rate = new BigDecimal(StringUtil.getMapValue(trapos, "credit_card_rate"));
+					settle_price = "card_settle_price";
+				}
 				LOGGER.info(settle_price);
 			}else if(ZhongFuInterfaceCodeConstant.trans_type_3.equals(StringUtil.getMapValue(traposTrade, "trans_type"))){
 				rate = new BigDecimal(StringUtil.getMapValue(trapos, "weixin_rate"));
